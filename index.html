@@ -209,7 +209,6 @@ button.ctrl {
 </style>
 </head>
 
-
 <body>
 
 <div class="wrap">
@@ -230,17 +229,15 @@ button.ctrl {
 
   </div>
 
-
   <div class="sub">
     Find four groups of four. Famous competitors,
     styles, positions, submissions, and more.
   </div>
 
-
   <div class="bar">
 
     <span>
-      Mistakes:
+      Mistakes left before new round:
       <span id="mistakes">4</span>
     </span>
 
@@ -250,13 +247,11 @@ button.ctrl {
 
   </div>
 
-
   <div id="solved"></div>
 
   <div class="grid" id="grid"></div>
 
   <div id="msg"></div>
-
 
   <div class="buttons">
 
@@ -281,7 +276,6 @@ button.ctrl {
 
   </div>
 
-
   <div class="round">
     Round
     <span id="roundNo">1</span>
@@ -290,24 +284,7 @@ button.ctrl {
 
 </div>
 
-
 <script>
-
-/*
-=========================================================
-BJJ CONNECTIONS
-Created By Gabe Shaffer
-
-50 puzzle rounds.
-After all 50 are played, the game starts another cycle.
-A puzzle will not repeat until the other puzzles have
-been played.
-
-The Connections counter is saved in the browser using
-localStorage, so closing the page does not reset it.
-=========================================================
-*/
-
 
 const rounds = [
 
@@ -319,7 +296,6 @@ const rounds = [
 ["LEG DRAG","TORIANDO","KNEE CUT","SMASH PASS","PASSES"]
 ],
 
-
 /* ROUND 2 */
 [
 ["HALF GUARD","DEEP HALF","REVERSE DE LA RIVA","KNEE SHIELD","GUARDS"],
@@ -327,7 +303,6 @@ const rounds = [
 ["STRAIGHT ANKLE","HEEL HOOK","KNEEBAR","CALF SLICER","LEG LOCKS"],
 ["SEATBELT","BODY TRIANGLE","BACK TAKE","HOOKS","BACK CONTROL"]
 ],
-
 
 /* ROUND 3 */
 [
@@ -337,15 +312,13 @@ const rounds = [
 ["SINGLE LEG","DOUBLE LEG","UCHI MATA","OSOTO GARI","TAKEDOWNS"]
 ],
 
-
 /* ROUND 4 */
 [
-["MARCelo GARCIA","RUBENS CHARLES","GUI MENDES","RAFAEL MENDES","GI STARS"],
+["MARCELO GARCIA","RUBENS CHARLES","GUI MENDES","RAFAEL MENDES","GI STARS"],
 ["DE LA RIVA","BERIMBOLO","LASSO","COLLAR-SLEEVE","GI GUARDS"],
 ["GUILLOTINE","D'ARCE","ANACONDA","MARCELOTINE","CHOKES"],
 ["ARMBAR","TRIANGLE","OMOPLATA","KIMURA","SUBMISSIONS"]
 ],
-
 
 /* ROUND 5 */
 [
@@ -355,7 +328,6 @@ const rounds = [
 ["CROSS CHOKE","COLLAR CHOKE","EZEKIEL","BOW-AND-ARROW","CHOKES"]
 ],
 
-
 /* ROUND 6 */
 [
 ["GORDON RYAN","CRAIG JONES","GARRY TONON","NICK RODRIGUEZ","NO-GI"],
@@ -363,7 +335,6 @@ const rounds = [
 ["ASHI GARAMI","SINGLE LEG X","INSIDE SANKAKU","OUTSIDE ASHI","LEG POSITIONS"],
 ["BODY LOCK","LEG DRAG","KNEE CUT","SMASH PASS","PASSES"]
 ],
-
 
 /* ROUND 7 */
 [
@@ -373,15 +344,13 @@ const rounds = [
 ["ARMBAR","TRIANGLE","KIMURA","AMERICANA","ARM SUBMISSIONS"]
 ],
 
-
 /* ROUND 8 */
 [
-["MARCelo GARCIA","KRON GRACIE","DEMIAN MAIA","GORDON RYAN","SUBMISSION SPECIALISTS"],
+["MARCELO GARCIA","KRON GRACIE","DEMIAN MAIA","GORDON RYAN","SUBMISSION SPECIALISTS"],
 ["GUILLOTINE","ANACONDA","D'ARCE","PAPER CUTTER","CHOKES"],
 ["BERIMBOLO","BACK TAKE","ARM DRAG","CHAIR SIT","BACK-TAKE TOOLS"],
 ["BUTTERFLY","X-GUARD","SINGLE LEG X","DEEP HALF","OPEN GUARDS"]
 ],
-
 
 /* ROUND 9 */
 [
@@ -391,7 +360,6 @@ const rounds = [
 ["ARMBAR","OMOPLATA","TRIANGLE","KIMURA","ARM ATTACKS"]
 ],
 
-
 /* ROUND 10 */
 [
 ["JOHN DANAHER","GORDON RYAN","GARRY TONON","CRAIG JONES","DANAHER ASSOCIATED"],
@@ -400,15 +368,13 @@ const rounds = [
 ["SEATBELT","BODY TRIANGLE","BACK TAKE","HOOKS","BACK CONTROL"]
 ],
 
-
 /* ROUND 11 */
 [
-["ROGER GRACIE","MARCelo GARCIA","SAULO RIBEIRO","ROMULO BARRAL","BJJ LEGENDS"],
+["ROGER GRACIE","MARCELO GARCIA","SAULO RIBEIRO","ROMULO BARRAL","BJJ LEGENDS"],
 ["CLOSED GUARD","BUTTERFLY","DEEP HALF","HALF GUARD","GUARDS"],
 ["MOUNT","SIDE CONTROL","KESA","NORTH-SOUTH","POSITIONS"],
 ["CROSS CHOKE","BOW-AND-ARROW","EZEKIEL","COLLAR CHOKE","GI CHOKES"]
 ],
-
 
 /* ROUND 12 */
 [
@@ -418,7 +384,6 @@ const rounds = [
 ["TORIANDO","LEG DRAG","KNEE CUT","LONG STEP","PASSES"]
 ],
 
-
 /* ROUND 13 */
 [
 ["BUCHECHA","RODOLFO VIEIRA","GORDON RYAN","NICK RODRIGUEZ","HEAVYWEIGHTS"],
@@ -427,15 +392,13 @@ const rounds = [
 ["GUILLOTINE","D'ARCE","ANACONDA","ARM TRIANGLE","CHOKES"]
 ],
 
-
 /* ROUND 14 */
 [
-["MARCelo GARCIA","KRON GRACIE","DEMIAN MAIA","GORDON RYAN","SUBMISSION SPECIALISTS"],
+["MARCELO GARCIA","KRON GRACIE","DEMIAN MAIA","GORDON RYAN","SUBMISSION SPECIALISTS"],
 ["BUTTERFLY","CLOSED GUARD","HALF GUARD","DEEP HALF","GUARDS"],
 ["ARM DRAG","BACK TAKE","BERIMBOLO","CHAIR SIT","BACK TAKES"],
 ["REAR NAKED CHOKE","BOW-AND-ARROW","GUILLOTINE","D'ARCE","CHOKES"]
 ],
-
 
 /* ROUND 15 */
 [
@@ -445,7 +408,6 @@ const rounds = [
 ["SINGLE LEG","DOUBLE LEG","UCHI MATA","ANKLE PICK","TAKEDOWNS"]
 ],
 
-
 /* ROUND 16 */
 [
 ["GORDON RYAN","CRAIG JONES","GARRY TONON","NICK RODRIGUEZ","NO-GI COMPETITORS"],
@@ -453,7 +415,6 @@ const rounds = [
 ["ASHI GARAMI","SINGLE LEG X","INSIDE SANKAKU","OUTSIDE ASHI","LEG POSITIONS"],
 ["LEG DRAG","KNEE CUT","BODY LOCK","TORIANDO","PASSES"]
 ],
-
 
 /* ROUND 17 */
 [
@@ -463,7 +424,6 @@ const rounds = [
 ["TORIANDO","LEG DRAG","LONG STEP","KNEE CUT","PASSES"]
 ],
 
-
 /* ROUND 18 */
 [
 ["ROGER GRACIE","BUCHECHA","SAULO RIBEIRO","ROMULO BARRAL","GI LEGENDS"],
@@ -472,15 +432,13 @@ const rounds = [
 ["CLOSED GUARD","BUTTERFLY","HALF GUARD","DEEP HALF","GUARDS"]
 ],
 
-
 /* ROUND 19 */
 [
-["MARCelo GARCIA","GORDON RYAN","DEMIAN MAIA","ROGER GRACIE","FAMOUS GRAPPLERS"],
+["MARCELO GARCIA","GORDON RYAN","DEMIAN MAIA","ROGER GRACIE","FAMOUS GRAPPLERS"],
 ["GUILLOTINE","ANACONDA","D'ARCE","REAR NAKED CHOKE","CHOKES"],
 ["BUTTERFLY","X-GUARD","DE LA RIVA","SINGLE LEG X","GUARDS"],
 ["BACK TAKE","ARM DRAG","BERIMBOLO","CHAIR SIT","BACK ATTACKS"]
 ],
-
 
 /* ROUND 20 */
 [
@@ -490,7 +448,6 @@ const rounds = [
 ["KNEE CUT","BODY LOCK","SMASH PASS","LEG DRAG","PASSING"]
 ],
 
-
 /* ROUND 21 */
 [
 ["RODOLFO VIEIRA","BUCHECHA","MARCUS ALMEIDA","ERBERTH SANTOS","GI POWER"],
@@ -498,7 +455,6 @@ const rounds = [
 ["KIMURA","ARMBAR","AMERICANA","ARM TRIANGLE","ARM ATTACKS"],
 ["SINGLE LEG","DOUBLE LEG","UCHI MATA","ANKLE PICK","TAKEDOWNS"]
 ],
-
 
 /* ROUND 22 */
 [
@@ -508,15 +464,13 @@ const rounds = [
 ["TRIANGLE","ARMBAR","OMOPLATA","KIMURA","SUBMISSIONS"]
 ],
 
-
 /* ROUND 23 */
 [
-["MARCelo GARCIA","KRON GRACIE","DEMIAN MAIA","ROGER GRACIE","SUBMISSION LEGENDS"],
+["MARCELO GARCIA","KRON GRACIE","DEMIAN MAIA","ROGER GRACIE","SUBMISSION LEGENDS"],
 ["BUTTERFLY","CLOSED GUARD","HALF GUARD","DEEP HALF","GUARDS"],
 ["ARM DRAG","BACK TAKE","BERIMBOLO","CHAIR SIT","BACK TAKES"],
 ["GUILLOTINE","ANACONDA","D'ARCE","REAR NAKED CHOKE","CHOKES"]
 ],
-
 
 /* ROUND 24 */
 [
@@ -526,7 +480,6 @@ const rounds = [
 ["SEATBELT","BODY TRIANGLE","HOOKS","BACK TAKE","BACK CONTROL"]
 ],
 
-
 /* ROUND 25 */
 [
 ["ROGER GRACIE","LEANDRO LO","MARCUS ALMEIDA","RUBENS CHARLES","GI"],
@@ -535,24 +488,21 @@ const rounds = [
 ["STACK PASS","OVER-UNDER","DOUBLE UNDER","BODY LOCK","PASSES"]
 ],
 
-
 /* ROUND 26 */
 [
-["MARCelo GARCIA","RAFAEL MENDES","GUI MENDES","BRUNO MALFACINE","GI TECHNICIANS"],
+["MARCELO GARCIA","RAFAEL MENDES","GUI MENDES","BRUNO MALFACINE","GI TECHNICIANS"],
 ["DE LA RIVA","SPIDER","LASSO","BUTTERFLY","GUARDS"],
 ["ARMBAR","OMOPLATA","TRIANGLE","KIMURA","SUBMISSIONS"],
 ["TORIANDO","LEG DRAG","LONG STEP","KNEE CUT","PASSES"]
 ],
 
-
 /* ROUND 27 */
 [
-["DEMIAN MAIA","ROGER GRACIE","MARCelo GARCIA","KRON GRACIE","SUBMISSION LEGENDS"],
+["DEMIAN MAIA","ROGER GRACIE","MARCELO GARCIA","KRON GRACIE","SUBMISSION LEGENDS"],
 ["CLOSED GUARD","BUTTERFLY","HALF GUARD","DEEP HALF","GUARDS"],
 ["GUILLOTINE","D'ARCE","ANACONDA","REAR NAKED CHOKE","CHOKES"],
 ["BACK TAKE","ARM DRAG","BERIMBOLO","CHAIR SIT","BACK ATTACKS"]
 ],
-
 
 /* ROUND 28 */
 [
@@ -562,7 +512,6 @@ const rounds = [
 ["BODY LOCK","SMASH PASS","KNEE CUT","OVER-UNDER","PASSES"]
 ],
 
-
 /* ROUND 29 */
 [
 ["ROGER GRACIE","BUCHECHA","RODOLFO VIEIRA","MARCUS ALMEIDA","GI HEAVYWEIGHTS"],
@@ -570,7 +519,6 @@ const rounds = [
 ["CROSS CHOKE","COLLAR CHOKE","EZEKIEL","PAPER CUTTER","CHOKES"],
 ["SINGLE LEG","DOUBLE LEG","UCHI MATA","ANKLE PICK","TAKEDOWNS"]
 ],
-
 
 /* ROUND 30 */
 [
@@ -580,15 +528,13 @@ const rounds = [
 ["TRIANGLE","ARMBAR","OMOPLATA","KIMURA","SUBMISSIONS"]
 ],
 
-
 /* ROUND 31 */
 [
-["MARCelo GARCIA","DEMIAN MAIA","ROGER GRACIE","GORDON RYAN","FAMOUS STYLISTS"],
+["MARCELO GARCIA","DEMIAN MAIA","ROGER GRACIE","GORDON RYAN","FAMOUS STYLISTS"],
 ["BUTTERFLY","X-GUARD","HALF GUARD","DEEP HALF","GUARDS"],
 ["GUILLOTINE","D'ARCE","ANACONDA","REAR NAKED CHOKE","CHOKES"],
 ["SEATBELT","BODY TRIANGLE","HOOKS","BACK TAKE","BACK CONTROL"]
 ],
-
 
 /* ROUND 32 */
 [
@@ -598,7 +544,6 @@ const rounds = [
 ["KNEE CUT","BODY LOCK","SMASH PASS","LEG DRAG","PASSES"]
 ],
 
-
 /* ROUND 33 */
 [
 ["LEANDRO LO","ROGER GRACIE","BUCHECHA","SAULO RIBEIRO","GI ICONS"],
@@ -606,7 +551,6 @@ const rounds = [
 ["CROSS CHOKE","BOW-AND-ARROW","COLLAR CHOKE","EZEKIEL","CHOKES"],
 ["CLOSED GUARD","BUTTERFLY","HALF GUARD","DEEP HALF","GUARDS"]
 ],
-
 
 /* ROUND 34 */
 [
@@ -616,15 +560,13 @@ const rounds = [
 ["ARMBAR","TRIANGLE","OMOPLATA","KIMURA","SUBMISSIONS"]
 ],
 
-
 /* ROUND 35 */
 [
-["MARCelo GARCIA","KRON GRACIE","DEMIAN MAIA","ROGER GRACIE","SUBMISSION STYLE"],
+["MARCELO GARCIA","KRON GRACIE","DEMIAN MAIA","ROGER GRACIE","SUBMISSION STYLE"],
 ["BUTTERFLY","CLOSED GUARD","DEEP HALF","HALF GUARD","GUARDS"],
 ["ARM DRAG","BACK TAKE","BERIMBOLO","CHAIR SIT","BACK TAKES"],
 ["GUILLOTINE","D'ARCE","ANACONDA","REAR NAKED CHOKE","CHOKES"]
 ],
-
 
 /* ROUND 36 */
 [
@@ -634,7 +576,6 @@ const rounds = [
 ["BODY LOCK","SMASH PASS","KNEE CUT","OVER-UNDER","PASSES"]
 ],
 
-
 /* ROUND 37 */
 [
 ["RODOLFO VIEIRA","BUCHECHA","MARCUS ALMEIDA","ERBERTH SANTOS","GI POWER"],
@@ -642,7 +583,6 @@ const rounds = [
 ["KIMURA","AMERICANA","ARMBAR","ARM TRIANGLE","ARM ATTACKS"],
 ["SINGLE LEG","DOUBLE LEG","UCHI MATA","ANKLE PICK","TAKEDOWNS"]
 ],
-
 
 /* ROUND 38 */
 [
@@ -652,15 +592,13 @@ const rounds = [
 ["TRIANGLE","OMOPLATA","ARMBAR","KIMURA","SUBMISSIONS"]
 ],
 
-
 /* ROUND 39 */
 [
-["ROGER GRACIE","MARCelo GARCIA","DEMIAN MAIA","KRON GRACIE","LEGENDS"],
+["ROGER GRACIE","MARCELO GARCIA","DEMIAN MAIA","KRON GRACIE","LEGENDS"],
 ["CLOSED GUARD","BUTTERFLY","HALF GUARD","DEEP HALF","GUARDS"],
 ["GUILLOTINE","D'ARCE","ANACONDA","REAR NAKED CHOKE","CHOKES"],
 ["BACK TAKE","ARM DRAG","BERIMBOLO","CHAIR SIT","BACK ATTACKS"]
 ],
-
 
 /* ROUND 40 */
 [
@@ -670,7 +608,6 @@ const rounds = [
 ["BODY LOCK","SMASH PASS","LEG DRAG","KNEE CUT","PASSES"]
 ],
 
-
 /* ROUND 41 */
 [
 ["ROGER GRACIE","BUCHECHA","LEANDRO LO","RODOLFO VIEIRA","GI CHAMPIONS"],
@@ -679,24 +616,21 @@ const rounds = [
 ["STACK PASS","OVER-UNDER","DOUBLE UNDER","BODY LOCK","PASSES"]
 ],
 
-
 /* ROUND 42 */
 [
-["MARCelo GARCIA","RAFAEL MENDES","GUI MENDES","BRUNO MALFACINE","GI TECHNICIANS"],
+["MARCELO GARCIA","RAFAEL MENDES","GUI MENDES","BRUNO MALFACINE","GI TECHNICIANS"],
 ["DE LA RIVA","SPIDER","LASSO","COLLAR-SLEEVE","GUARDS"],
 ["ARMBAR","OMOPLATA","TRIANGLE","KIMURA","SUBMISSIONS"],
 ["TORIANDO","LEG DRAG","KNEE CUT","LONG STEP","PASSES"]
 ],
 
-
 /* ROUND 43 */
 [
-["DEMIAN MAIA","MARCelo GARCIA","ROGER GRACIE","KRON GRACIE","SUBMISSION ICONS"],
+["DEMIAN MAIA","MARCELO GARCIA","ROGER GRACIE","KRON GRACIE","SUBMISSION ICONS"],
 ["BUTTERFLY","CLOSED GUARD","HALF GUARD","DEEP HALF","GUARDS"],
 ["GUILLOTINE","D'ARCE","ANACONDA","REAR NAKED CHOKE","CHOKES"],
 ["SEATBELT","BODY TRIANGLE","HOOKS","BACK TAKE","BACK CONTROL"]
 ],
-
 
 /* ROUND 44 */
 [
@@ -706,7 +640,6 @@ const rounds = [
 ["BODY LOCK","SMASH PASS","LEG DRAG","KNEE CUT","PASSES"]
 ],
 
-
 /* ROUND 45 */
 [
 ["MARCUS ALMEIDA","BUCHECHA","RODOLFO VIEIRA","ROGER GRACIE","GI HEAVYWEIGHTS"],
@@ -714,7 +647,6 @@ const rounds = [
 ["KIMURA","AMERICANA","ARMBAR","ARM TRIANGLE","ARM ATTACKS"],
 ["SINGLE LEG","DOUBLE LEG","UCHI MATA","ANKLE PICK","TAKEDOWNS"]
 ],
-
 
 /* ROUND 46 */
 [
@@ -724,15 +656,13 @@ const rounds = [
 ["TRIANGLE","ARMBAR","OMOPLATA","KIMURA","SUBMISSIONS"]
 ],
 
-
 /* ROUND 47 */
 [
-["ROGER GRACIE","MARCelo GARCIA","DEMIAN MAIA","GORDON RYAN","FAMOUS STYLISTS"],
+["ROGER GRACIE","MARCELO GARCIA","DEMIAN MAIA","GORDON RYAN","FAMOUS STYLISTS"],
 ["BUTTERFLY","X-GUARD","HALF GUARD","DEEP HALF","GUARDS"],
 ["GUILLOTINE","ANACONDA","D'ARCE","REAR NAKED CHOKE","CHOKES"],
 ["BACK TAKE","ARM DRAG","BERIMBOLO","CHAIR SIT","BACK ATTACKS"]
 ],
-
 
 /* ROUND 48 */
 [
@@ -742,7 +672,6 @@ const rounds = [
 ["BODY LOCK","KNEE CUT","SMASH PASS","OVER-UNDER","PASSES"]
 ],
 
-
 /* ROUND 49 */
 [
 ["ROGER GRACIE","LEANDRO LO","BUCHECHA","MARCUS ALMEIDA","GI LEGENDS"],
@@ -751,10 +680,9 @@ const rounds = [
 ["CLOSED GUARD","BUTTERFLY","HALF GUARD","DEEP HALF","GUARDS"]
 ],
 
-
 /* ROUND 50 */
 [
-["MARCelo GARCIA","RAFAEL MENDES","GORDON RYAN","ROGER GRACIE","ALL-TIME GREAT NAMES"],
+["MARCELO GARCIA","RAFAEL MENDES","GORDON RYAN","ROGER GRACIE","ALL-TIME GREAT NAMES"],
 ["DE LA RIVA","BUTTERFLY","X-GUARD","SPIDER","GUARDS"],
 ["ARMBAR","TRIANGLE","KIMURA","OMOPLATA","SUBMISSIONS"],
 ["LEG DRAG","TORIANDO","KNEE CUT","SMASH PASS","PASSES"]
@@ -762,38 +690,13 @@ const rounds = [
 
 ];
 
-
-/*
-=========================================================
-GAME VARIABLES
-=========================================================
-*/
-
 let used = [];
-
 let puzzle = null;
-
 let words = [];
-
 let selected = [];
-
 let solved = [];
-
 let mistakes = 4;
-
 let round = 0;
-
-
-/*
-=========================================================
-TOTAL CONNECTIONS
-=========================================================
-
-The number is saved in the browser.
-
-So if you close the page and reopen it,
-your total remains.
-*/
 
 let totalConnections =
   Number(
@@ -801,13 +704,6 @@ let totalConnections =
       "bjjTotalConnections"
     )
   ) || 0;
-
-
-/*
-=========================================================
-ELEMENTS
-=========================================================
-*/
 
 const grid =
   document.getElementById("grid");
@@ -838,23 +734,10 @@ const connectionCount =
     "connectionCount"
   );
 
-
 connectionCount.textContent =
   totalConnections;
 
-
-/*
-=========================================================
-START NEW ROUND
-=========================================================
-*/
-
 function newRound() {
-
-  /*
-  Once all 50 rounds have been played,
-  start a new cycle.
-  */
 
   if (
     used.length === rounds.length
@@ -863,12 +746,6 @@ function newRound() {
     used = [];
 
   }
-
-
-  /*
-  Pick a puzzle that has not been played
-  during the current cycle.
-  */
 
   const available =
     rounds
@@ -879,7 +756,6 @@ function newRound() {
         i => !used.includes(i)
       );
 
-
   const index =
     available[
       Math.floor(
@@ -888,16 +764,10 @@ function newRound() {
       )
     ];
 
-
   used.push(index);
 
   puzzle =
     rounds[index];
-
-
-  /*
-  Extract the 16 words.
-  */
 
   words =
     puzzle.flatMap(
@@ -905,41 +775,24 @@ function newRound() {
         group.slice(0, 4)
     );
 
-
   selected = [];
-
   solved = [];
-
   mistakes = 4;
-
   round++;
-
 
   msg.textContent = "";
 
   next.style.display =
     "none";
 
-
   renderSolved();
-
   shuffle();
-
   update();
-
 }
-
-
-/*
-=========================================================
-RENDER WORDS
-=========================================================
-*/
 
 function render() {
 
   grid.innerHTML = "";
-
 
   words.forEach(word => {
 
@@ -948,14 +801,11 @@ function render() {
         "button"
       );
 
-
     button.className =
       "word";
 
-
     button.textContent =
       word;
-
 
     if (
       selected.includes(word)
@@ -966,7 +816,6 @@ function render() {
       );
 
     }
-
 
     button.onclick =
       function() {
@@ -996,26 +845,16 @@ function render() {
 
         }
 
-
         render();
-
         update();
 
       };
-
 
     grid.appendChild(button);
 
   });
 
 }
-
-
-/*
-=========================================================
-SUBMIT GUESS
-=========================================================
-*/
 
 function submitGuess() {
 
@@ -1027,19 +866,12 @@ function submitGuess() {
 
   }
 
-
-  /*
-  Find a group containing all
-  four selected words.
-  */
-
   const found =
     puzzle.find(
       group => {
 
         const groupWords =
           group.slice(0, 4);
-
 
         return selected.every(
           word =>
@@ -1051,44 +883,19 @@ function submitGuess() {
       }
     );
 
-
-  /*
-  CORRECT
-  */
-
   if (found) {
 
     solved.push(found);
 
-
-    /*
-    ADD ONE TO TOTAL CONNECTIONS
-    */
-
     totalConnections++;
-
-
-    /*
-    SAVE IT PERMANENTLY
-    */
 
     localStorage.setItem(
       "bjjTotalConnections",
       totalConnections
     );
 
-
-    /*
-    UPDATE THE COUNTER
-    */
-
     connectionCount.textContent =
       totalConnections;
-
-
-    /*
-    Remove solved words.
-    */
 
     words =
       words.filter(
@@ -1098,22 +905,13 @@ function submitGuess() {
             .includes(word)
       );
 
-
     selected = [];
-
 
     msg.textContent =
       "Correct.";
 
-
     renderSolved();
-
     render();
-
-
-    /*
-    ALL FOUR GROUPS SOLVED
-    */
 
     if (
       words.length === 0
@@ -1129,17 +927,11 @@ function submitGuess() {
 
   }
 
-
-  /*
-  WRONG
-  */
-
   else {
 
     mistakes--;
 
     selected = [];
-
 
     if (
       mistakes === 0
@@ -1160,27 +952,17 @@ function submitGuess() {
 
     }
 
-
     render();
 
   }
-
 
   update();
 
 }
 
-
-/*
-=========================================================
-RENDER SOLVED GROUPS
-=========================================================
-*/
-
 function renderSolved() {
 
   solvedBox.innerHTML = "";
-
 
   solved.forEach(
     group => {
@@ -1190,10 +972,8 @@ function renderSolved() {
           "div"
         );
 
-
       box.className =
         "solved";
-
 
       box.innerHTML =
         "<b>" +
@@ -1203,7 +983,6 @@ function renderSolved() {
           .slice(0, 4)
           .join(" · ");
 
-
       solvedBox.appendChild(
         box
       );
@@ -1212,13 +991,6 @@ function renderSolved() {
   );
 
 }
-
-
-/*
-=========================================================
-SHUFFLE WORDS
-=========================================================
-*/
 
 function shuffle() {
 
@@ -1234,7 +1006,6 @@ function shuffle() {
         (i + 1)
       );
 
-
     [
       words[i],
       words[j]
@@ -1246,65 +1017,38 @@ function shuffle() {
 
   }
 
-
   render();
 
 }
-
-
-/*
-=========================================================
-UPDATE GAME INFO
-=========================================================
-*/
 
 function update() {
 
   mistakesEl.textContent =
     mistakes;
 
-
   dots.textContent =
     "● ".repeat(
       mistakes
     ).trim();
 
-
   submit.disabled =
     selected.length !== 4;
-
 
   roundNo.textContent =
     round;
 
 }
 
-
-/*
-=========================================================
-BUTTONS
-=========================================================
-*/
-
 submit.onclick =
   submitGuess;
-
 
 document.getElementById(
   "shuffle"
 ).onclick =
   shuffle;
 
-
 next.onclick =
   newRound;
-
-
-/*
-=========================================================
-START GAME
-=========================================================
-*/
 
 newRound();
 
