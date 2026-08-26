@@ -4,52 +4,592 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BJJ Connections</title>
-
 <style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background: #f7f7f5;
-  color: #111;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.wrap {
-  width: min(780px, 94vw);
-  margin: auto;
-  padding: 28px 0 45px;
-}
-
-.header {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 78px;
-}
-
-.title-area {
-  text-align: center;
-}
-
-h1 {
-  text-align: center;
-  margin: 0;
-  font-size: 38px;
-}
-
+*{box-sizing:border-box}body{margin:0;background:#f7f7f5;color:#111;font-family:Arial,Helvetica,sans-serif}
+.wrap{width:min(780px,94vw);margin:auto;padding:28px 0 45px}h1{text-align:center;margin:0;font-size:38px}
+.sub{text-align:center;color:#666;margin:7px 0 22px}.bar{display:flex;justify-content:space-between;font-weight:700;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.word{min-height:86px;border:0;border-radius:8px;background:#e8e8e5;font-weight:800;font-size:14px;padding:7px;cursor:pointer}
+.word:hover{background:#ddd}.word.sel{background:#111;color:#fff}.solved{padding:14px 16px;border-radius:8px;background:#d9ead3;margin-bottom:8px}.solved b{display:block;margin-bottom:4px}
+#msg{text-align:center;min-height:24px;font-weight:700;margin:14px}.buttons{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}
+button.ctrl{border:1px solid #999;background:#fff;border-radius:22px;padding:10px 18px;font-weight:700;cursor:pointer}
+#submit,#next{background:#111;color:#fff;border-color:#111}#submit:disabled{opacity:.4;cursor:default}
+#next{display:none}.round{text-align:center;color:#777;margin-top:12px;font-size:13px}
+@media(max-width:560px){h1{font-size:30px}.word{min-height:72px;font-size:11px}.grid{gap:6px}}
 .creator {
   text-align: center;
   font-size: 13px;
   color: #777;
-  margin-top: 4px;
+  margin-top: 6px;
+  margin-bottom: 12px;
   font-weight: 600;
 }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>BJJ Connections</h1>
+<div class="creator">Created By Gabe Shaffer</div>
+<div class="sub">Find four groups of four. Famous competitors, styles, positions, submissions, and more.</div>
+<div class="bar"><span>Mistakes left before new round: <span id="mistakes">4</span></span><span id="dots">● ● ● ●</span></div>
+<div id="solved"></div>
+<div class="grid" id="grid"></div>
+<div id="msg"></div>
+<div class="buttons">
+<button class="ctrl" id="shuffle">Shuffle</button>
+<button class="ctrl" id="submit" disabled>Submit</button>
+<button class="ctrl" id="next">Next Round</button>
+</div>
+<div class="round">Round <span id="roundNo">1</span> / 50</div>
+</div>
 
-.connection-tracker {
-  position: absolute;
-  left: 0;
-  top: 0;
+<script>
+/*
+  50-round BJJ Connections.
+  After round 50, the game starts a fresh cycle in a new random order.
+  It will not repeat a complete puzzle until all 50 have been played.
+
+  The competitor/style facts are used as puzzle categories rather than
+  claiming that every athlete uses only one technique.
+*/
+
+const rounds = [
+
+/* 1 */
+[
+["MARCELO GARCIA","ROGER GRACIE","BRUNO MALFACINE","RAFAEL MENDES","LEGENDS"],
+["BUTTERFLY","X-GUARD","DE LA RIVA","SPIDER","GUARDS"],
+["KIMURA","AMERICANA","ARMBAR","OMOPLATA","ARM ATTACKS"],
+["TORIANDO","LEG DRAG","KNEE CUT","SMASH PASS","PASSES"]
+],
+
+/* 2 */
+[
+["GORDON RYAN","CRAIG JONES","NICK RODRIGUEZ","ANDREW WILSON","NO-GI"],
+["HEEL HOOK","KNEEBAR","STRAIGHT ANKLE","CALF SLICER","LEG ATTACKS"],
+["ASHI GARAMI","SINGLE LEG X","INSIDE SANKAKU","OUTSIDE ASHI","LEG-LOCK POSITIONS"],
+["SEATBELT","BODY TRIANGLE","HOOKS","BACK TAKE","BACK CONTROL"]
+],
+
+/* 3 */
+[
+["DEMIAN MAIA","ROGER GRACIE","LEANDRO LO","MARCUS ALMEIDA","PRESSURE"],
+["MOUNT","SIDE CONTROL","KESA","NORTH-SOUTH","TOP POSITIONS"],
+["CROSS CHOKE","PAPER CUTTER","EZEKIEL","BOW-AND-ARROW","GI CHOKES"],
+["SINGLE LEG","DOUBLE LEG","ANKLE PICK","UCHI MATA","TAKEDOWNS"]
+],
+
+/* 4 */
+[
+["MARCELO GARCIA","RUBENS CHARLES","GUI MENDES","RAFAEL MENDES","ALL-TIME GI STARS"],
+["DE LA RIVA","BERIMBOLO","LASSO","COLLAR-SLEEVE","GI GUARDS"],
+["GUILLOTINE","D'ARCE","ANACONDA","MARCELOTINE","HEAD-AND-NECK CHOKES"],
+["ARMBAR","TRIANGLE","OMOPLATA","KIMURA","SUBMISSIONS"]
+],
+
+/* 5 */
+[
+["ROGER GRACIE","BUCHECHA","XANDE RIBEIRO","SAULO RIBEIRO","GRACIE-LINEAGE CHAMPIONS"],
+["MOUNT","BACK","SIDE CONTROL","KNEE-ON-BELLY","POSITIONS"],
+["STACK PASS","OVER-UNDER","DOUBLE UNDER","BODY LOCK","PRESSURE PASSES"],
+["COLLAR CHOKE","CROSS CHOKE","CLOCK CHOKE","PAPER CUTTER","CHOKES"]
+],
+
+/* 6 */
+[
+["GORDON RYAN","NICHOLAS MIERA","CRAIG JONES","JT TORRES","MODERN NO-GI"],
+["HALF GUARD","DEEP HALF","KNEE SHIELD","Z-GUARD","HALF GUARDS"],
+["HEEL HOOK","INSIDE SANKAKU","ASHI GARAMI","KNEEBAR","LEG LOCKS"],
+["BODY LOCK","LEG DRAG","KNEE CUT","SMASH PASS","PASSES"]
+],
+
+/* 7 */
+[
+["MARCUS ALMEIDA","RODOLFO VIEIRA","ERBERTH SANTOS","LEANDRO LO","GI POWERHOUSES"],
+["CLOSED GUARD","BUTTERFLY","SPIDER","DE LA RIVA","GUARDS"],
+["MOUNT","BACK","SIDE CONTROL","NORTH-SOUTH","TOP CONTROL"],
+["ARMBAR","TRIANGLE","KIMURA","AMERICANA","ARM SUBMISSIONS"]
+],
+
+/* 8 */
+[
+["MARCELO GARCIA","KRON GRACIE","DEMIAN MAIA","GORDON RYAN","SUBMISSION SPECIALISTS"],
+["GUILLOTINE","ANACONDA","D'ARCE","PAPER CUTTER","CHOKES"],
+["BERIMBOLO","BACK TAKE","ARM DRAG","TECHNICAL STAND-UP","BACK-TAKE TOOLS"],
+["BUTTERFLY","X-GUARD","SINGLE LEG X","DEEP HALF","OPEN GUARDS"]
+],
+
+/* 9 */
+[
+["RAFAEL MENDES","GUI MENDES","MICA GALVAO","GABRIEL SOUSA","TECHNICAL GUARD PLAYERS"],
+["DE LA RIVA","REVERSE DE LA RIVA","SPIDER","LASSO","OPEN GUARD"],
+["BERIMBOLO","LEG DRAG","TORIANDO","KNEE CUT","GUARD-PASSING"],
+["ARMBAR","OMOPLATA","TRIANGLE","KIMURA","ARM ATTACKS"]
+],
+
+/* 10 */
+[
+["JOHN DANAHER","GORDON RYAN","GARRY TONON","CRAIG JONES","DANAHER-ASSOCIATED NO-GI"],
+["HEEL HOOK","KNEEBAR","STRAIGHT ANKLE","CALF SLICER","LEG SUBMISSIONS"],
+["ASHI GARAMI","SINGLE LEG X","INSIDE SANKAKU","OUTSIDE ASHI","LEG POSITIONS"],
+["SEATBELT","BODY TRIANGLE","BACK TAKE","HOOKS","BACK CONTROL"]
+],
+
+/* 11 */
+[
+["ROGER GRACIE","MARCELO GARCIA","SAULO RIBEIRO","ROMULO BARRAL","IBJJF LEGENDS"],
+["CLOSED GUARD","BUTTERFLY","DEEP HALF","HALF GUARD","GUARDS"],
+["MOUNT","SIDE CONTROL","KESA","NORTH-SOUTH","POSITIONS"],
+["CROSS CHOKE","BOW-AND-ARROW","EZEKIEL","COLLAR CHOKE","GI CHOKES"]
+],
+
+/* 12 */
+[
+["BRUNO MALFACINE","CAIO TERRA","MIYAO BROTHERS","RAFAEL MENDES","LIGHTWEIGHT STARS"],
+["SPIDER","DE LA RIVA","LASSO","COLLAR-SLEEVE","GI GUARDS"],
+["ARMBAR","TRIANGLE","OMOPLATA","KIMURA","SUBMISSIONS"],
+["TORIANDO","LEG DRAG","KNEE CUT","LONG STEP","PASSES"]
+],
+
+/* 13 */
+[
+["BUCHECHA","RODOLFO VIEIRA","GORDON RYAN","NICK RODRIGUEZ","HEAVYWEIGHT NO-GI NAMES"],
+["MOUNT","SIDE CONTROL","NORTH-SOUTH","KESA","TOP POSITIONS"],
+["BODY LOCK","SMASH PASS","STACK PASS","OVER-UNDER","PRESSURE PASSES"],
+["GUILLOTINE","D'ARCE","ANACONDA","ARM TRIANGLE","CHOKES"]
+],
+
+/* 14 */
+[
+["MARCELO GARCIA","DEMIAN MAIA","ROGER GRACIE","KRON GRACIE","SUBMISSION-FOCUSED"],
+["BUTTERFLY","CLOSED GUARD","HALF GUARD","DEEP HALF","GUARDS"],
+["ARM DRAG","TECHNICAL STAND-UP","CHAIR SIT","BERIMBOLO","BACK TAKES"],
+["REAR NAKED CHOKE","BOW-AND-ARROW","GUILLOTINE","D'ARCE","CHOKES"]
+],
+
+/* 15 */
+[
+["LEANDRO LO","MARCUS ALMEIDA","RUBENS CHARLES","RODOLFO VIEIRA","GI CHAMPIONS"],
+["KIMURA","ARMBAR","AMERICANA","OMOPLATA","ARM ATTACKS"],
+["MOUNT","BACK","SIDE CONTROL","KNEE-ON-BELLY","TOP POSITIONS"],
+["SINGLE LEG","DOUBLE LEG","UCHI MATA","ANKLE PICK","TAKEDOWNS"]
+],
+
+/* 16 */
+[
+["GORDON RYAN","CRAIG JONES","GARRY TONON","NICK RODRIGUEZ","NO-GI COMPETITORS"],
+["HEEL HOOK","KNEEBAR","STRAIGHT ANKLE","CALF SLICER","LEG LOCKS"],
+["ASHI GARAMI","SINGLE LEG X","INSIDE SANKAKU","OUTSIDE ASHI","LEG POSITIONS"],
+["LEG DRAG","KNEE CUT","BODY LOCK","TORIANDO","PASSES"]
+],
+
+/* 17 */
+[
+["RAFAEL MENDES","GUI MENDES","MICA GALVAO","BRUNO MALFACINE","TECHNICAL LIGHTWEIGHTS"],
+["DE LA RIVA","BERIMBOLO","SPIDER","LASSO","GI GUARDS"],
+["TRIANGLE","ARMBAR","OMOPLATA","KIMURA","SUBMISSIONS"],
+["TORIANDO","LEG DRAG","LONG STEP","KNEE CUT","PASSES"]
+],
+
+/* 18 */
+[
+["ROGER GRACIE","BUCHECHA","SAULO RIBEIRO","ROMULO BARRAL","GI LEGENDS"],
+["CROSS CHOKE","COLLAR CHOKE","EZEKIEL","BOW-AND-ARROW","CHOKES"],
+["MOUNT","SIDE CONTROL","BACK","NORTH-SOUTH","POSITIONS"],
+["CLOSED GUARD","BUTTERFLY","HALF GUARD","DEEP HALF","GUARDS"]
+],
+
+/* 19 */
+[
+["MARCELO GARCIA","GORDON RYAN","DEMIAN MAIA","ROGER GRACIE","FAMOUS SUBMISSION STYLES"],
+["GUILLOTINE","ANACONDA","D'ARCE","REAR NAKED CHOKE","CHOKES"],
+["BUTTERFLY","X-GUARD","DE LA RIVA","SINGLE LEG X","GUARDS"],
+["BACK TAKE","ARM DRAG","BERIMBOLO","CHAIR SIT","BACK ATTACKS"]
+],
+
+/* 20 */
+[
+["JOHN DANAHER","GORDON RYAN","GARRY TONON","CRAIG JONES","DANAHER SYSTEM"],
+["HEEL HOOK","KNEEBAR","CALF SLICER","STRAIGHT ANKLE","LEG ATTACKS"],
+["ASHI GARAMI","SINGLE LEG X","INSIDE SANKAKU","OUTSIDE ASHI","LEG POSITIONS"],
+["BODY LOCK","HALF GUARD","KNEE CUT","SMASH PASS","PASSING"]
+],
+
+/* 21 */
+[
+["RODOLFO VIEIRA","BUCHECHA","ERBERTH SANTOS","MARCUS ALMEIDA","POWERFUL GI"],
+["MOUNT","SIDE CONTROL","KESA","NORTH-SOUTH","TOP POSITIONS"],
+["KIMURA","ARMBAR","AMERICANA","ARM TRIANGLE","ARM ATTACKS"],
+["SINGLE LEG","DOUBLE LEG","ANKLE PICK","UCHI MATA","TAKEDOWNS"]
+],
+
+/* 22 */
+[
+["RAFAEL MENDES","GUI MENDES","BRUNO MALFACINE","CAIO TERRA","LIGHTWEIGHT TECHNIQUE"],
+["SPIDER","LASSO","DE LA RIVA","COLLAR-SLEEVE","GUARDS"],
+["BERIMBOLO","LEG DRAG","TORIANDO","KNEE CUT","PASSING"],
+["TRIANGLE","ARMBAR","OMOPLATA","KIMURA","SUBMISSIONS"]
+],
+
+/* 23 */
+[
+["MARCELO GARCIA","KRON GRACIE","DEMIAN MAIA","ROGER GRACIE","BACK-TAKE / SUBMISSION"],
+["BUTTERFLY","CLOSED GUARD","HALF GUARD","DEEP HALF","GUARDS"],
+["ARM DRAG","BACK TAKE","BERIMBOLO","CHAIR SIT","BACK TAKES"],
+["GUILLOTINE","ANACONDA","D'ARCE","REAR NAKED CHOKE","CHOKES"]
+],
+
+/* 24 */
+[
+["GORDON RYAN","NICK RODRIGUEZ","CRAIG JONES","GARRY TONON","NO-GI"],
+["HEEL HOOK","KNEEBAR","STRAIGHT ANKLE","CALF SLICER","LEG LOCKS"],
+["ASHI GARAMI","SINGLE LEG X","INSIDE SANKAKU","OUTSIDE ASHI","LEG POSITIONS"],
+["SEATBELT","BODY TRIANGLE","HOOKS","BACK TAKE","BACK CONTROL"]
+],
+
+/* 25 */
+[
+["ROGER GRACIE","LEANDRO LO","MARCUS ALMEIDA","RUBENS CHARLES","GI"],
+["MOUNT","BACK","SIDE CONTROL","KNEE-ON-BELLY","POSITIONS"],
+["CROSS CHOKE","COLLAR CHOKE","EZEKIEL","BOW-AND-ARROW","GI CHOKES"],
+["STACK PASS","OVER-UNDER","DOUBLE UNDER","BODY LOCK","PASSES"]
+],
+
+/* 26 */
+[
+["MARCELO GARCIA","RAFAEL MENDES","GUI MENDES","BRUNO MALFACINE","GI TECHNICIANS"],
+["DE LA RIVA","SPIDER","LASSO","BUTTERFLY","GUARDS"],
+["ARMBAR","OMOPLATA","TRIANGLE","KIMURA","SUBMISSIONS"],
+["TORIANDO","LEG DRAG","LONG STEP","KNEE CUT","PASSES"]
+],
+
+/* 27 */
+[
+["DEMIAN MAIA","ROGER GRACIE","MARCELO GARCIA","KRON GRACIE","SUBMISSION LEGENDS"],
+["GUILLOTINE","D'ARCE","ANACONDA","REAR NAKED CHOKE","CHOKES"],
+["BUTTERFLY","CLOSED GUARD","HALF GUARD","DEEP HALF","GUARDS"],
+["BACK TAKE","ARM DRAG","BERIMBOLO","CHAIR SIT","BACK ATTACKS"]
+],
+
+/* 28 */
+[
+["GORDON RYAN","CRAIG JONES","GARRY TONON","NICK RODRIGUEZ","NO-GI"],
+["HEEL HOOK","KNEEBAR","CALF SLICER","STRAIGHT ANKLE","LEG LOCKS"],
+["ASHI GARAMI","SINGLE LEG X","INSIDE SANKAKU","OUTSIDE ASHI","LEG POSITIONS"],
+["BODY LOCK","SMASH PASS","LEG DRAG","KNEE CUT","PASSES"]
+],
+
+/* 29 */
+[
+["ROGER GRACIE","BUCHECHA","RODOLFO VIEIRA","MARCUS ALMEIDA","GI HEAVYWEIGHTS"],
+["MOUNT","SIDE CONTROL","KESA","NORTH-SOUTH","POSITIONS"],
+["CROSS CHOKE","COLLAR CHOKE","EZEKIEL","PAPER CUTTER","CHOKES"],
+["SINGLE LEG","DOUBLE LEG","UCHI MATA","ANKLE PICK","TAKEDOWNS"]
+],
+
+/* 30 */
+[
+["RAFAEL MENDES","GUI MENDES","MICA GALVAO","BRUNO MALFACINE","TECHNICAL GUARD PLAYERS"],
+["DE LA RIVA","REVERSE DE LA RIVA","SPIDER","LASSO","OPEN GUARDS"],
+["BERIMBOLO","LEG DRAG","TORIANDO","LONG STEP","PASSING"],
+["TRIANGLE","ARMBAR","OMOPLATA","KIMURA","ARM ATTACKS"]
+],
+
+/* 31 */
+[
+["MARCELO GARCIA","DEMIAN MAIA","ROGER GRACIE","GORDON RYAN","FAMOUS GRAPPLERS"],
+["BUTTERFLY","X-GUARD","HALF GUARD","DEEP HALF","GUARDS"],
+["GUILLOTINE","D'ARCE","ANACONDA","REAR NAKED CHOKE","CHOKES"],
+["SEATBELT","BODY TRIANGLE","HOOKS","BACK TAKE","BACK CONTROL"]
+],
+
+/* 32 */
+[
+["JOHN DANAHER","GORDON RYAN","GARRY TONON","CRAIG JONES","LEG-LOCK ERA"],
+["HEEL HOOK","KNEEBAR","CALF SLICER","STRAIGHT ANKLE","SUBMISSIONS"],
+["ASHI GARAMI","SINGLE LEG X","INSIDE SANKAKU","OUTSIDE ASHI","POSITIONS"],
+["KNEE CUT","BODY LOCK","SMASH PASS","LEG DRAG","PASSES"]
+],
+
+/* 33 */
+[
+["LEANDRO LO","ROGER GRACIE","BUCHECHA","SAULO RIBEIRO","GI ICONS"],
+["MOUNT","BACK","SIDE CONTROL","NORTH-SOUTH","POSITIONS"],
+["CROSS CHOKE","BOW-AND-ARROW","COLLAR CHOKE","EZEKIEL","CHOKES"],
+["CLOSED GUARD","BUTTERFLY","HALF GUARD","DEEP HALF","GUARDS"]
+],
+
+/* 34 */
+[
+["RAFAEL MENDES","GUI MENDES","BRUNO MALFACINE","CAIO TERRA","LIGHTWEIGHTS"],
+["SPIDER","LASSO","DE LA RIVA","COLLAR-SLEEVE","GUARDS"],
+["BERIMBOLO","TORIANDO","LEG DRAG","KNEE CUT","PASSES"],
+["ARMBAR","TRIANGLE","OMOPLATA","KIMURA","SUBMISSIONS"]
+],
+
+/* 35 */
+[
+["MARCELO GARCIA","KRON GRACIE","DEMIAN MAIA","ROGER GRACIE","SUBMISSION STYLE"],
+["BUTTERFLY","CLOSED GUARD","DEEP HALF","HALF GUARD","GUARDS"],
+["ARM DRAG","BACK TAKE","BERIMBOLO","CHAIR SIT","BACK TAKES"],
+["GUILLOTINE","D'ARCE","ANACONDA","REAR NAKED CHOKE","CHOKES"]
+],
+
+/* 36 */
+[
+["GORDON RYAN","CRAIG JONES","GARRY TONON","NICK RODRIGUEZ","MODERN NO-GI"],
+["HEEL HOOK","KNEEBAR","CALF SLICER","STRAIGHT ANKLE","LEG ATTACKS"],
+["ASHI GARAMI","SINGLE LEG X","INSIDE SANKAKU","OUTSIDE ASHI","POSITIONS"],
+["BODY LOCK","SMASH PASS","KNEE CUT","OVER-UNDER","PASSES"]
+],
+
+/* 37 */
+[
+["RODOLFO VIEIRA","BUCHECHA","MARCUS ALMEIDA","ERBERTH SANTOS","GI POWER"],
+["MOUNT","SIDE CONTROL","KESA","NORTH-SOUTH","TOP CONTROL"],
+["KIMURA","AMERICANA","ARMBAR","ARM TRIANGLE","ARM ATTACKS"],
+["SINGLE LEG","DOUBLE LEG","UCHI MATA","ANKLE PICK","TAKEDOWNS"]
+],
+
+/* 38 */
+[
+["RAFAEL MENDES","GUI MENDES","MICA GALVAO","BRUNO MALFACINE","GUARD SPECIALISTS"],
+["DE LA RIVA","SPIDER","LASSO","BUTTERFLY","GUARDS"],
+["BERIMBOLO","LEG DRAG","TORIANDO","LONG STEP","PASSING"],
+["TRIANGLE","OMOPLATA","ARMBAR","KIMURA","SUBMISSIONS"]
+],
+
+/* 39 */
+[
+["ROGER GRACIE","MARCELO GARCIA","DEMIAN MAIA","KRON GRACIE","LEGENDS"],
+["CLOSED GUARD","BUTTERFLY","HALF GUARD","DEEP HALF","GUARDS"],
+["GUILLOTINE","D'ARCE","ANACONDA","REAR NAKED CHOKE","CHOKES"],
+["BACK TAKE","ARM DRAG","BERIMBOLO","CHAIR SIT","BACK ATTACKS"]
+],
+
+/* 40 */
+[
+["GORDON RYAN","CRAIG JONES","GARRY TONON","NICK RODRIGUEZ","NO-GI"],
+["HEEL HOOK","KNEEBAR","CALF SLICER","STRAIGHT ANKLE","LEG LOCKS"],
+["ASHI GARAMI","SINGLE LEG X","INSIDE SANKAKU","OUTSIDE ASHI","LEG POSITIONS"],
+["LEG DRAG","KNEE CUT","BODY LOCK","SMASH PASS","PASSES"]
+],
+
+/* 41 */
+[
+["ROGER GRACIE","BUCHECHA","LEANDRO LO","RODOLFO VIEIRA","GI CHAMPIONS"],
+["MOUNT","BACK","SIDE CONTROL","KESA","POSITIONS"],
+["CROSS CHOKE","COLLAR CHOKE","EZEKIEL","BOW-AND-ARROW","CHOKES"],
+["STACK PASS","OVER-UNDER","DOUBLE UNDER","BODY LOCK","PASSES"]
+],
+
+/* 42 */
+[
+["MARCELO GARCIA","RAFAEL MENDES","GUI MENDES","BRUNO MALFACINE","GI TECHNICIANS"],
+["DE LA RIVA","SPIDER","LASSO","COLLAR-SLEEVE","GUARDS"],
+["ARMBAR","OMOPLATA","TRIANGLE","KIMURA","SUBMISSIONS"],
+["TORIANDO","LEG DRAG","KNEE CUT","LONG STEP","PASSES"]
+],
+
+/* 43 */
+[
+["DEMIAN MAIA","MARCELO GARCIA","ROGER GRACIE","KRON GRACIE","SUBMISSION ICONS"],
+["BUTTERFLY","CLOSED GUARD","HALF GUARD","DEEP HALF","GUARDS"],
+["GUILLOTINE","D'ARCE","ANACONDA","REAR NAKED CHOKE","CHOKES"],
+["SEATBELT","BODY TRIANGLE","HOOKS","BACK TAKE","BACK CONTROL"]
+],
+
+/* 44 */
+[
+["GORDON RYAN","CRAIG JONES","GARRY TONON","NICK RODRIGUEZ","NO-GI STARS"],
+["HEEL HOOK","KNEEBAR","STRAIGHT ANKLE","CALF SLICER","LEG LOCKS"],
+["ASHI GARAMI","SINGLE LEG X","INSIDE SANKAKU","OUTSIDE ASHI","LEG POSITIONS"],
+["BODY LOCK","SMASH PASS","LEG DRAG","KNEE CUT","PASSES"]
+],
+
+/* 45 */
+[
+["MARCUS ALMEIDA","BUCHECHA","RODOLFO VIEIRA","ROGER GRACIE","GI HEAVYWEIGHTS"],
+["MOUNT","SIDE CONTROL","KESA","NORTH-SOUTH","POSITIONS"],
+["KIMURA","AMERICANA","ARMBAR","ARM TRIANGLE","ARM ATTACKS"],
+["SINGLE LEG","DOUBLE LEG","UCHI MATA","ANKLE PICK","TAKEDOWNS"]
+],
+
+/* 46 */
+[
+["RAFAEL MENDES","GUI MENDES","MICA GALVAO","BRUNO MALFACINE","TECHNICAL BJJ"],
+["DE LA RIVA","SPIDER","LASSO","BUTTERFLY","GUARDS"],
+["BERIMBOLO","TORIANDO","LEG DRAG","KNEE CUT","PASSES"],
+["TRIANGLE","ARMBAR","OMOPLATA","KIMURA","SUBMISSIONS"]
+],
+
+/* 47 */
+[
+["ROGER GRACIE","MARCELO GARCIA","DEMIAN MAIA","GORDON RYAN","FAMOUS STYLISTS"],
+["BUTTERFLY","X-GUARD","HALF GUARD","DEEP HALF","GUARDS"],
+["GUILLOTINE","ANACONDA","D'ARCE","REAR NAKED CHOKE","CHOKES"],
+["BACK TAKE","ARM DRAG","BERIMBOLO","CHAIR SIT","BACK ATTACKS"]
+],
+
+/* 48 */
+[
+["GORDON RYAN","CRAIG JONES","GARRY TONON","NICK RODRIGUEZ","NO-GI"],
+["HEEL HOOK","KNEEBAR","CALF SLICER","STRAIGHT ANKLE","LEG LOCKS"],
+["ASHI GARAMI","SINGLE LEG X","INSIDE SANKAKU","OUTSIDE ASHI","LEG POSITIONS"],
+["BODY LOCK","KNEE CUT","SMASH PASS","OVER-UNDER","PASSES"]
+],
+
+/* 49 */
+[
+["ROGER GRACIE","LEANDRO LO","BUCHECHA","MARCUS ALMEIDA","GI LEGENDS"],
+["MOUNT","BACK","SIDE CONTROL","NORTH-SOUTH","POSITIONS"],
+["CROSS CHOKE","COLLAR CHOKE","EZEKIEL","BOW-AND-ARROW","CHOKES"],
+["CLOSED GUARD","BUTTERFLY","HALF GUARD","DEEP HALF","GUARDS"]
+],
+
+/* 50 */
+[
+["MARCELO GARCIA","RAFAEL MENDES","GORDON RYAN","ROGER GRACIE","ALL-TIME GREAT BJJ NAMES"],
+["DE LA RIVA","BUTTERFLY","X-GUARD","SPIDER","GUARDS"],
+["ARMBAR","TRIANGLE","KIMURA","OMOPLATA","SUBMISSIONS"],
+["LEG DRAG","TORIANDO","KNEE CUT","SMASH PASS","PASSES"]
+]
+];
+
+
+/* ---------------- GAME LOGIC ---------------- */
+
+let used = [];
+let puzzle = null;
+let words = [];
+let selected = [];
+let solved = [];
+let mistakes = 4;
+let round = 0;
+
+const grid = document.getElementById("grid");
+const solvedBox = document.getElementById("solved");
+const msg = document.getElementById("msg");
+const mistakesEl = document.getElementById("mistakes");
+const dots = document.getElementById("dots");
+const submit = document.getElementById("submit");
+const next = document.getElementById("next");
+const roundNo = document.getElementById("roundNo");
+
+function newRound(){
+  if(used.length === rounds.length) used = [];
+
+  const available = rounds.map((_,i)=>i).filter(i=>!used.includes(i));
+  const index = available[Math.floor(Math.random()*available.length)];
+
+  used.push(index);
+  puzzle = rounds[index];
+
+  words = puzzle.flatMap(g=>g.slice(0,4));
+  selected = [];
+  solved = [];
+  mistakes = 4;
+  round++;
+
+  msg.textContent = "";
+  next.style.display = "none";
+  renderSolved();
+  shuffle();
+  update();
+}
+
+function render(){
+  grid.innerHTML = "";
+
+  words.forEach(word=>{
+    const b = document.createElement("button");
+    b.className = "word";
+    b.textContent = word;
+
+    if(selected.includes(word)) b.classList.add("sel");
+
+    b.onclick = ()=>{
+      if(selected.includes(word)){
+        selected = selected.filter(x=>x!==word);
+      }else if(selected.length < 4){
+        selected.push(word);
+      }
+      render();
+      update();
+    };
+
+    grid.appendChild(b);
+  });
+}
+
+function submitGuess(){
+  if(selected.length !== 4) return;
+
+  const found = puzzle.find(g=>{
+    const groupWords = g.slice(0,4);
+    return selected.every(w=>groupWords.includes(w));
+  });
+
+  if(found){
+    solved.push(found);
+    words = words.filter(w=>!found.slice(0,4).includes(w));
+    selected = [];
+    msg.textContent = "Correct.";
+    renderSolved();
+    render();
+
+    if(words.length === 0){
+      msg.textContent = "Round complete.";
+      next.style.display = "inline-block";
+    }
+  }else{
+    mistakes--;
+    selected = [];
+
+    if(mistakes === 0){
+      msg.textContent = "Game over. Start the next round.";
+      next.style.display = "inline-block";
+    }else{
+      msg.textContent = "Not a group.";
+    }
+
+    render();
+  }
+
+  update();
+}
+
+function renderSolved(){
+  solvedBox.innerHTML = "";
+
+  solved.forEach(g=>{
+    const box = document.createElement("div");
+    box.className = "solved";
+    box.innerHTML = "<b>"+g[4]+"</b>"+g.slice(0,4).join(" · ");
+    solvedBox.appendChild(box);
+  });
+}
+
+function shuffle(){
+  for(let i=words.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [words[i],words[j]]=[words[j],words[i]];
+  }
+  render();
+}
+
+function update(){
+  mistakesEl.textContent = mistakes;
+  dots.textContent = "● ".repeat(mistakes).trim();
+  submit.disabled = selected.length !== 4;
+  roundNo.textContent = round;
+}
+
+submit.onclick = submitGuess;
+document.getElementById("shuffle").onclick = shuffle;
+next.onclick = newRound;
+
+newRound();
+
+</script>
+</body>
+</html>
