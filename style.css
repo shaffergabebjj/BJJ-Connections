@@ -1,13 +1,187 @@
-*{box-sizing:border-box}
-:root{--bg:#f6f6f2;--ink:#111;--muted:#666;--tile:#e7e7e2;--green:#d7ead2;--yellow:#f5e6a9;--blue:#cfe1ef;--purple:#ded4e8;--danger:#a33}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
-.wrap{width:min(780px,94vw);margin:auto;padding:24px 0 48px}
-header{text-align:center}.eyebrow{font-size:12px;font-weight:800;letter-spacing:1.2px;color:var(--muted)}
-h1{margin:5px 0 0;font-size:clamp(32px,7vw,46px)}.creator,.sub{color:var(--muted)}.creator{font-size:12px;font-weight:700;margin-top:5px}.sub{margin:12px auto 18px;max-width:600px}
-.tabs,.buttons,.stats-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.tabs{margin:16px 0}.tab,.ctrl{border:1px solid #aaa;background:#fff;border-radius:22px;padding:10px 15px;font-weight:800;cursor:pointer}.tab.active,#submit{background:#111;color:#fff;border-color:#111}
-.status{display:flex;justify-content:space-between;gap:10px;font-weight:800;margin:14px 0 10px}.meta{text-align:center;color:var(--muted);font-size:13px;margin-bottom:12px}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.word{min-height:82px;border:0;border-radius:9px;background:var(--tile);font-weight:800;font-size:14px;padding:8px;cursor:pointer;line-height:1.1}.word:hover{filter:brightness(.96)}.word.sel{background:#111;color:#fff}.word:disabled{cursor:default}
-.solved{padding:13px 15px;border-radius:9px;margin-bottom:8px;text-align:center;font-size:14px}.solved:nth-child(4n+1){background:var(--green)}.solved:nth-child(4n+2){background:var(--yellow)}.solved:nth-child(4n+3){background:var(--blue)}.solved:nth-child(4n){background:var(--purple)}.solved b{display:block;margin-bottom:4px}
-#msg{text-align:center;min-height:26px;font-weight:800;margin:14px}.hidden{display:none!important}.panel{background:#fff;border:1px solid #ddd;border-radius:12px;padding:16px;margin:16px 0}.panel h2{margin:0 0 8px;font-size:18px}.learn{font-size:14px;line-height:1.45}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}.stat{background:#f0f0ed;border-radius:8px;padding:10px;font-size:12px}.stat b{display:block;font-size:20px}.difficulty{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:10px 0}.difficulty button{border:1px solid #bbb;background:#fff;border-radius:18px;padding:7px 11px;font-weight:700;cursor:pointer}.difficulty button.active{background:#111;color:#fff}
-footer{text-align:center;color:#777;font-size:12px;margin-top:22px}
-@media(max-width:560px){.wrap{width:min(96vw,780px);padding-top:18px}.word{min-height:70px;font-size:11px}.grid{gap:6px}.status{font-size:13px}.ctrl,.tab{padding:10px 12px}.stats{grid-template-columns:repeat(3,1fr)}}
+/* =====================================================================
+   BJJ Connections — styles
+   Sections: reset & tokens / layout / tabs & buttons / grid & tiles /
+   solved list / panels & stats / archive / footer / focus & a11y /
+   dark mode / responsive
+   ===================================================================== */
+
+* { box-sizing: border-box; }
+
+:root {
+  --bg: #f6f6f2;
+  --ink: #111;
+  --muted: #666;
+  --tile: #e7e7e2;
+  --panel-bg: #fff;
+  --panel-border: #ddd;
+  --green: #d7ead2;
+  --yellow: #f5e6a9;
+  --blue: #cfe1ef;
+  --purple: #ded4e8;
+  --danger: #a33;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.wrap { width: min(780px, 94vw); margin: auto; padding: 24px 0 48px; }
+
+/* ---- Header ---- */
+header { text-align: center; }
+.eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 1.2px; color: var(--muted); }
+h1 { margin: 5px 0 0; font-size: clamp(32px, 7vw, 46px); }
+.creator, .sub { color: var(--muted); }
+.creator { font-size: 12px; font-weight: 700; margin-top: 5px; }
+.sub { margin: 12px auto 18px; max-width: 600px; }
+
+/* ---- Tabs & buttons ---- */
+.tabs, .buttons { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.tabs { margin: 16px 0; }
+.tab, .ctrl {
+  border: 1px solid #aaa;
+  background: var(--panel-bg);
+  color: var(--ink);
+  border-radius: 22px;
+  padding: 10px 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.tab.active, #submit:not(:disabled) { background: #111; color: #fff; border-color: #111; }
+#submit:disabled { opacity: .5; cursor: default; }
+.ctrl:disabled { opacity: .5; cursor: default; }
+
+.status { display: flex; justify-content: space-between; gap: 10px; font-weight: 800; margin: 14px 0 10px; }
+.meta { text-align: center; color: var(--muted); font-size: 13px; margin-bottom: 12px; }
+
+/* ---- Puzzle grid & tiles ----
+   Font size uses clamp() so it scales fluidly with viewport width instead
+   of jumping at one breakpoint — important here because entries are often
+   long multi-word names ("MARCELO GARCIA"), not short single words. */
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.word {
+  min-height: 84px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--tile);
+  color: var(--ink);
+  font-weight: 800;
+  font-size: clamp(10px, 2.6vw, 14px);
+  padding: 8px 6px;
+  cursor: pointer;
+  line-height: 1.15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
+.word:hover { filter: brightness(.96); }
+.word.sel { background: #111; color: #fff; }
+.word:disabled { cursor: default; }
+
+/* ---- Solved groups ---- */
+.solved { padding: 13px 15px; border-radius: 9px; margin-bottom: 8px; text-align: center; font-size: 14px; }
+.solved:nth-child(4n+1) { background: var(--green); }
+.solved:nth-child(4n+2) { background: var(--yellow); }
+.solved:nth-child(4n+3) { background: var(--blue); }
+.solved:nth-child(4n)   { background: var(--purple); }
+.solved b { display: block; margin-bottom: 4px; }
+
+#msg { text-align: center; min-height: 26px; font-weight: 800; margin: 14px; }
+.hidden { display: none !important; }
+
+/* ---- Panels (Learn why / Stats / Archive / noscript) ---- */
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 16px 0;
+}
+.panel h2 { margin: 0 0 8px; font-size: 18px; }
+.learn { font-size: 14px; line-height: 1.45; }
+.learn p { margin: 0 0 10px; }
+.learn b { display: block; margin-bottom: 2px; }
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
+.stat { background: var(--tile); border-radius: 8px; padding: 10px; font-size: 12px; }
+.stat b { display: block; font-size: 20px; }
+
+.difficulty { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin: 10px 0; }
+.difficulty button { border: 1px solid #bbb; background: var(--panel-bg); color: var(--ink); border-radius: 18px; padding: 7px 11px; font-weight: 700; cursor: pointer; }
+.difficulty button.active { background: #111; color: #fff; }
+
+/* ---- Archive (past puzzles) ---- */
+.archiveNote { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+.archiveList { display: flex; flex-direction: column; gap: 8px; max-height: 60vh; overflow-y: auto; }
+.archiveItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #ddd;
+  background: var(--tile);
+  color: var(--ink);
+  border-radius: 9px;
+  padding: 12px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+}
+.archiveItem:hover { filter: brightness(.97); }
+.archiveDate { font-size: 14px; }
+.archiveTag { font-size: 12px; color: var(--muted); font-weight: 700; }
+
+footer { text-align: center; color: #777; font-size: 12px; margin-top: 22px; }
+
+/* ---- Focus visibility (keyboard navigation) ---- */
+.tab:focus-visible,
+.ctrl:focus-visible,
+.word:focus-visible,
+.archiveItem:focus-visible,
+.difficulty button:focus-visible {
+  outline: 3px solid #111;
+  outline-offset: 2px;
+}
+
+/* ---- Dark mode ---- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121212;
+    --ink: #f1f1ee;
+    --muted: #9a9a9a;
+    --tile: #262624;
+    --panel-bg: #1b1b1a;
+    --panel-border: #333;
+    --green: #2f4a30;
+    --yellow: #4d4426;
+    --blue: #2a3d4d;
+    --purple: #3a3148;
+  }
+  .tab, .ctrl, .difficulty button, .archiveItem { border-color: #3a3a3a; }
+  .word.sel { background: #f1f1ee; color: #111; }
+  .tab.active, #submit:not(:disabled), .difficulty button.active {
+    background: #f1f1ee; color: #111; border-color: #f1f1ee;
+  }
+  .tab:focus-visible, .ctrl:focus-visible, .word:focus-visible,
+  .archiveItem:focus-visible, .difficulty button:focus-visible {
+    outline-color: #f1f1ee;
+  }
+}
+
+/* ---- Responsive (phones) ---- */
+@media (max-width: 560px) {
+  .wrap { width: min(96vw, 780px); padding-top: 18px; }
+  .word { min-height: 78px; padding: 6px 4px; }
+  .grid { gap: 6px; }
+  .status { font-size: 13px; }
+  .ctrl, .tab { padding: 10px 12px; }
+  .stats { grid-template-columns: repeat(3, 1fr); }
+  .archiveItem { padding: 10px 12px; }
+}

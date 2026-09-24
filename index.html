@@ -1,14 +1,115 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="A daily Connections-style puzzle for Brazilian Jiu-Jitsu.">
-<title>BJJ Connections</title><link rel="stylesheet" href="style.css"></head>
-<body><main class="wrap"><header><div class="eyebrow">THE DAILY BJJ PUZZLE</div><h1>BJJ Connections</h1><div class="creator">Created by Gabe Shaffer</div><p class="sub">Find four groups of four. Learn BJJ history, athletes, techniques, positions, and more.</p></header>
-<nav class="tabs"><button class="tab active" data-mode="daily">Daily</button><button class="tab" data-mode="training">Training</button><button class="tab" data-mode="stats">Stats</button></nav>
-<section id="gameView"><div id="difficultyWrap" class="difficulty hidden"></div><div class="meta" id="puzzleMeta"></div>
-<div class="status"><span>Mistakes: <span id="mistakes">4</span></span><span id="dots">● ● ● ●</span></div>
-<div id="solved"></div><div class="grid" id="grid"></div><div id="msg"></div>
-<div class="buttons"><button class="ctrl" id="shuffle">Shuffle</button><button class="ctrl" id="submit" disabled>Submit</button><button class="ctrl hidden" id="share">Share</button><button class="ctrl hidden" id="next">Next Puzzle</button></div>
-<div id="learnPanel" class="panel hidden"><h2>Learn why</h2><div id="learn" class="learn"></div></div></section>
-<section id="statsView" class="hidden"><div class="panel"><h2>Your Connections Stats</h2><div class="stats" id="stats"></div><div class="buttons" style="margin-top:12px"><button class="ctrl" id="resetStats">Reset stats</button></div></div></section>
-<footer>Daily puzzles are deterministic: everyone gets the same puzzle each day.</footer></main>
-<script src="data.js"></script><script src="app.js"></script></body></html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BJJ Connections — The Daily Brazilian Jiu-Jitsu Puzzle</title>
+<meta name="description" content="A free daily Connections-style word puzzle for Brazilian Jiu-Jitsu. Find four groups of four and learn BJJ history, athletes, techniques, and positions along the way.">
+<meta name="theme-color" content="#111111">
+<link rel="canonical" href="https://bjjconnectionsbygabe.com/">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+
+<!-- Open Graph / social sharing -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BJJ Connections">
+<meta property="og:title" content="BJJ Connections — The Daily Brazilian Jiu-Jitsu Puzzle">
+<meta property="og:description" content="Find four groups of four. A free daily word puzzle that teaches BJJ history, athletes, techniques, and positions.">
+<meta property="og:url" content="https://bjjconnectionsbygabe.com/">
+<meta property="og:image" content="https://bjjconnectionsbygabe.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="BJJ Connections — The Daily Brazilian Jiu-Jitsu Puzzle">
+<meta name="twitter:description" content="Find four groups of four. A free daily word puzzle that teaches BJJ history, athletes, techniques, and positions.">
+<meta name="twitter:image" content="https://bjjconnectionsbygabe.com/og-image.png">
+
+<link rel="stylesheet" href="style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Game",
+  "name": "BJJ Connections",
+  "description": "A daily Connections-style word puzzle for Brazilian Jiu-Jitsu.",
+  "url": "https://bjjconnectionsbygabe.com/",
+  "genre": "Puzzle",
+  "creator": { "@type": "Person", "name": "Gabe Shaffer" },
+  "isAccessibleForFree": true
+}
+</script>
+</head>
+<body>
+<main class="wrap">
+
+  <header>
+    <div class="eyebrow">THE DAILY BJJ PUZZLE</div>
+    <h1>BJJ Connections</h1>
+    <div class="creator">Created by Gabe Shaffer</div>
+    <p class="sub">Find four groups of four. Learn BJJ history, athletes, techniques, positions, and more.</p>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Game mode">
+    <button class="tab active" data-mode="daily" role="tab" aria-selected="true">Daily</button>
+    <button class="tab" data-mode="training" role="tab" aria-selected="false">Training</button>
+    <button class="tab" data-mode="archive" role="tab" aria-selected="false">Archive</button>
+    <button class="tab" data-mode="stats" role="tab" aria-selected="false">Stats</button>
+  </nav>
+
+  <section id="gameView">
+    <div id="difficultyWrap" class="difficulty hidden" role="group" aria-label="Difficulty filter"></div>
+    <div class="meta" id="puzzleMeta"></div>
+
+    <div class="status">
+      <span>Mistakes: <span id="mistakes">4</span></span>
+      <span id="dots" aria-hidden="true">● ● ● ●</span>
+    </div>
+
+    <div id="solved" aria-live="polite"></div>
+    <div class="grid" id="grid" role="group" aria-label="Puzzle words"></div>
+    <div id="msg" role="status" aria-live="polite"></div>
+
+    <div class="buttons">
+      <button class="ctrl" id="shuffle">Shuffle</button>
+      <button class="ctrl" id="submit" disabled>Submit</button>
+      <button class="ctrl hidden" id="share">Share</button>
+      <button class="ctrl hidden" id="next">Next Puzzle</button>
+    </div>
+
+    <div id="learnPanel" class="panel hidden">
+      <h2>Learn why</h2>
+      <div id="learn" class="learn"></div>
+    </div>
+  </section>
+
+  <section id="archiveView" class="hidden">
+    <div class="panel">
+      <h2>Past Puzzles</h2>
+      <p class="archiveNote">Replay any previous daily puzzle. These are the same deterministic puzzles that appeared on each date below.</p>
+      <div class="archiveList" id="archiveList"></div>
+    </div>
+  </section>
+
+  <section id="statsView" class="hidden">
+    <div class="panel">
+      <h2>Your Connections Stats</h2>
+      <div class="stats" id="stats"></div>
+      <div class="buttons" style="margin-top:12px">
+        <button class="ctrl" id="resetStats">Reset stats</button>
+      </div>
+    </div>
+  </section>
+
+  <noscript>
+    <div class="panel">This puzzle needs JavaScript enabled to play. Please enable JavaScript and reload the page.</div>
+  </noscript>
+
+  <footer>Daily puzzles are deterministic: everyone gets the same puzzle each day.</footer>
+</main>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

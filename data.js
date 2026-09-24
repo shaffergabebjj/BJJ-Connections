@@ -163,7 +163,7 @@ const ROUNDS = [
 
 /* 21 */
 [
-["RODOLFO VIEIRA","BUCHECHA","ERBERTH SANTOS","MARCUS ALMEIDA","POWERFUL GI"],
+["RODOLFO VIEIRA","BUCHECHA","ERBERTH SANTOS","ROMULO BARRAL","POWERFUL GI"],
 ["MOUNT","SIDE CONTROL","KESA","NORTH-SOUTH","TOP POSITIONS"],
 ["KIMURA","ARMBAR","AMERICANA","ARM TRIANGLE","ARM ATTACKS"],
 ["SINGLE LEG","DOUBLE LEG","ANKLE PICK","UCHI MATA","TAKEDOWNS"]
@@ -227,7 +227,7 @@ const ROUNDS = [
 
 /* 29 */
 [
-["ROGER GRACIE","BUCHECHA","RODOLFO VIEIRA","MARCUS ALMEIDA","GI HEAVYWEIGHTS"],
+["ROGER GRACIE","BUCHECHA","RODOLFO VIEIRA","XANDE RIBEIRO","GI HEAVYWEIGHTS"],
 ["MOUNT","SIDE CONTROL","KESA","NORTH-SOUTH","POSITIONS"],
 ["CROSS CHOKE","COLLAR CHOKE","EZEKIEL","PAPER CUTTER","CHOKES"],
 ["SINGLE LEG","DOUBLE LEG","UCHI MATA","ANKLE PICK","TAKEDOWNS"]
@@ -291,7 +291,7 @@ const ROUNDS = [
 
 /* 37 */
 [
-["RODOLFO VIEIRA","BUCHECHA","MARCUS ALMEIDA","ERBERTH SANTOS","GI POWER"],
+["RODOLFO VIEIRA","BUCHECHA","SAULO RIBEIRO","ERBERTH SANTOS","GI POWER"],
 ["MOUNT","SIDE CONTROL","KESA","NORTH-SOUTH","TOP CONTROL"],
 ["KIMURA","AMERICANA","ARMBAR","ARM TRIANGLE","ARM ATTACKS"],
 ["SINGLE LEG","DOUBLE LEG","UCHI MATA","ANKLE PICK","TAKEDOWNS"]
@@ -314,11 +314,13 @@ const ROUNDS = [
 ],
 
 /* 40 */
+/* NOTE: this used to be an exact duplicate of puzzle 28 (same 4 categories,
+   same 16 words). Replaced with new, distinct content. */
 [
-["GORDON RYAN","CRAIG JONES","GARRY TONON","NICK RODRIGUEZ","NO-GI"],
-["HEEL HOOK","KNEEBAR","CALF SLICER","STRAIGHT ANKLE","LEG LOCKS"],
-["ASHI GARAMI","SINGLE LEG X","INSIDE SANKAKU","OUTSIDE ASHI","LEG POSITIONS"],
-["LEG DRAG","KNEE CUT","BODY LOCK","SMASH PASS","PASSES"]
+["ADCC","IBJJF","EBI","POLARIS","GRAPPLING ORGANIZATIONS"],
+["SCISSOR SWEEP","FLOWER SWEEP","HIP BUMP SWEEP","PENDULUM SWEEP","SWEEPS"],
+["TOEHOLD","ESTIMA LOCK","ACHILLES LOCK","KNEEBAR","FOOT LOCKS"],
+["UNDERHOOK","OVERHOOK","COLLAR TIE","PUMMELING","CLINCH POSITIONS"]
 ],
 
 /* 41 */
@@ -355,7 +357,7 @@ const ROUNDS = [
 
 /* 45 */
 [
-["MARCUS ALMEIDA","BUCHECHA","RODOLFO VIEIRA","ROGER GRACIE","GI HEAVYWEIGHTS"],
+["LEANDRO LO","BUCHECHA","RODOLFO VIEIRA","ROGER GRACIE","GI HEAVYWEIGHTS"],
 ["MOUNT","SIDE CONTROL","KESA","NORTH-SOUTH","POSITIONS"],
 ["KIMURA","AMERICANA","ARMBAR","ARM TRIANGLE","ARM ATTACKS"],
 ["SINGLE LEG","DOUBLE LEG","UCHI MATA","ANKLE PICK","TAKEDOWNS"]
@@ -387,7 +389,7 @@ const ROUNDS = [
 
 /* 49 */
 [
-["ROGER GRACIE","LEANDRO LO","BUCHECHA","MARCUS ALMEIDA","GI LEGENDS"],
+["ROGER GRACIE","LEANDRO LO","BUCHECHA","RODOLFO VIEIRA","GI LEGENDS"],
 ["MOUNT","BACK","SIDE CONTROL","NORTH-SOUTH","POSITIONS"],
 ["CROSS CHOKE","COLLAR CHOKE","EZEKIEL","BOW-AND-ARROW","CHOKES"],
 ["CLOSED GUARD","BUTTERFLY","HALF GUARD","DEEP HALF","GUARDS"]
@@ -402,18 +404,142 @@ const ROUNDS = [
 ]
 ];
 
-// Add lightweight metadata without changing the original puzzle content.
-const DIFFICULTIES = ["white","blue","purple","black"];
-const PUZZLES = ROUNDS.map((groups, index) => ({
-  id: index + 1,
-  groups: groups.map((g, groupIndex) => ({
-    items: g.slice(0,4),
+// ---------------------------------------------------------------------
+// Real "Learn why" explanations, keyed by exact category string.
+// One or two honest sentences about what the category actually is —
+// not just the category name repeated back. Kept general/descriptive
+// rather than making specific superlative claims about any one person.
+// A category not found here falls back to a generic sentence so a
+// future puzzle with a new category name never breaks the UI.
+// ---------------------------------------------------------------------
+const EXPLANATIONS = {
+  "GUARDS": "General term for defensive positions played from the bottom, using the legs to control distance, off-balance an opponent, and set up attacks from underneath.",
+  "PASSES": "Guard passes are techniques a top player uses to get around an opponent's legs and into a dominant position.",
+  "CHOKES": "Chokes cut off blood flow or air through the neck to force a tap — among the most common finishes in both gi and no-gi.",
+  "SUBMISSIONS": "General term for any technique — a choke, joint lock, or compression — used to force an opponent to submit.",
+  "POSITIONS": "Core control positions in jiu-jitsu, each with its own hierarchy of dominance and typical attacking options.",
+  "LEG POSITIONS": "Control positions used to enter and finish leg locks, developed and popularized in the modern no-gi leg-lock era.",
+  "ARM ATTACKS": "Joint locks that target the elbow or shoulder to force a submission.",
+  "LEG LOCKS": "Submissions that attack the knee, ankle, or hip through the leg — a major focus of modern no-gi grappling.",
+  "TAKEDOWNS": "Techniques used to bring a standing opponent to the mat, many borrowed from wrestling and judo.",
+  "NO-GI": "A ruleset and style of grappling practiced without a gi, which changes grips and often opens up leg-lock-heavy game plans.",
+  "BACK CONTROL": "The dominant back position, usually combined with hooks or a body triangle, from which many chokes are finished.",
+  "TOP POSITIONS": "Dominant positions controlled from on top of the opponent, offering strong attacking angles with lower risk.",
+  "BACK ATTACKS": "Techniques and entries used to take or maintain an opponent's back, one of the most valuable positions in grappling.",
+  "PASSING": "The family of techniques used to get past an opponent's legs into a dominant position.",
+  "LEG ATTACKS": "Another term for leg locks — submissions that target the ankle, knee, or hip.",
+  "GI CHOKES": "Chokes that use the collar or lapel of the gi for extra leverage, unavailable in no-gi grappling.",
+  "GI GUARDS": "Guard variations that rely on gripping the opponent's gi — collar, sleeve, or pants — for control.",
+  "BACK TAKES": "Techniques and entries used specifically to get to an opponent's back.",
+  "LEGENDS": "Widely regarded as among the most influential competitors in jiu-jitsu history.",
+  "PRESSURE PASSES": "Guard passes that rely on heavy top pressure and weight distribution rather than speed.",
+  "MODERN NO-GI": "Competitors associated with the current generation of no-gi grappling and its leg-lock-heavy meta.",
+  "TOP CONTROL": "Positions and techniques used to maintain dominant control from the top.",
+  "OPEN GUARDS": "Guard variations played without the legs closed around the opponent's torso, usually more mobile than closed guard.",
+  "TECHNICAL GUARD PLAYERS": "Known for a detailed, technique-heavy guard game rather than relying on athleticism alone.",
+  "GI CHAMPIONS": "Competitors known for their success specifically in gi competition.",
+  "GI LEGENDS": "Widely regarded among the most accomplished competitors in gi jiu-jitsu.",
+  "GI TECHNICIANS": "Known for precise, detail-oriented technique within the gi ruleset.",
+  "GI HEAVYWEIGHTS": "Accomplished competitors who competed primarily in the heavier gi weight classes.",
+  "LEG-LOCK POSITIONS": "Control positions used to enter and finish leg-lock submissions.",
+  "PRESSURE": "Known for a heavy, pressure-based style of top control.",
+  "ALL-TIME GI STARS": "Among the most decorated and recognizable names in gi competition history.",
+  "HEAD-AND-NECK CHOKES": "Submissions that finish by choking through the neck, using an arm, the collar, or a combination of both.",
+  "GRACIE-LINEAGE CHAMPIONS": "Competitors from the Gracie family lineage who became major competition champions.",
+  "HALF GUARDS": "Guard variations played with one leg trapped between the opponent's legs.",
+  "GI POWERHOUSES": "Known for strong, physically dominant performances in gi competition.",
+  "ARM SUBMISSIONS": "Submissions that finish by attacking the arm.",
+  "SUBMISSION SPECIALISTS": "Known for finishing a high percentage of matches by submission rather than by points.",
+  "BACK-TAKE TOOLS": "Techniques used specifically to get to and secure an opponent's back.",
+  "OPEN GUARD": "A family of guards played without closing the legs around the opponent.",
+  "GUARD-PASSING": "Techniques used to get around an opponent's guard and into a dominant position.",
+  "DANAHER-ASSOCIATED NO-GI": "Competitors associated with coach John Danaher's leg-lock-focused no-gi system.",
+  "LEG SUBMISSIONS": "Submissions that finish by attacking the leg.",
+  "IBJJF LEGENDS": "Among the most decorated competitors in IBJJF (International Brazilian Jiu-Jitsu Federation) competition history.",
+  "LIGHTWEIGHT STARS": "Accomplished competitors known for competing in the lighter weight classes.",
+  "HEAVYWEIGHT NO-GI NAMES": "Accomplished competitors known for no-gi competition in the heavier weight classes.",
+  "SUBMISSION-FOCUSED": "Known for an aggressive, finish-first competitive style.",
+  "NO-GI COMPETITORS": "Competitors who built their reputation primarily in no-gi competition.",
+  "TECHNICAL LIGHTWEIGHTS": "Lighter-weight competitors known for detailed, technique-driven grappling.",
+  "FAMOUS SUBMISSION STYLES": "Known for a distinctive, submission-hunting competitive style.",
+  "DANAHER SYSTEM": "Competitors associated with the systematic leg-lock and back-attack approach developed by coach John Danaher.",
+  "POWERFUL GI": "Known for a strong, pressure-heavy game within the gi ruleset.",
+  "LIGHTWEIGHT TECHNIQUE": "Lighter-weight competitors recognized for technical, detail-focused grappling.",
+  "BACK-TAKE / SUBMISSION": "Known for combining back takes with high finishing rates.",
+  "GI": "Accomplished competitors within the gi ruleset.",
+  "SUBMISSION LEGENDS": "Among the most recognizable submission specialists in the sport's history.",
+  "FAMOUS GRAPPLERS": "Widely recognized names across jiu-jitsu and grappling.",
+  "LEG-LOCK ERA": "Competitors associated with the rise of leg locks as a mainstream competitive weapon.",
+  "GI ICONS": "Widely recognized figures in gi competition history.",
+  "LIGHTWEIGHTS": "Accomplished competitors in the lighter weight classes.",
+  "SUBMISSION STYLE": "Known for a particular, recognizable approach to finishing fights.",
+  "GI POWER": "Known for a strong, physically dominant style within the gi ruleset.",
+  "GUARD SPECIALISTS": "Known for an especially technical or dangerous guard game.",
+  "SUBMISSION ICONS": "Widely recognized for a submission-focused competitive style.",
+  "NO-GI STARS": "Well-known competitors within the no-gi ruleset.",
+  "TECHNICAL BJJ": "Known for detail-oriented, technique-driven grappling.",
+  "FAMOUS STYLISTS": "Recognized for a signature style of grappling.",
+  "ALL-TIME GREAT BJJ NAMES": "Among the most recognizable names across jiu-jitsu history.",
+  "GRAPPLING ORGANIZATIONS": "Major organizations and events that host high-level grappling competition.",
+  "SWEEPS": "Sweeps are guard techniques used to reverse position from the bottom, turning a bottom player into the top player.",
+  "FOOT LOCKS": "Submissions that attack the foot or ankle — a specialized branch of leg locks.",
+  "CLINCH POSITIONS": "Grip and control positions used in the stand-up clinch, often as entries into takedowns."
+};
+function explanationFor(category, items) {
+  return EXPLANATIONS[category] || `A recognized grouping in jiu-jitsu: ${items.join(", ")}.`;
+}
+
+// ---------------------------------------------------------------------
+// Difficulty is classified from the puzzle's actual technique content
+// instead of its position in the array. Advanced leg-lock-system terms
+// push a puzzle to black; advanced guard/back-take terms push to purple;
+// a majority of true fundamentals pulls it to white; anything else
+// lands on blue. This also means a newly added puzzle classifies itself
+// correctly without needing to be manually slotted in.
+// ---------------------------------------------------------------------
+const BLACK_BELT_TERMS = new Set(["HEEL HOOK","KNEEBAR","CALF SLICER","STRAIGHT ANKLE","ASHI GARAMI",
+  "INSIDE SANKAKU","OUTSIDE ASHI","SINGLE LEG X","ESTIMA LOCK","ACHILLES LOCK","TOEHOLD","MARCELOTINE"]);
+const PURPLE_BELT_TERMS = new Set(["BERIMBOLO","LASSO","REVERSE DE LA RIVA","TORIANDO","LONG STEP",
+  "CHAIR SIT","TECHNICAL STAND-UP","ARM DRAG","SEATBELT","BODY TRIANGLE","KNEE CUT","SMASH PASS",
+  "STACK PASS","OVER-UNDER","DOUBLE UNDER","BODY LOCK","SPIDER","DE LA RIVA","COLLAR-SLEEVE","X-GUARD",
+  "DEEP HALF","HALF GUARD","KNEE SHIELD","Z-GUARD","KNEE-ON-BELLY","NORTH-SOUTH","KESA"]);
+const WHITE_BELT_TERMS = new Set(["MOUNT","SIDE CONTROL","CLOSED GUARD","BUTTERFLY","CROSS CHOKE",
+  "COLLAR CHOKE","ARMBAR","KIMURA","AMERICANA","TRIANGLE","SINGLE LEG","DOUBLE LEG","UCHI MATA",
+  "ANKLE PICK","EZEKIEL","REAR NAKED CHOKE","GUILLOTINE","BACK TAKE","HOOKS"]);
+
+function classifyDifficulty(items) {
+  // A whole dedicated leg-lock-system group (4 black-tier terms) makes
+  // the puzzle black-belt level outright.
+  const blackCount = items.filter(w => BLACK_BELT_TERMS.has(w)).length;
+  if (blackCount >= 4) return "black";
+  // A single stray leg-lock term mixed into an otherwise lighter puzzle
+  // still earns purple (exposure, not a full system) rather than black.
+  if (blackCount >= 1) return "purple";
+  // Otherwise, weigh advanced vs. fundamental term density.
+  let score = 0;
+  items.forEach(w => {
+    if (PURPLE_BELT_TERMS.has(w)) score += 1;
+    else if (WHITE_BELT_TERMS.has(w)) score -= 1;
+  });
+  if (score <= -2) return "white";
+  if (score <= 2) return "blue";
+  return "purple";
+}
+
+const PUZZLES = ROUNDS.map((groups, index) => {
+  const builtGroups = groups.map(g => ({
+    items: g.slice(0, 4),
     category: g[4],
-    explanation: `${g[4]}: ${g.slice(0,4).join(", ")}.`
-  })),
-  difficulty: DIFFICULTIES[Math.min(3, Math.floor(index / 13))],
-  theme: ["Legends","Techniques","Competition","Guards","No-Gi"][index % 5]
-}));
+    explanation: explanationFor(g[4], g.slice(0, 4))
+  }));
+  const allItems = builtGroups.flatMap(g => g.items);
+  return {
+    id: index + 1,
+    groups: builtGroups,
+    difficulty: classifyDifficulty(allItems),
+    theme: ["Legends", "Techniques", "Competition", "Guards", "No-Gi"][index % 5]
+  };
+});
 
 function validatePuzzle(puzzle) {
   const items = puzzle.groups.flatMap(g => g.items);
@@ -425,6 +551,22 @@ function validatePuzzle(puzzle) {
     if (g.items.length !== 4) errors.push(`Group ${i+1} must have 4 items.`);
     if (!g.category) errors.push(`Group ${i+1} is missing a category.`);
     if (!g.explanation) errors.push(`Group ${i+1} is missing an explanation.`);
+  });
+  return errors;
+}
+
+// Bank-level check: catches an exact-duplicate puzzle (same 4 category
+// names + same 16 words as another puzzle) before it ships. This is the
+// check that would have caught puzzles #28/#40 being identical.
+function validateAllPuzzles(puzzles) {
+  const errors = [];
+  puzzles.forEach(p => errors.push(...validatePuzzle(p).map(e => `Puzzle ${p.id}: ${e}`)));
+  const seen = new Map();
+  puzzles.forEach(p => {
+    const key = JSON.stringify(p.groups.map(g => ({ c: g.category, i: g.items.slice().sort() }))
+      .sort((a, b) => a.c.localeCompare(b.c)));
+    if (seen.has(key)) errors.push(`Puzzle ${p.id} is an exact duplicate of puzzle ${seen.get(key)}.`);
+    else seen.set(key, p.id);
   });
   return errors;
 }
