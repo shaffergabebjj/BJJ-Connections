@@ -209,8 +209,36 @@
           <span id="goalCount">0 goals</span>
         </div>
       </div>
+  <!-- Training Log -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Training Log</h2>
+      <p class="section-sub">Track your training sessions. Entries save locally in your browser.</p>
+      <div class="panel">
+        <div class="search-bar">
+          <input type="date" class="search-input" id="logDate" style="max-width:200px" aria-label="Session date">
+          <input type="number" class="search-input" id="logDuration" placeholder="Duration (min)" style="max-width:160px" aria-label="Duration in minutes" min="0">
+          <select class="search-input" id="logType" style="max-width:160px" aria-label="Session type">
+            <option value="Gi">Gi</option>
+            <option value="No-Gi">No-Gi</option>
+            <option value="Open Mat">Open Mat</option>
+            <option value="Drilling">Drilling</option>
+            <option value="Competition">Competition</option>
+          </select>
+        </div>
+        <input type="text" class="search-input" id="logTechniques" placeholder="Techniques practiced (comma-separated)" style="width:100%;margin-bottom:10px" aria-label="Techniques practiced">
+        <input type="text" class="search-input" id="logNotes" placeholder="Notes about this session" style="width:100%;margin-bottom:10px" aria-label="Session notes">
+        <button class="btn btn-dark btn-sm" id="addSession">Add Session</button>
+      </div>
+
+      <div class="checklist-progress mt-2">
+        <span id="logSummary">0 sessions logged</span>
+      </div>
+      <div id="logList" style="display:flex;flex-direction:column;gap:12px"></div>
+      <div class="no-results hidden" id="noSessions">No training sessions logged yet. Add your first session above.</div>
     </div>
   </section>
+
 </main>
 
 <footer class="site-footer">
@@ -311,6 +339,111 @@
 
   if (addBtn) addBtn.addEventListener("click", addGoal);
   if (input) input.addEventListener("keydown", function(e) { if (e.key === "Enter") addGoal(); });
+  render();
+})();
+
+// ---- Training Log ----
+(function() {
+  var dateEl = document.getElementById("logDate");
+  var durEl = document.getElementById("logDuration");
+  var typeEl = document.getElementById("logType");
+  var techEl = document.getElementById("logTechniques");
+  var notesEl = document.getElementById("logNotes");
+  var addBtn = document.getElementById("addSession");
+  var listEl = document.getElementById("logList");
+  var summaryEl = document.getElementById("logSummary");
+  var noResults = document.getElementById("noSessions");
+
+  // Set today's date as default
+  if (dateEl) {
+    var today = new Date();
+    var yyyy = today.getFullYear();
+    var mm = String(today.getMonth() + 1).padStart(2, "0");
+    var dd = String(today.getDate()).padStart(2, "0");
+    dateEl.value = yyyy + "-" + mm + "-" + dd;
+  }
+
+  function getSessions() {
+    try { return JSON.parse(localStorage.getItem("bjjTrainingLog") || "[]"); }
+    catch(e) { return []; }
+  }
+  function saveSessions(sessions) {
+    try { localStorage.setItem("bjjTrainingLog", JSON.stringify(sessions)); }
+    catch(e) {}
+  }
+
+  function render() {
+    var sessions = getSessions();
+    sessions.sort(function(a, b) { return b.date.localeCompare(a.date); });
+
+    summaryEl.textContent = sessions.length + " session" + (sessions.length === 1 ? "" : "s") + " logged";
+
+    if (sessions.length === 0) {
+      listEl.innerHTML = "";
+      noResults.classList.remove("hidden");
+      return;
+    }
+    noResults.classList.add("hidden");
+
+    var totalMin = sessions.reduce(function(sum, s) { return sum + (parseInt(s.duration) || 0); }, 0);
+    var totalHrs = Math.floor(totalMin / 60);
+    var remainingMin = totalMin % 60;
+    summaryEl.textContent = sessions.length + " session" + (sessions.length === 1 ? "" : "s") + " · " + totalHrs + "h " + remainingMin + "m total";
+
+    listEl.innerHTML = sessions.map(function(s, i) {
+      var formattedDate = new Date(s.date + "T00:00").toLocaleDateString("en-US", { weekday: "short", year: "numeric", month: "short", day: "numeric" });
+      var durationText = s.duration ? s.duration + " min" : "—";
+      var typeBadge = s.type ? '<span class="belt-badge belt-blue" style="margin-right:8px">' + s.type + '</span>' : "";
+      var techText = s.techniques ? '<div style="font-size:13px;color:var(--muted);margin-top:6px"><b>Techniques:</b> ' + s.techniques + "</div>" : "";
+      var notesText = s.notes ? '<div style="font-size:13px;color:var(--muted);margin-top:4px;font-style:italic">' + s.notes + "</div>" : "";
+      return '<div class="card" style="padding:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px">' +
+        '<div style="flex:1">' +
+        '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+        '<b>' + formattedDate + '</b>' +
+        '<span style="color:var(--muted);font-size:13px">· ' + durationText + '</span>' +
+        typeBadge +
+        '</div>' +
+        techText + notesText +
+        '</div>' +
+        '<button class="btn btn-ghost btn-sm" data-del="' + i + '" style="flex-shrink:0" aria-label="Delete session">✕</button>' +
+        '</div>';
+    }).join("");
+
+    // Attach delete handlers
+    listEl.querySelectorAll("[data-del]").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var idx = parseInt(btn.getAttribute("data-del"));
+        sessions.splice(idx, 1);
+        saveSessions(sessions);
+        render();
+      });
+    });
+  }
+
+  function addSession() {
+    var session = {
+      date: dateEl.value || new Date().toISOString().slice(0, 10),
+      duration: durEl.value || "",
+      type: typeEl.value || "",
+      techniques: techEl.value.trim(),
+      notes: notesEl.value.trim(),
+      timestamp: Date.now()
+    };
+    if (!session.techniques && !session.notes && !session.duration) {
+      alert("Please enter at least a duration, technique, or note.");
+      return;
+    }
+    var sessions = getSessions();
+    sessions.push(session);
+    saveSessions(sessions);
+    techEl.value = "";
+    notesEl.value = "";
+    durEl.value = "";
+    render();
+  }
+
+  if (addBtn) addBtn.addEventListener("click", addSession);
+  if (notesEl) notesEl.addEventListener("keydown", function(e) { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) addSession(); });
   render();
 })();
 </script>

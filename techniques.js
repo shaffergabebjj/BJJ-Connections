@@ -142,5 +142,89 @@ const TECHNIQUES = [
   { name: "Underhook Battle", cat: "transition", belt: "blue", desc: "Fighting for underhook position to control the opponent's upper body. Critical in half guard and stand-up." },
   { name: "Collar Tie", cat: "transition", belt: "white", desc: "Stand-up grip using the hand on the back of the opponent's neck to control their posture and set up takedowns." },
   { name: "Pummeling", cat: "transition", belt: "blue", desc: "Trading underhooks back and forth with the opponent to establish dominant control. Used in clinch and guard work." },
-  { name: "Knee-on-Belly Transition", cat: "transition", belt: "blue", desc: "Using knee-on-belly as a mobile transition point between side control, mount, and back control." }
+  { name: "Knee-on-Belly Transition", cat: "transition", belt: "blue", desc: "Using knee-on-belly as a mobile transition point between side control, mount, and back control." },
+
+  // ---- Additional Positions ----
+  { name: "Top Half Guard", cat: "position", belt: "white", desc: "Top position with one leg trapped between the opponent's legs. Strong control position with submission and passing options." },
+  { name: "Quarter Position", cat: "position", belt: "blue", desc: "Side control variant where you are positioned at the opponent's hip rather than fully perpendicular. Often a transition point." },
+  { name: "Front Headlock", cat: "position", belt: "white", desc: "Control position with the opponent's head and one arm trapped, usually from a sprawl. Sets up chokes and takedowns." },
+  { name: "Crucifix (Top)", cat: "position", belt: "purple", desc: "Control position where both of the opponent's arms are trapped behind their back using your legs and arms. Highly dominant." },
+  { name: "S-Mount", cat: "position", belt: "purple", desc: "Mount variant where one leg is placed higher on the opponent's chest, creating an S-shape. Excellent for armbar setups." },
+  { name: "High Mount", cat: "position", belt: "blue", desc: "Mount variant with knees positioned high in the opponent's armpits, preventing them from bridging or turning. Strong attacking position." },
+
+  // ---- Additional Submissions ----
+  { name: "Marceloplata", cat: "submission", belt: "black", desc: "Armbar variant from guard that uses the leg over the shoulder in a modified omoplata/armbar hybrid. Named after Marcelo Garcia." },
+  { name: "Baratoplata", cat: "submission", belt: "black", desc: "Shoulder lock from side control using a figure-four grip on the opponent's arm. Named after Rafael Barata." },
+  { name: "Crucifix Neck Crank", cat: "submission", belt: "black", desc: "Neck crank applied from the crucifix position using the arms to apply rotational pressure to the cervical spine." },
+  { name: "Calf Crank", cat: "submission", belt: "black", desc: "Submission applying compression to the calf muscle by leveraging the shin against the knee. Distinct from a calf slicer." },
+  { name: "Banana Split", cat: "submission", belt: "black", desc: "Groin stretch submission where both of the opponent's legs are pulled apart in opposite directions." },
+  { name: "Twister", cat: "submission", belt: "black", desc: "Spinal lock that twists the opponent's spine using a hook on the far leg and control of the head. Popularized by Eddie Bravo." },
+  { name: "Bicep Slicer (from Mount)", cat: "submission", belt: "purple", desc: "Compression lock targeting the bicep from mount position, using the shin or forearm behind the opponent's arm." },
+  { name: "Americana from Side Control", cat: "submission", belt: "white", desc: "Keylock applied from side control, bending the opponent's arm in an L-shape and driving toward the head." },
+  { name: "Kimura from Side Control", cat: "submission", belt: "white", desc: "Double-wrist lock applied from side control, isolating the shoulder by leveraging the arm behind the back." },
+  { name: "Cross Collar Choke from Guard", cat: "submission", belt: "white", desc: "Gi choke from closed guard using deep collar grips to compress the neck. One of the first guard chokes taught." },
+  { name: "Loop Choke from Half Guard", cat: "submission", belt: "purple", desc: "Gi choke from bottom half guard using the collar to create a loop around the opponent's neck when they apply pressure." },
+  { name: "Monoplata", cat: "submission", belt: "black", desc: "Shoulder lock using the leg over the opponent's arm similar to an omoplata but with a different finishing angle." },
+
+  // ---- Additional Escapes ----
+  { name: "Elbow Push Escape (Side Control)", cat: "escape", belt: "white", desc: "Creating space from bottom side control by pushing the opponent's elbow and bridging to recover guard." },
+  { name: "Bridge and Roll (Side Control)", cat: "escape", belt: "blue", desc: "Escaping side control by bridging explosively and rolling the opponent over when they are too high or off-balance." },
+  { name: "Guard Recovery from Turtle", cat: "escape", belt: "blue", desc: "From bottom turtle, sitting back to recover guard or half guard before the opponent can establish back control." },
+  { name: "Bridge Escape from Back Control", cat: "escape", belt: "blue", desc: "Escaping back control by bridging and turning toward the choking arm to remove hooks and face the opponent." },
+  { name: "Frame and Stand (Side Control)", cat: "escape", belt: "blue", desc: "Using frames (forearms/shins) to create space and technical stand-up from bottom side control." },
+  { name: "Knee Insertion Escape (Mount)", cat: "escape", belt: "white", desc: "Mount escape where you bridge and insert a knee to create space and recover half guard or full guard." },
+  { name: "Foot Lift Back Escape", cat: "escape", belt: "purple", desc: "Escaping back control by lifting the opponent's foot off the mat to remove the hook, then turning in." },
+
+  // ---- Additional Sweeps ----
+  { name: "Triangle Sweep", cat: "sweep", belt: "blue", desc: "Sweep from guard using the triangle setup — when the opponent defends the choke, use the leg position to sweep instead." },
+  { name: "Omoplata Sweep", cat: "sweep", belt: "purple", desc: "When the opponent defends the omoplata submission, transition into a sweep by using the leg over the shoulder as leverage." },
+  { name: "Guillotine Sweep", cat: "sweep", belt: "blue", desc: "Sweep from guard using a guillotine grip — when the opponent resists the choke, use the momentum to sweep them." },
+  { name: "Collar-Sleeve Sweep", cat: "sweep", belt: "blue", desc: "Sweep from collar-sleeve guard using the sleeve grip to pull the opponent forward while sweeping with the legs." },
+  { name: "Reverse De La Riva Sweep", cat: "sweep", belt: "purple", desc: "Sweep from reverse de la Riva guard using the inside hook to off-balance the opponent and come on top." },
+  { name: "Lasso Sweep", cat: "sweep", belt: "purple", desc: "Sweep from lasso guard using the threaded leg to control the opponent's arm and create an off-balancing angle." },
+  { name: "Deep Half Sweep", cat: "sweep", belt: "black", desc: "Sweep from deep half guard using the underhook and leg positioning to off-balance and reverse the opponent." },
+  { name: "Underhook Half Guard Sweep", cat: "sweep", belt: "blue", desc: "Sweep from half guard using the underhook to get to the opponent's back or come up into a dogfight position." },
+
+  // ---- Additional Takedowns ----
+  { name: "Kouchi Gari", cat: "takedown", belt: "blue", desc: "Judo foot sweep reaping the opponent's inside leg while pushing them backward." },
+  { name: "Deashi Harai", cat: "takedown", belt: "blue", desc: "Judo foot sweep where you sweep the opponent's advancing leg from the outside." },
+  { name: "Kosoto Gake", cat: "takedown", belt: "purple", desc: "Judo throw hooking the opponent's outside leg while driving forward." },
+  { name: "Drop Seoi Nage", cat: "takedown", belt: "purple", desc: "Variation of seoi nage where you drop to both knees to create leverage for the throw." },
+  { name: "Sumi Gaeshi", cat: "takedown", belt: "purple", desc: "Judo sacrifice throw where you grab the opponent's leg and roll backward to take them over." },
+  { name: "Russian 2-on-1", cat: "takedown", belt: "blue", desc: "Grip fighting technique controlling the opponent's arm with both hands to set up takedowns and throws." },
+  { name: "Lateral Drop", cat: "takedown", belt: "purple", desc: "Wrestling throw using an overhook to throw the opponent laterally, falling to the side." },
+
+  // ---- Additional Guards ----
+  { name: "Closed Guard (High)", cat: "guard", belt: "blue", desc: "Closed guard variant with legs positioned high on the opponent's back, breaking posture and setting up chokes and armbars." },
+  { name: "Full Guard", cat: "guard", belt: "white", desc: "Another term for closed guard — legs wrapped around the opponent's torso with ankles crossed." },
+  { name: "Headquarters Position", cat: "guard", belt: "purple", desc: "Top position between the opponent's legs, often the starting point for guard passing. One leg inside, one outside." },
+  { name: "Octopus Guard", cat: "guard", belt: "black", desc: "Unorthodox guard where you invert and use the opponent's leg and torso for control. Rare but creative." },
+  { name: "Lockdown", cat: "guard", belt: "purple", desc: "Half guard variant popularized by Eddie Bravo, using a figure-four leg lock on the opponent's leg for control." },
+  { name: "K-Guard", cat: "guard", belt: "black", desc: "Modern guard position where one of your feet is on the opponent's hip and the other hooks behind their knee, creating entries to leg locks." },
+  { name: "Reverse Half Guard", cat: "guard", belt: "purple", desc: "Half guard variant where you face the opponent's legs rather than their torso, often used for leg lock entries." },
+
+  // ---- Additional Guard Passing ----
+  { name: "Floating Pass", cat: "pass", belt: "purple", desc: "Pass where you jump or float over the opponent's legs, landing directly in side control or mount." },
+  { name: "Shin Pin Pass", cat: "pass", belt: "blue", desc: "Pass where you pin the opponent's shin to the mat with your hand or knee, then step around to side control." },
+  { name: "Leg Pin Pass", cat: "pass", belt: "blue", desc: "Pass where you pin both of the opponent's legs to one side, then walk around to the other side for side control." },
+  { name: "Crash Pass", cat: "pass", belt: "purple", desc: "No-gi pass where you crash your weight forward through the opponent's guard, using momentum and pressure to pass." },
+  { name: "Tripod Pass", cat: "pass", belt: "purple", desc: "Pass where you tripod on your head and feet to clear the opponent's legs, then settle into side control." },
+
+  // ---- Additional Leg Entanglements ----
+  { name: "Outside Heel Hook", cat: "leg", belt: "black", desc: "Heel hook where the foot is rotated outward, attacking the knee's medial collateral ligament. Generally considered the more dangerous variation." },
+  { name: "Inside Heel Hook", cat: "leg", belt: "black", desc: "Heel hook where the foot is rotated inward. Often applied from the saddle or 50/50 position." },
+  { name: "Straight Foot Lock", cat: "leg", belt: "blue", desc: "Another term for the straight ankle lock — extending the foot to attack the Achilles tendon and ankle joint." },
+  { name: "Achilles Lock", cat: "leg", belt: "blue", desc: "Compression lock on the Achilles tendon and calf muscle, often applied from ashi garami or single leg X." },
+  { name: "Estima Lock", cat: "leg", belt: "black", desc: "Foot lock named after the Estima brothers, applying rotational pressure to the foot from a standing or top position." },
+  { name: "Saddle Entry", cat: "leg", belt: "black", desc: "Transition from single leg X or ashi garami into the saddle (honeyhole) position for a stronger heel hook entry." },
+
+  // ---- Additional Transitions ----
+  { name: "Guard Pull", cat: "transition", belt: "white", desc: "Deliberately pulling the opponent into your guard from standing. Common in gi competition to avoid takedown exchanges." },
+  { name: "Sit Guard", cat: "transition", belt: "blue", desc: "Sitting guard position where you sit upright with one or both feet on the opponent's hips, ready to attack or retain guard." },
+  { name: "Dogfight Position", cat: "transition", belt: "blue", desc: "Transitional position on one knee with an underhook, used to come up from half guard or defend against being flattened." },
+  { name: "Whizzer", cat: "transition", belt: "white", desc: "Overhook on the opponent's arm, typically used to defend against takedowns or control their upper body." },
+  { name: "Underhook Entry", cat: "transition", belt: "blue", desc: "Technique of establishing an underhook from various positions to create an angle for back takes or sweeps." },
+  { name: "Head Outside Single", cat: "transition", belt: "blue", desc: "Single leg takedown entry where your head is on the outside of the opponent's leg, setting up finishes or transitions." },
+  { name: "Sprawl", cat: "transition", belt: "white", desc: "Defensive technique against takedowns — dropping your hips and legs back to prevent the opponent from completing the takedown." },
+  { name: "Stand-up", cat: "transition", belt: "white", desc: "Returning to standing position from the ground, typically using a technical stand-up to protect the head and maintain base." }
 ];
