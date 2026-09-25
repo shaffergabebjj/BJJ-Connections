@@ -344,7 +344,7 @@ var GLOSSARY = [
     noResults.classList.add("hidden");
 
     list.innerHTML = filtered.map(function(g) {
-      return '<div class="glossary-item"><dt>' + g.term + '</dt><dd>' + g.def + '</dd></div>';
+      return '<div class="glossary-item"><dt><a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(g.term + ' BJJ technique') + '" target="_blank" rel="noopener noreferrer">' + g.term + '</a></dt><dd>' + g.def + '</dd></div>';
     }).join("");
   }
 
