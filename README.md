@@ -15,7 +15,9 @@ Live at **[bjjconnectionsbygabe.com](https://bjjconnectionsbygabe.com)**.
 - "One away" feedback
 - "Learn why" explanations for every category
 - Share results as a colored-square grid, like Wordle/Connections
-- 50-puzzle bank with automated duplicate/structure checking
+- 100-puzzle bank with automated duplicate/structure checking, and a
+  difficulty classifier that requires real breadth (at least half the
+  puzzle) of advanced material before calling something "black belt"
 - Mobile-first, accessible layout (keyboard focus states, ARIA live regions)
 
 ## Files
