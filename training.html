@@ -193,6 +193,66 @@
     </div>
   </section>
 
+  <!-- Game Plan Builder -->
+  <section class="section section-alt">
+    <div class="container">
+      <h2 class="section-title">Game Plan Builder</h2>
+      <p class="section-sub">Build a simple position-to-finish chain and save it locally.</p>
+      <div class="gameplan-grid">
+        <div class="panel">
+          <label for="gpTakedown"><strong>Stand-up / Entry</strong></label>
+          <select class="search-input" id="gpTakedown">
+            <option>Single Leg</option>
+            <option>Double Leg</option>
+            <option>Uchi-Mata</option>
+            <option>Ankle Pick</option>
+            <option>Guard Pull</option>
+          </select>
+          <label for="gpGuard"><strong>Guard / Bottom Position</strong></label>
+          <select class="search-input" id="gpGuard">
+            <option>Closed Guard</option>
+            <option>Half Guard</option>
+            <option>Butterfly Guard</option>
+            <option>De La Riva</option>
+            <option>Single Leg X</option>
+          </select>
+          <label for="gpSweep"><strong>Sweep / Transition</strong></label>
+          <select class="search-input" id="gpSweep">
+            <option>Hip Bump Sweep</option>
+            <option>Butterfly Sweep</option>
+            <option>Technical Stand-up</option>
+            <option>Back Take</option>
+            <option>Pass the Guard</option>
+          </select>
+          <label for="gpPass"><strong>Top Game</strong></label>
+          <select class="search-input" id="gpPass">
+            <option>Knee Cut Pass</option>
+            <option>Over-Under Pass</option>
+            <option>Smash Pass</option>
+            <option>Body Lock Pass</option>
+            <option>Leg Drag</option>
+          </select>
+          <label for="gpFinish"><strong>Finish</strong></label>
+          <select class="search-input" id="gpFinish">
+            <option>Armbar</option>
+            <option>Triangle Choke</option>
+            <option>Kimura</option>
+            <option>Rear Naked Choke</option>
+            <option>Guillotine Choke</option>
+          </select>
+          <div class="puzzle-buttons" style="justify-content:flex-start;margin-top:14px">
+            <button class="btn btn-dark btn-sm" id="saveGamePlan" type="button">Save Game Plan</button>
+            <button class="btn btn-ghost btn-sm" id="clearGamePlan" type="button">Clear</button>
+          </div>
+        </div>
+        <div class="panel gameplan-preview">
+          <div class="gameplan-eyebrow">Your sequence</div>
+          <div id="gamePlanPreview"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Goal Setting -->
   <section class="section">
     <div class="container">
@@ -444,6 +504,41 @@
   if (addBtn) addBtn.addEventListener("click", addSession);
   if (notesEl) notesEl.addEventListener("keydown", function(e) { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) addSession(); });
   render();
+})();
+
+// ---- Game Plan Builder ----
+(function() {
+  var ids = ["gpTakedown","gpGuard","gpSweep","gpPass","gpFinish"];
+  var preview = document.getElementById("gamePlanPreview");
+  var saveBtn = document.getElementById("saveGamePlan");
+  var clearBtn = document.getElementById("clearGamePlan");
+
+  function values() {
+    return ids.map(function(id) { return document.getElementById(id).value; });
+  }
+  function renderPlan() {
+    var saved = [];
+    try { saved = JSON.parse(localStorage.getItem("bjjGamePlan") || "[]"); } catch(e) {}
+    var current = values();
+    preview.innerHTML = current.map(function(value, i) {
+      return '<div class="gameplan-step"><span class="gameplan-number">' + (i + 1) + '</span><div><small>' +
+        ["Entry","Guard","Transition","Top Game","Finish"][i] + '</small><strong>' + value + '</strong></div></div>';
+    }).join("");
+    if (saved.length) preview.innerHTML += '<p class="gameplan-saved">Saved locally.</p>';
+  }
+  ids.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener("change", renderPlan);
+  });
+  if (saveBtn) saveBtn.addEventListener("click", function() {
+    try { localStorage.setItem("bjjGamePlan", JSON.stringify(values())); } catch(e) {}
+    renderPlan();
+  });
+  if (clearBtn) clearBtn.addEventListener("click", function() {
+    try { localStorage.removeItem("bjjGamePlan"); } catch(e) {}
+    renderPlan();
+  });
+  renderPlan();
 })();
 </script>
 </body>
