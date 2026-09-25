@@ -68,7 +68,12 @@
       <div class="search-bar">
         <input type="search" class="search-input" id="glossarySearch" placeholder="Search BJJ terms..." aria-label="Search glossary">
       </div>
-      <dl class="glossary" id="glossaryList"></dl>
+      <div id="glossarySections"></div>
+      <style>
+        .glossary-section { margin-top: 36px; }
+        .glossary-section:first-child { margin-top: 0; }
+        .glossary-category-title { font-size: 24px; margin-bottom: 18px; }
+      </style>
       <div class="no-results hidden" id="noGlossaryResults">No terms match your search.</div>
     </div>
   </section>
@@ -372,20 +377,72 @@ var GLOSSARY = [
   var search = document.getElementById("glossarySearch");
   var noResults = document.getElementById("noGlossaryResults");
 
+  var CATEGORY_ORDER = [
+    "Fundamentals & General Terms",
+    "Guard Positions",
+    "Guard Passing",
+    "Submissions",
+    "Escapes & Defense",
+    "Back & Dominant Positions",
+    "Takedowns & Wrestling",
+    "Gi & Grip Terminology",
+    "Movement & Drills",
+    "Portuguese & BJJ Slang",
+    "Judo & Grappling Terminology"
+  ];
+
+  var CATEGORY_RULES = [
+    ["Portuguese & BJJ Slang", ["Raspagem","Passagem de Guarda","Queda","Pegada","Montada","Guarda Fechada","Meia Guarda","Mata-Leão","Creonte","OSS"]],
+    ["Judo & Grappling Terminology", ["Kesa Gatame","Kosoto Gake","Kosoto Gari","Ouchi Gari","Osoto Gari","Sumi Gaeshi","Tai Otoshi","Uchi Mata","Uchi Mata Gaeshi","Uchi Mata Sankaku","Ude Garami","Ude Hishigi Juji Gatame","Ura Nage","Vale Tudo"]],
+    ["Gi & Grip Terminology", ["Gi","Lapel","Lapel Guard","Collar-Sleeve Guard","Cross Collar Choke","Canto Choke","Loop Choke","Pistol Grip","Pocket Grip","Garcia Grip","Marcelo Grip","Bow-and-Arrow Grip","Bow-and-Arrow Choke","Spider Guard"]],
+    ["Leg Locks & Leg Entanglements", ["50/50 Guard","Ashi Garami","False Reap","Heel Hook","K-Guard","Kani Basami","Leg Entanglement","Single-Leg X (SLX)","Shin-to-Shin","Kneebar","Calf Slicer","Biceps Slicer","Hip Clamp"]],
+    ["Guard Passing", ["Backstep","Body Lock","Combat Base","Guard Pass","Headquarters","Knee Cut","Leg Drag","Long Step","Over-under Pass","Pass","Smash Pass","Stack Pass","Standing Guard Pass","Toreando Pass","X-Pass"]],
+    ["Back & Dominant Positions", ["Back Control","Body Triangle","Chest-to-Back","Crucifix","Kesa Gatame","Knee-on-Belly","Mount","Mounted Triangle","North-South","S-Mount","Seatbelt","Side Control","Turtle","Gift Wrap","Head-and-Arm Control"]],
+    ["Takedowns & Wrestling", ["Ankle Pick","Deliberate Guard Pull","Double Underhooks","Front Headlock","Hip Heist","Russian Tie","Sit-Up Guard","Takedown","Underhook","Underhook Half Guard","Wrestle-Up","Wrestling-Up","Technical Stand-Up","Two-on-One","Stance"]],
+    ["Submissions", ["Americana","Anaconda Choke","Arm-In Guillotine","Arm Triangle","Armbar","Baratoplata","Bow-and-Arrow Choke","Clock Choke","D'Arce Choke","Darce","Ezekiel Choke","Guillotine","Kimura","Kata Gatame","Loop Choke","Omoplata","Rear Naked Choke (RNC)","Reverse Triangle","Triangle Choke","Wristlock","Mounted Triangle"]],
+    ["Escapes & Defense", ["Bridge","Frames","Granby Roll","Hip Escape","Re-Guard","Upa"]],
+    ["Movement & Drills", ["Cat-Dog","Drilling","Ebi","Frog Splash","Hip Switch","Inversion","Leg Pummel","Pummel","V-Ups","Leg Pummel"]],
+    ["Guard Positions", ["Berimbolo","Butterfly Guard","Butterfly Half Guard","Closed Guard","De La Riva (DLR)","Deep De La Riva","Deep Half Guard","Half Butterfly","Half Guard","Helicopter Guard","K-Guard","Lasso Guard","Lockdown","Octopus Guard","Reverse De La Riva","Reverse Half Guard","Sit-Up Guard","Spider Guard","Upside-Down Guard","X-Guard","Z-Guard","Collar-Sleeve Guard","Shin-to-Shin","Single-Leg X (SLX)","50/50 Guard","Lasso Guard"]],
+    ["Fundamentals & General Terms", ["Base","Guard","Inside Position","Outside Position","Hooks","Overhook","Posture","Sweep","Wrestle-Up"]]
+  ];
+
+  var CATEGORY_NAMES = CATEGORY_ORDER.concat(["Leg Locks & Leg Entanglements"]);
+
+  function getCategory(g) {
+    for (var i = 0; i < CATEGORY_RULES.length; i++) {
+      if (CATEGORY_RULES[i][1].indexOf(g.term) > -1) return CATEGORY_RULES[i][0];
+    }
+    return "Fundamentals & General Terms";
+  }
+
   function render(term) {
     var filtered = !term ? GLOSSARY : GLOSSARY.filter(function(g) {
       return g.term.toLowerCase().indexOf(term) > -1 || g.def.toLowerCase().indexOf(term) > -1;
     });
 
     if (filtered.length === 0) {
-      list.innerHTML = "";
+      document.getElementById("glossarySections").innerHTML = "";
       noResults.classList.remove("hidden");
       return;
     }
     noResults.classList.add("hidden");
 
-    list.innerHTML = filtered.map(function(g) {
-      return '<div class="glossary-item"><dt><a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(g.term + ' BJJ technique') + '" target="_blank" rel="noopener noreferrer">' + g.term + '</a></dt><dd>' + g.def + '</dd></div>';
+    var grouped = {};
+    filtered.forEach(function(g) {
+      var category = getCategory(g);
+      if (!grouped[category]) grouped[category] = [];
+      grouped[category].push(g);
+    });
+
+    document.getElementById("glossarySections").innerHTML = CATEGORY_ORDER.map(function(category) {
+      if (!grouped[category] || grouped[category].length === 0) return "";
+      return '<section class="glossary-section">' +
+        '<h2 class="section-title glossary-category-title">' + category + '</h2>' +
+        '<dl class="glossary">' +
+        grouped[category].map(function(g) {
+          return '<div class="glossary-item"><dt><a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(g.term + ' BJJ technique') + '" target="_blank" rel="noopener noreferrer">' + g.term + '</a></dt><dd>' + g.def + '</dd></div>';
+        }).join("") +
+        '</dl></section>';
     }).join("");
   }
 
