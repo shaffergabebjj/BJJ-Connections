@@ -61,9 +61,26 @@
   <!-- Glossary -->
   <section class="section">
     <div class="container">
-      <div class="callout callout-info" style="margin-bottom:20px">
-        <strong>Quick tip:</strong> Every BJJ term title below is a live link. Click any term to find videos showing the technique.
+      <div class="callout callout-info glossary-link-notice" style="margin-bottom:24px">
+        <strong>Every BJJ term below is a clickable link</strong>
+        <span>Click any term to find videos showing the technique.</span>
       </div>
+
+      <style>
+        .glossary-link-notice {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          padding: 20px 22px;
+          font-size: 16px;
+        }
+        .glossary-link-notice strong {
+          font-size: 21px;
+        }
+        .glossary-link-notice span {
+          font-size: 15px;
+        }
+      </style>
 
       <div class="search-bar">
         <input type="search" class="search-input" id="glossarySearch" placeholder="Search BJJ terms..." aria-label="Search glossary">
