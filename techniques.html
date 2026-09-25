@@ -62,6 +62,7 @@
     <div class="container">
       <div class="search-bar">
         <input type="search" class="search-input" id="techSearch" placeholder="Search techniques..." aria-label="Search techniques">
+        <button class="btn btn-dark btn-sm" id="randomTechnique" type="button">Random Technique</button>
       </div>
 
       <div class="filter-chips" id="techFilters" role="group" aria-label="Filter by category"></div>
@@ -126,6 +127,27 @@
   var noResults = document.getElementById("noResults");
   var countEl = document.getElementById("techCount");
   var searchEl = document.getElementById("techSearch");
+  var randomBtn = document.getElementById("randomTechnique");
+
+  function getFavorites() {
+    try { return JSON.parse(localStorage.getItem("bjjFavoriteTechniques") || "[]"); }
+    catch(e) { return []; }
+  }
+  function saveFavorites(items) {
+    try { localStorage.setItem("bjjFavoriteTechniques", JSON.stringify(items)); }
+    catch(e) {}
+  }
+  function isFavorite(name) {
+    return getFavorites().indexOf(name) !== -1;
+  }
+  function toggleFavorite(name) {
+    var favorites = getFavorites();
+    var index = favorites.indexOf(name);
+    if (index === -1) favorites.push(name);
+    else favorites.splice(index, 1);
+    saveFavorites(favorites);
+    render();
+  }
 
   // Category filter chips
   var allChip = document.createElement("button");
@@ -193,9 +215,38 @@
         '<div class="tech-category">' + (catLabel ? catLabel.label : t.cat) + '</div>' +
         '<p class="tech-desc">' + t.desc + '</p>' +
         '<span class="belt-badge belt-' + t.belt + '">' + t.belt + ' Belt</span>' +
+        '<button class="tech-favorite ' + (isFavorite(t.name) ? 'is-favorite' : '') + '" data-favorite="' + t.name.replace(/"/g, '&quot;') + '" type="button" aria-label="' + (isFavorite(t.name) ? 'Remove ' : 'Save ') + t.name + ' ' + (isFavorite(t.name) ? 'from favorites' : 'to favorites') + '">' +
+          (isFavorite(t.name) ? '★ Saved' : '☆ Save') +
+        '</button>' +
       '</div>';
     }).join("");
+
+    results.querySelectorAll("[data-favorite]").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        toggleFavorite(btn.getAttribute("data-favorite"));
+      });
+    });
   }
+
+  if (randomBtn) randomBtn.addEventListener("click", function() {
+    if (!TECHNIQUES.length) return;
+    var t = TECHNIQUES[Math.floor(Math.random() * TECHNIQUES.length)];
+    searchEl.value = "";
+    activeCat = "all";
+    activeBelt = "all";
+    updateFilters(catFilters, allChip);
+    updateFilters(beltFilters, beltAll);
+    render();
+    setTimeout(function() {
+      var cards = Array.prototype.slice.call(results.querySelectorAll(".tech-card"));
+      var card = cards.find(function(el) { return el.querySelector("h3") && el.querySelector("h3").textContent === t.name; });
+      if (card) {
+        card.scrollIntoView({ behavior: "smooth", block: "center" });
+        card.classList.add("random-highlight");
+        setTimeout(function() { card.classList.remove("random-highlight"); }, 1400);
+      }
+    }, 0);
+  });
 
   searchEl.addEventListener("input", function() {
     searchTerm = searchEl.value.toLowerCase().trim();
