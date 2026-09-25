@@ -1,13 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <rect width="64" height="64" rx="14" fill="#0a0a0a"/>
-  <!-- Horizontal belt bar -->
-  <rect x="6" y="29" width="52" height="6" fill="#fff"/>
-  <!-- Knot: vertical center piece -->
-  <rect x="26" y="23" width="12" height="18" fill="#fff"/>
-  <!-- Dark gap where belt wraps under -->
-  <rect x="6" y="30" width="20" height="4" fill="#0a0a0a"/>
-  <rect x="38" y="30" width="20" height="4" fill="#0a0a0a"/>
-  <!-- Belt ends hanging down from knot -->
-  <path d="M26 33 L22 52 L27 52 L29 35 Z" fill="#fff"/>
-  <path d="M38 33 L42 52 L37 52 L35 35 Z" fill="#fff"/>
+  <path d="M32 10 L18 18 L18 50 L24 50 L24 30 L26 30 L26 54 L30 54 L30 34 L34 34 L34 54 L38 54 L38 30 L40 30 L40 50 L46 50 L46 18 Z" fill="#fff"/>
+  <rect x="29" y="10" width="6" height="4" fill="#c8102e"/>
+  <path d="M28 16 L32 22 L36 16" stroke="#0a0a0a" stroke-width="2" fill="none"/>
 </svg>
