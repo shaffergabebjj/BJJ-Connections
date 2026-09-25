@@ -872,3 +872,56 @@ a:focus-visible, button:focus-visible, input:focus-visible,
   color: #fff;
   text-decoration: underline;
 }
+
+
+/* ---- Game-first homepage ---- */
+.game-hero { padding-bottom: 56px; }
+.game-hero .hero-lead { max-width: 720px; margin-left: auto; margin-right: auto; }
+.hero-game-card {
+  max-width: 620px;
+  margin: 28px auto 22px;
+  padding: 22px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 16px;
+  box-shadow: 0 12px 36px rgba(0,0,0,.18);
+}
+.hero-game-top { display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:14px; flex-wrap:wrap; }
+.hero-game-label { font-size:12px; font-weight:900; letter-spacing:1px; }
+.hero-game-meta { font-size:12px; color:rgba(255,255,255,.65); }
+.hero-mini-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; margin-bottom:16px; }
+.hero-mini-grid span { min-height:54px; display:flex; align-items:center; justify-content:center; text-align:center; padding:6px; border-radius:8px; background:rgba(255,255,255,.9); color:#111; font-size:11px; font-weight:900; }
+.btn-game { width:100%; justify-content:center; }
+.game-feature { display:flex; align-items:center; justify-content:space-between; gap:24px; padding:28px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow-sm); }
+.game-feature h2 { margin:4px 0 8px; }
+.game-feature p { margin:0; color:var(--muted); max-width:650px; }
+
+/* ---- Technique Explorer upgrades ---- */
+.tech-favorite { display:block; margin-top:12px; border:1px solid var(--border); background:transparent; color:var(--muted); border-radius:18px; padding:7px 11px; font:700 12px var(--font-body); cursor:pointer; }
+.tech-favorite:hover, .tech-favorite.is-favorite { color:var(--accent); border-color:var(--accent); }
+.random-highlight { box-shadow:0 0 0 3px var(--accent), var(--shadow); transform:translateY(-2px); }
+
+/* ---- Game Plan ---- */
+.gameplan-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.gameplan-grid label { display:block; font-size:14px; margin:0 0 6px; }
+.gameplan-grid select { width:100%; margin-bottom:14px; }
+.gameplan-preview { position:sticky; top:20px; align-self:start; }
+.gameplan-eyebrow { font-size:11px; font-weight:900; letter-spacing:1px; color:var(--muted); text-transform:uppercase; margin-bottom:12px; }
+.gameplan-step { display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid var(--border); }
+.gameplan-step:last-of-type { border-bottom:0; }
+.gameplan-number { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--black); color:var(--white); font-size:12px; font-weight:900; flex-shrink:0; }
+.gameplan-step small { display:block; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.4px; }
+.gameplan-step strong { display:block; margin-top:2px; }
+.gameplan-saved { color:var(--accent); font-size:13px; font-weight:800; margin:14px 0 0; }
+
+@media (max-width: 700px) {
+  .game-feature, .gameplan-grid { grid-template-columns:1fr; display:grid; }
+  .game-feature { padding:22px; }
+  .game-feature .btn { width:100%; }
+  .gameplan-preview { position:static; }
+}
+@media (max-width: 560px) {
+  .hero-game-card { padding:14px; }
+  .hero-mini-grid { gap:5px; }
+  .hero-mini-grid span { min-height:48px; font-size:9px; }
+}
