@@ -70,14 +70,27 @@
       <h1>BJJ Connections</h1>
       <div class="hero-game-card">
         <div class="hero-game-top">
-          <span class="hero-game-label">TODAY'S PUZZLE</span>
-          <span class="hero-game-meta">16 words · 4 groups · 4 mistakes</span>
+          <div>
+            <span class="hero-game-label">TODAY'S PUZZLE</span>
+            <span class="hero-game-date" id="homePuzzleDate">Loading today's puzzle…</span>
+          </div>
+          <span class="hero-game-meta" id="homePuzzleMeta">16 words · 4 groups · 4 mistakes</span>
         </div>
-        <div class="hero-mini-grid">
-          <span>KIMURA</span><span>ARMBAR</span><span>TRIANGLE</span><span>OMOPLATA</span>
-          <span>MOUNT</span><span>BACK</span><span>GUARD</span><span>PASS</span>
+        <div class="home-focus" id="homePuzzleFocus"></div>
+        <div class="hero-mini-grid home-mini-grid" id="homePuzzleGrid" aria-label="Today's BJJ Connections puzzle"></div>
+        <div class="home-game-status">
+          <span id="homeMistakes">4 mistakes</span>
+          <span id="homeMessage" role="status" aria-live="polite">Select 4 words.</span>
         </div>
-        <a href="puzzles.html" class="btn btn-primary btn-game">Play Today's BJJ Connections →</a>
+        <div class="home-game-controls">
+          <button class="btn btn-secondary home-game-btn" id="homeShuffle" type="button">Shuffle</button>
+          <button class="btn btn-primary home-game-btn" id="homeSubmit" type="button" disabled>Submit</button>
+        </div>
+        <div id="homeSolved" class="home-solved"></div>
+        <div class="home-game-footer">
+          <span id="homeStreak">Streak: 0</span>
+          <a href="puzzles.html">Open full game →</a>
+        </div>
       </div>
       <div class="hero-actions">
         <a href="techniques.html" class="btn btn-secondary">Explore Techniques</a>
@@ -217,6 +230,149 @@
   </div>
 </footer>
 
+<script src="data.js"></script>
+<script>
+(function () {
+  const grid = document.getElementById("homePuzzleGrid");
+  const dateEl = document.getElementById("homePuzzleDate");
+  const metaEl = document.getElementById("homePuzzleMeta");
+  const focusEl = document.getElementById("homePuzzleFocus");
+  const mistakesEl = document.getElementById("homeMistakes");
+  const messageEl = document.getElementById("homeMessage");
+  const submitBtn = document.getElementById("homeSubmit");
+  const shuffleBtn = document.getElementById("homeShuffle");
+  const solvedEl = document.getElementById("homeSolved");
+  const streakEl = document.getElementById("homeStreak");
+
+  if (!grid || typeof PUZZLES === "undefined" || !PUZZLES.length) return;
+
+  const now = new Date();
+  const dayNumber = Math.floor(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) / 86400000);
+  const dateKey = now.toISOString().slice(0, 10);
+  const puzzle = PUZZLES[Math.abs(dayNumber) % PUZZLES.length];
+  let words = puzzle.groups.flatMap(g => g.items);
+  let selected = [];
+  let solved = [];
+  let mistakes = 4;
+  let finished = false;
+
+  dateEl.textContent = new Intl.DateTimeFormat(undefined, {
+    weekday: "long", month: "long", day: "numeric"
+  }).format(now);
+  metaEl.textContent = "16 words · 4 groups · 4 mistakes";
+  focusEl.textContent = "Today's focus: " + puzzle.theme;
+
+  function seeded(n) {
+    const x = Math.sin(n) * 10000;
+    return x - Math.floor(x);
+  }
+
+  function dailyShuffle(list) {
+    const out = list.slice();
+    for (let i = out.length - 1; i > 0; i--) {
+      const j = Math.floor(seeded(dayNumber + i + puzzle.id) * (i + 1));
+      [out[i], out[j]] = [out[j], out[i]];
+    }
+    return out;
+  }
+
+  words = dailyShuffle(words);
+
+  function render() {
+    grid.innerHTML = "";
+    words.forEach(word => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "hero-mini-tile" + (selected.includes(word) ? " selected" : "");
+      button.textContent = word;
+      button.disabled = finished;
+      button.setAttribute("aria-pressed", selected.includes(word) ? "true" : "false");
+      button.onclick = function () {
+        if (selected.includes(word)) {
+          selected = selected.filter(x => x !== word);
+        } else if (selected.length < 4) {
+          selected.push(word);
+        }
+        render();
+        update();
+      };
+      grid.appendChild(button);
+    });
+  }
+
+  function update() {
+    mistakesEl.textContent = mistakes + (mistakes === 1 ? " mistake" : " mistakes") + " left";
+    submitBtn.disabled = selected.length !== 4 || finished;
+  }
+
+  function renderSolved() {
+    solvedEl.innerHTML = "";
+    solved.forEach((group, index) => {
+      const row = document.createElement("div");
+      row.className = "home-solved-group home-solved-" + index;
+      row.innerHTML = "<strong>" + group.category + "</strong><span>" + group.items.join(" · ") + "</span>";
+      solvedEl.appendChild(row);
+    });
+  }
+
+  function finish() {
+    finished = true;
+    messageEl.textContent = "Puzzle complete. Open the full game to see the explanations.";
+    puzzle.groups.forEach(group => {
+      if (!solved.includes(group)) solved.push(group);
+    });
+    renderSolved();
+    grid.innerHTML = "";
+    update();
+  }
+
+  function submitGuess() {
+    if (selected.length !== 4 || finished) return;
+    const found = puzzle.groups.find(group =>
+      group.items.every(word => selected.includes(word))
+    );
+
+    if (found) {
+      solved.push(found);
+      words = words.filter(word => !found.items.includes(word));
+      selected = [];
+      messageEl.textContent = "Connected.";
+      renderSolved();
+      if (!words.length) finish();
+      else render();
+    } else {
+      const near = puzzle.groups.some(group =>
+        group.items.filter(word => selected.includes(word)).length === 3
+      );
+      mistakes--;
+      messageEl.textContent = near ? "One away." : "Not a group.";
+      if (mistakes <= 0) finish();
+    }
+    update();
+  }
+
+  shuffleBtn.onclick = function () {
+    if (finished) return;
+    for (let i = words.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [words[i], words[j]] = [words[j], words[i]];
+    }
+    render();
+  };
+
+  submitBtn.onclick = submitGuess;
+
+  try {
+    const saved = JSON.parse(localStorage.getItem("bjjConnectionsState") || "{}");
+    streakEl.textContent = "Streak: " + (saved.currentStreak || 0);
+  } catch (e) {
+    streakEl.textContent = "Daily puzzle";
+  }
+
+  render();
+  update();
+})();
+</script>
 <script src="nav.js"></script>
 </body>
 </html>
