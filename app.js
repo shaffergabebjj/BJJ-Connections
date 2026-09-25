@@ -201,7 +201,10 @@ function submitGuess() {
   } else {
     const near = puzzle.groups.some(g => g.items.filter(w => attempted.includes(w)).length === 3);
     mistakes--;
-    selected = [];
+    // Match the real NYT Connections behavior: a wrong guess does NOT
+    // clear the selection. The words stay selected so the player can
+    // just tap off the wrong one(s) and tap in a replacement, instead
+    // of re-selecting all 4 from scratch every time.
     if (mistakes <= 0) finish(false);
     else msg.textContent = near ? "One away." : "Not a group.";
     render();
@@ -319,6 +322,25 @@ $("resetStats").onclick = () => {
     location.reload();
   }
 };
+
+// ---- How to play -----------------------------------------------------------
+// Reuses the same resilient storage pattern as game state: never throws,
+// just falls back to "show it" if storage is unavailable.
+const howToBtn = $("howToBtn"), howToPanel = $("howToPanel"), howToCloseBtn = $("howToCloseBtn");
+function setHowToOpen(open) {
+  howToPanel.classList.toggle("hidden", !open);
+  howToBtn.setAttribute("aria-expanded", open ? "true" : "false");
+}
+howToBtn.onclick = () => setHowToOpen(howToPanel.classList.contains("hidden"));
+howToCloseBtn.onclick = () => {
+  setHowToOpen(false);
+  try { localStorage.setItem("bjjConnectionsSeenHowTo", "1"); } catch (e) { /* ignore */ }
+};
+(function maybeAutoShowHowTo() {
+  let seen = false;
+  try { seen = localStorage.getItem("bjjConnectionsSeenHowTo") === "1"; } catch (e) { /* leave false */ }
+  if (!seen) setHowToOpen(true);
+})();
 
 // ---- Boot -------------------------------------------------------------------
 if (typeof validateAllPuzzles === "function") {

@@ -36,7 +36,10 @@ header { text-align: center; }
 h1 { margin: 5px 0 0; font-size: clamp(32px, 7vw, 46px); }
 .creator, .sub { color: var(--muted); }
 .creator { font-size: 12px; font-weight: 700; margin-top: 5px; }
-.sub { margin: 12px auto 18px; max-width: 600px; }
+.sub { margin: 12px auto 8px; max-width: 600px; }
+#howToBtn { margin: 4px auto 10px; }
+#howToPanel { text-align: left; max-width: 600px; margin: 0 auto 18px; }
+#howToPanel p { margin: 0 0 10px; line-height: 1.5; }
 
 /* ---- Tabs & buttons ---- */
 .tabs, .buttons { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
