@@ -864,7 +864,7 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 }
 
 .creator-links a {
-  color: rgba(255,255,255,.65);
+  color: #e53935;
   text-decoration: none;
 }
 
