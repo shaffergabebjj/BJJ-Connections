@@ -841,3 +841,34 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 .footer-links a:hover {
   text-decoration: underline;
 }
+.creator-contact {
+  text-align: center;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.1);
+}
+
+.creator-title {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255,255,255,.8);
+}
+
+.creator-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.creator-links a {
+  color: rgba(255,255,255,.65);
+  text-decoration: none;
+}
+
+.creator-links a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
