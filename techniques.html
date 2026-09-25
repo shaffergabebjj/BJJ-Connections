@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BJJ Techniques — Positions, Submissions, Sweeps & More | BJJ Connections</title>
+<meta name="description" content="Search and filter Brazilian Jiu-Jitsu techniques by category: positions, submissions, escapes, sweeps, takedowns, guards, passing, and leg entanglements.">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="canonical" href="https://bjjconnectionsbygabe.com/techniques.html">
+
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BJJ Connections">
+<meta property="og:title" content="BJJ Techniques — Explore Positions, Submissions & More">
+<meta property="og:description" content="Search and filter BJJ techniques by category and difficulty.">
+<meta property="og:url" content="https://bjjconnectionsbygabe.com/techniques.html">
+<meta property="og:image" content="https://bjjconnectionsbygabe.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="BJJ Techniques — Explore Positions, Submissions & More">
+<meta name="twitter:description" content="Search and filter BJJ techniques by category and difficulty.">
+<meta name="twitter:image" content="https://bjjconnectionsbygabe.com/og-image.png">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<header class="site-header">
+  <div class="container">
+    <nav class="nav">
+      <a href="/" class="nav-logo">
+        <img src="favicon.svg" alt="" aria-hidden="true">
+        <span class="logo-text">BJJ Connections</span>
+      </a>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="techniques.html" class="active">Techniques</a>
+        <a href="puzzles.html">Puzzles</a>
+        <a href="competition.html">Competition</a>
+        <a href="training.html">Training</a>
+        <a href="resources.html">Resources</a>
+        <a href="about.html">About</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="page-header">
+    <div class="container">
+      <h1>Technique Explorer</h1>
+      <p>Search and filter through Brazilian Jiu-Jitsu techniques by category and approximate difficulty level.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="search-bar">
+        <input type="search" class="search-input" id="techSearch" placeholder="Search techniques..." aria-label="Search techniques">
+      </div>
+
+      <div class="filter-chips" id="techFilters" role="group" aria-label="Filter by category"></div>
+
+      <div class="filter-chips" id="beltFilters" role="group" aria-label="Filter by belt level"></div>
+
+      <div class="checklist-progress" id="techProgress">
+        <span id="techCount">Loading...</span>
+      </div>
+
+      <div class="tech-results" id="techResults"></div>
+      <div class="no-results hidden" id="noResults">No techniques match your search. Try a different filter or search term.</div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="callout callout-info">
+        <strong>Note:</strong> Belt levels shown are approximate difficulty indicators, not rank requirements. They reflect how early a technique is typically introduced in training. Always learn techniques under qualified instruction.
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">BJJ Connections</div>
+        <p style="font-size:14px;color:rgba(255,255,255,.5);margin:0">A growing collection of Brazilian Jiu-Jitsu techniques, training tools, competition resources, and daily puzzles for grapplers.</p>
+      </div>
+      <div class="footer-links">
+        <a href="techniques.html">Techniques</a>
+        <a href="puzzles.html">Puzzles</a>
+        <a href="competition.html">Competition</a>
+        <a href="training.html">Training</a>
+      </div>
+      <div class="footer-links">
+        <a href="resources.html">Resources</a>
+        <a href="about.html">About</a>
+        <a href="https://github.com/shaffergabebjj/BJJ-Connections" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p style="margin:0">Built by Gabe Shaffer. Technique descriptions are for educational reference — always train under qualified supervision.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="techniques.js"></script>
+<script src="nav.js"></script>
+<script>
+(function() {
+  if (typeof TECHNIQUES === "undefined" || typeof TECHNIQUE_CATEGORIES === "undefined") return;
+
+  var activeCat = "all";
+  var activeBelt = "all";
+  var searchTerm = "";
+
+  var catFilters = document.getElementById("techFilters");
+  var beltFilters = document.getElementById("beltFilters");
+  var results = document.getElementById("techResults");
+  var noResults = document.getElementById("noResults");
+  var countEl = document.getElementById("techCount");
+  var searchEl = document.getElementById("techSearch");
+
+  // Category filter chips
+  var allChip = document.createElement("button");
+  allChip.className = "chip active";
+  allChip.textContent = "All";
+  allChip.onclick = function() { activeCat = "all"; updateFilters(catFilters, allChip); render(); };
+  catFilters.appendChild(allChip);
+
+  TECHNIQUE_CATEGORIES.forEach(function(cat) {
+    var chip = document.createElement("button");
+    chip.className = "chip";
+    chip.textContent = cat.label;
+    chip.onclick = function() { activeCat = cat.id; updateFilters(catFilters, chip); render(); };
+    catFilters.appendChild(chip);
+  });
+
+  // Belt filter chips
+  var beltAll = document.createElement("button");
+  beltAll.className = "chip active";
+  beltAll.textContent = "All Belts";
+  beltAll.onclick = function() { activeBelt = "all"; updateFilters(beltFilters, beltAll); render(); };
+  beltFilters.appendChild(beltAll);
+
+  var belts = [
+    { id: "white", label: "White" },
+    { id: "blue", label: "Blue" },
+    { id: "purple", label: "Purple" },
+    { id: "black", label: "Black" }
+  ];
+  belts.forEach(function(belt) {
+    var chip = document.createElement("button");
+    chip.className = "chip";
+    chip.textContent = belt.label;
+    chip.onclick = function() { activeBelt = belt.id; updateFilters(beltFilters, chip); render(); };
+    beltFilters.appendChild(chip);
+  });
+
+  function updateFilters(container, activeChip) {
+    container.querySelectorAll(".chip").forEach(function(c) { c.classList.remove("active"); });
+    activeChip.classList.add("active");
+  }
+
+  function render() {
+    var filtered = TECHNIQUES.filter(function(t) {
+      var catMatch = activeCat === "all" || t.cat === activeCat;
+      var beltMatch = activeBelt === "all" || t.belt === activeBelt;
+      var searchMatch = !searchTerm || t.name.toLowerCase().indexOf(searchTerm) > -1 ||
+        t.desc.toLowerCase().indexOf(searchTerm) > -1;
+      return catMatch && beltMatch && searchMatch;
+    });
+
+    countEl.textContent = filtered.length + " technique" + (filtered.length === 1 ? "" : "s");
+
+    if (filtered.length === 0) {
+      results.innerHTML = "";
+      noResults.classList.remove("hidden");
+      return;
+    }
+    noResults.classList.add("hidden");
+
+    results.innerHTML = filtered.map(function(t) {
+      var catLabel = TECHNIQUE_CATEGORIES.find(function(c) { return c.id === t.cat; });
+      return '<div class="tech-card">' +
+        '<h3>' + t.name + '</h3>' +
+        '<div class="tech-category">' + (catLabel ? catLabel.label : t.cat) + '</div>' +
+        '<p class="tech-desc">' + t.desc + '</p>' +
+        '<span class="belt-badge belt-' + t.belt + '">' + t.belt + ' Belt</span>' +
+      '</div>';
+    }).join("");
+  }
+
+  searchEl.addEventListener("input", function() {
+    searchTerm = searchEl.value.toLowerCase().trim();
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

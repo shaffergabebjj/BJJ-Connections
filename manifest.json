@@ -1,12 +1,12 @@
 {
   "name": "BJJ Connections",
   "short_name": "BJJ Connections",
-  "description": "A daily Connections-style word puzzle for Brazilian Jiu-Jitsu.",
+  "description": "A growing collection of Brazilian Jiu-Jitsu techniques, training tools, competition resources, and daily puzzles for grapplers.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#f6f6f2",
-  "theme_color": "#111111",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
   "icons": [
     { "src": "favicon-32.png", "sizes": "32x32", "type": "image/png" },
     { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
