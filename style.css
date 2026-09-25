@@ -925,3 +925,88 @@ a:focus-visible, button:focus-visible, input:focus-visible,
   .hero-mini-grid { gap:5px; }
   .hero-mini-grid span { min-height:48px; font-size:9px; }
 }
+
+
+/* ---- Interactive daily puzzle on homepage ---- */
+.hero-game-card { max-width: 720px; }
+.hero-game-date { display:block; margin-top:3px; font-size:13px; font-weight:700; color:rgba(255,255,255,.72); }
+.home-focus {
+  display:inline-flex;
+  margin:0 0 14px;
+  padding:5px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.16);
+  color:rgba(255,255,255,.78);
+  font-size:11px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+}
+.home-mini-grid { margin-bottom:12px; }
+.hero-mini-tile {
+  min-height:58px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:6px;
+  border:0;
+  border-radius:8px;
+  background:rgba(255,255,255,.94);
+  color:#111;
+  font-size:11px;
+  font-weight:900;
+  line-height:1.1;
+  cursor:pointer;
+  transition:transform var(--transition), background var(--transition), color var(--transition);
+}
+.hero-mini-tile:hover { transform:translateY(-2px); }
+.hero-mini-tile.selected {
+  background:var(--accent);
+  color:#fff;
+  transform:translateY(-2px);
+}
+.hero-mini-tile:disabled { cursor:default; }
+.home-game-status {
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  min-height:24px;
+  margin:8px 0 12px;
+  color:rgba(255,255,255,.72);
+  font-size:12px;
+  font-weight:800;
+}
+.home-game-controls { display:flex; gap:8px; }
+.home-game-btn { flex:1; min-height:42px; }
+.home-solved { display:flex; flex-direction:column; gap:6px; margin-top:10px; }
+.home-solved-group {
+  padding:9px 11px;
+  border-radius:8px;
+  color:#111;
+  font-size:11px;
+  text-align:center;
+}
+.home-solved-group strong { display:block; margin-bottom:2px; }
+.home-solved-0 { background:var(--green); }
+.home-solved-1 { background:var(--yellow); }
+.home-solved-2 { background:var(--blue); }
+.home-solved-3 { background:var(--purple); }
+.home-game-footer {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.58);
+  font-size:12px;
+  font-weight:700;
+}
+.home-game-footer a { color:var(--white); }
+@media (max-width:560px) {
+  .hero-mini-tile { min-height:52px; font-size:9px; }
+  .home-game-status { font-size:11px; }
+}
