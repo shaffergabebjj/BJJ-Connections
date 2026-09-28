@@ -13,8 +13,6 @@ const APP_SHELL = [
   "/app.js",
   "/data.js",
   "/techniques.js",
-  "/competition.js",
-  "/training.js",
   "/favicon.svg",
   "/favicon-32.png",
   "/apple-touch-icon.png",
