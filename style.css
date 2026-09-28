@@ -1010,3 +1010,29 @@ a:focus-visible, button:focus-visible, input:focus-visible,
   .hero-mini-tile { min-height:52px; font-size:9px; }
   .home-game-status { font-size:11px; }
 }
+
+
+.nav-install-btn {
+  border: 1px solid rgba(255,255,255,.28);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 7px 11px;
+  border-radius: 6px;
+}
+.nav-install-btn:hover {
+  background: rgba(255,255,255,.1);
+}
+.nav-install-btn[hidden] {
+  display: none;
+}
+@media (max-width: 800px) {
+  .nav-install-btn {
+    width: 100%;
+    text-align: left;
+    padding: 14px 16px;
+    border: 0;
+    border-radius: 0;
+  }
+}
