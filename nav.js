@@ -48,6 +48,24 @@
   install.textContent = "Install App";
   install.hidden = true;
   navLinks.appendChild(install);
+  var isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+  if (isIOS) install.hidden = false;
+
+  function showIOSInstructions() {
+    var dialog = document.createElement("dialog");
+    dialog.className = "install-dialog";
+    dialog.setAttribute("aria-labelledby", "install-dialog-title");
+    dialog.innerHTML = '<h2 id="install-dialog-title">Add BJJ Connections to your iPhone</h2>' +
+      '<ol><li>Open this page in <strong>Safari</strong> if you are viewing it inside another app.</li>' +
+      '<li>Tap Safari’s <strong>Share</strong> button (the square with an arrow). If you do not see it, open the page menu and choose <strong>Share</strong>.</li>' +
+      '<li>Tap <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</li></ol>' +
+      '<p>The BJJ Connections icon will appear on your Home Screen.</p>' +
+      '<button type="button" class="btn btn-primary install-dialog-close">Got it</button>';
+    document.body.appendChild(dialog);
+    dialog.querySelector("button").addEventListener("click", function () { dialog.close(); });
+    dialog.addEventListener("close", function () { dialog.remove(); install.focus(); });
+    dialog.showModal();
+  }
 
   window.addEventListener("beforeinstallprompt", function (event) {
     event.preventDefault();
@@ -64,9 +82,8 @@
       return;
     }
 
-    var isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
     if (isIOS) {
-      alert("To install BJJ Connections on iPhone or iPad: tap the Share button in Safari, then choose “Add to Home Screen.”");
+      showIOSInstructions();
     } else {
       alert("Use your browser's Install App or Add to Home Screen option to install BJJ Connections.");
     }
