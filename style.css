@@ -441,7 +441,7 @@ ul { list-style: none; }
 .word:disabled { cursor: default; }
 
 /* Solved groups */
-.solved { padding: 13px 15px; border-radius: 9px; margin-bottom: 8px; text-align: center; font-size: 14px; font-weight: 700; }
+.solved { color: #111; padding: 13px 15px; border-radius: 9px; margin-bottom: 8px; text-align: center; font-size: 14px; font-weight: 700; }
 .solved:nth-child(4n+1) { background: var(--green); }
 .solved:nth-child(4n+2) { background: var(--yellow); }
 .solved:nth-child(4n+3) { background: var(--blue); }
@@ -752,10 +752,6 @@ a:focus-visible, button:focus-visible, input:focus-visible,
     --shadow-sm: 0 1px 3px rgba(0,0,0,.3);
     --shadow: 0 2px 8px rgba(0,0,0,.4);
     --shadow-lg: 0 8px 30px rgba(0,0,0,.5);
-    --green: #2f4a30;
-    --yellow: #4d4426;
-    --blue: #2a3d4d;
-    --purple: #3a3148;
     --accent-soft: #2a1518;
   }
   .callout { background: var(--accent-soft); }
