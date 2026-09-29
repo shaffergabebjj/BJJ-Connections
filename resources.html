@@ -59,7 +59,7 @@
   </section>
 
   <!-- Glossary -->
-  <section class="section">
+  <section class="section" id="glossary">
     <div class="container">
       <div class="callout callout-info glossary-link-notice" style="margin-bottom:24px">
         <strong>Every BJJ term below is a clickable link</strong>
@@ -92,6 +92,32 @@
         .glossary-category-title { font-size: 24px; margin-bottom: 18px; }
       </style>
       <div class="no-results hidden" id="noGlossaryResults">No terms match your search.</div>
+    </div>
+  </section>
+
+  <!-- Searchable answers: rendered as HTML so they remain useful without JavaScript. -->
+  <section class="section section-alt" id="questions">
+    <div class="container">
+      <h2 class="section-title">BJJ questions and answers</h2>
+      <p class="section-sub">Quick answers drawn from the techniques, glossary, training and competition guides on this site.</p>
+      <label for="questionSearch" class="faq-label">Search questions and answers</label>
+      <input type="search" class="search-input faq-search" id="questionSearch" placeholder="Try guard, sweep, or competition" autocomplete="off">
+      <p id="questionCount" class="faq-count" role="status" aria-live="polite"></p>
+      <div class="faq-list" id="questionList">
+        <article class="faq-item"><h3>What is guard in BJJ?</h3><p>Guard is a bottom position where you use your legs and grips to manage distance, off-balance your partner and attack. <a href="techniques.html">Explore guard techniques</a>.</p></article>
+        <article class="faq-item"><h3>What is the difference between closed guard and open guard?</h3><p>In closed guard, your legs wrap around your partner with your ankles crossed. Open guard keeps the legs uncrossed and uses frames, hooks or grips to control distance. <a href="resources.html#glossary">See the glossary</a>.</p></article>
+        <article class="faq-item"><h3>What is a guard pass?</h3><p>A guard pass moves around or through the bottom player’s legs to reach a controlling position such as side control. Knee cut, leg drag and toreando are examples. <a href="techniques.html">Browse techniques</a>.</p></article>
+        <article class="faq-item"><h3>What is a sweep?</h3><p>A sweep reverses position from guard so the bottom player comes on top. Scissor, flower and hip bump sweeps are common examples. <a href="techniques.html">Explore sweeps</a>.</p></article>
+        <article class="faq-item"><h3>What is the difference between a sweep and a takedown?</h3><p>A sweep starts from guard on the ground and reverses the position. A takedown brings a standing opponent to the mat. <a href="resources.html#glossary">Browse the glossary</a>.</p></article>
+        <article class="faq-item"><h3>What is the difference between gi and no-gi?</h3><p>Gi training uses a jacket, pants and belt that can be gripped for control and submissions. No-gi training does not use those clothing grips. Rules can vary by event. <a href="competition.html">See competition prep</a>.</p></article>
+        <article class="faq-item"><h3>What is back control?</h3><p>Back control places you behind your partner, often with hooks or a body triangle and a seatbelt grip. It creates strong opportunities for chokes. <a href="techniques.html">Browse techniques</a>.</p></article>
+        <article class="faq-item"><h3>What is side control?</h3><p>Side control is a top position across your partner’s torso after you pass the guard. It offers control and several routes to mount or submissions. <a href="techniques.html">Explore positions</a>.</p></article>
+        <article class="faq-item"><h3>What is an armbar?</h3><p>An armbar is a submission that extends the elbow joint while controlling the arm and body. Apply submissions with your training partner’s safety in mind. <a href="techniques.html">Explore submissions</a>.</p></article>
+        <article class="faq-item"><h3>What is ashi garami?</h3><p>Ashi garami is a family of leg entanglements used to control a leg and enter leg attacks. Specific finishes and permitted techniques depend on the ruleset. <a href="resources.html#glossary">See related terms</a>.</p></article>
+        <article class="faq-item"><h3>How should I plan a training session?</h3><p>Pick one position or skill to focus on, drill its entry and response, then try it during positional sparring. Record what worked and what needs another round of practice. <a href="training.html">Use the training guide</a>.</p></article>
+        <article class="faq-item"><h3>How do I prepare for my first BJJ competition?</h3><p>Check your event’s current rules and weigh-in details, pack your required gear, and plan how you will warm up and get to the venue. <a href="competition.html">Use the competition checklist</a>.</p></article>
+      </div>
+      <p id="noQuestionResults" class="no-results" hidden>No answers match your search. Try a different BJJ term.</p>
     </div>
   </section>
 
@@ -469,6 +495,27 @@ var GLOSSARY = [
     render(search.value.toLowerCase().trim());
   });
   render();
+})();
+</script>
+<script>
+(function () {
+  var search = document.getElementById("questionSearch");
+  var entries = Array.from(document.querySelectorAll("#questionList .faq-item"));
+  var count = document.getElementById("questionCount");
+  var empty = document.getElementById("noQuestionResults");
+  function filter() {
+    var query = search.value.trim().toLocaleLowerCase();
+    var visible = 0;
+    entries.forEach(function (entry) {
+      var match = entry.textContent.toLocaleLowerCase().includes(query);
+      entry.hidden = !match;
+      if (match) visible++;
+    });
+    count.textContent = visible + " of " + entries.length + " answers";
+    empty.hidden = visible !== 0;
+  }
+  search.addEventListener("input", filter);
+  filter();
 })();
 </script>
 </body>

@@ -35,6 +35,15 @@ function loadDaily(now) {
 const {PUZZLES, validateAllPuzzles} = loadData();
 assert.equal(PUZZLES.length, 100, "daily index history depends on the 100-puzzle bank");
 assert.deepEqual([...validateAllPuzzles(PUZZLES)], []);
+for (let i = 0; i < PUZZLES.length; i++) {
+  const words = new Set(PUZZLES[i].groups.flatMap(group => group.items));
+  for (let j = i + 1; j < PUZZLES.length; j++) {
+    const overlap = PUZZLES[j].groups.flatMap(group => group.items)
+      .filter(word => words.has(word)).length;
+    assert(overlap < 15, `puzzles ${i + 1} and ${j + 1} share ${overlap} of 16 answers`);
+  }
+}
+
 const repeatedWords = JSON.parse(JSON.stringify(PUZZLES[0]));
 repeatedWords.id = 101;
 repeatedWords.groups[0].category = "A DIFFERENT LABEL";
