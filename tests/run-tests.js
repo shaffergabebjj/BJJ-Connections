@@ -35,6 +35,11 @@ function loadDaily(now) {
 const {PUZZLES, validateAllPuzzles} = loadData();
 assert.equal(PUZZLES.length, 100, "daily index history depends on the 100-puzzle bank");
 assert.deepEqual([...validateAllPuzzles(PUZZLES)], []);
+const repeatedWords = JSON.parse(JSON.stringify(PUZZLES[0]));
+repeatedWords.id = 101;
+repeatedWords.groups[0].category = "A DIFFERENT LABEL";
+assert(validateAllPuzzles([...PUZZLES, repeatedWords]).some(error =>
+  error.includes("repeats all 16 words from puzzle 1")));
 assert(PUZZLES.some(p => p.groups.some(g => g.items.includes("ANDREW WILTSE"))));
 assert(PUZZLES.some(p => p.groups.some(g => g.items.includes("NICHOLAS MEREGALI"))));
 
@@ -42,6 +47,18 @@ const {daily} = loadDaily("2026-09-29T23:30:00");
 assert.equal(daily.dateKey(), "2026-09-29");
 assert.equal(daily.dayNumber(), 20725);
 const puzzle = PUZZLES[25];
+const savedProgress = {
+  date: daily.dateKey(), puzzle: puzzle.id,
+  words: puzzle.groups.flatMap(group => group.items), selected: [], solved: [],
+  guessLog: [], mistakes: 4, finished: false, won: false
+};
+const storage = loadDaily("2026-09-29T23:30:00");
+storage.values.set("bjjDailyProgress", JSON.stringify(savedProgress));
+assert(storage.daily.read(puzzle), "valid progress should restore");
+storage.values.set("bjjDailyProgress", JSON.stringify({...savedProgress, words: savedProgress.words.slice(1)}));
+assert.equal(storage.daily.read(puzzle), null, "an incomplete grid should be rejected");
+storage.values.set("bjjDailyProgress", JSON.stringify({...savedProgress, selected: [savedProgress.words[0], savedProgress.words[0]]}));
+assert.equal(storage.daily.read(puzzle), null, "duplicate selections should be rejected");
 const state = {};
 assert.equal(daily.recordResult(state, puzzle, true, 3, 45), true);
 assert.equal(daily.recordResult(state, puzzle, true, 4, 1), false, "a daily result is immutable");

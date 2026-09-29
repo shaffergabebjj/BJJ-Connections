@@ -69,7 +69,7 @@ function queryPuzzle() {
 
 // ---- Game state --------------------------------------------------------
 const RESULT_COLORS = ["🟩", "🟨", "🟦", "🟪"]; // fixed per puzzle group, order = data order
-let mode = "daily", difficulty = "all", puzzle = null, isDailyGame = false;
+let mode = "daily", difficulty = "all", puzzle = null, isDailyGame = false, isDailyReplay = false;
 let words = [], selected = [], solved = [];
 let mistakes = 4, startedAt = 0, finished = false, won = false;
 let guessLog = []; // rows of 4 colored squares, one per guess attempt — used for sharing
@@ -79,7 +79,7 @@ function persistDaily() {
   if (!isDailyGame) return;
   BJJDaily.save(puzzle, {
     words, selected, solved: solved.map(g => puzzle.groups.indexOf(g)),
-    mistakes, startedAt, guessLog, finished, won
+    mistakes, startedAt, guessLog, finished, won, replay: isDailyReplay
   });
 }
 
@@ -115,6 +115,7 @@ function loadPuzzle(override) {
   }
 
   const saved = isDailyGame ? BJJDaily.read(puzzle) : null;
+  isDailyReplay = isDailyGame && (!!saved?.replay || (!saved && !!state.dailyHistory[dateKey()]));
   if (saved) {
     words = saved.words;
     selected = saved.selected;
@@ -140,12 +141,14 @@ function loadPuzzle(override) {
   render();
   renderSolved();
   update();
-  if (finished) showCompletion(state.dailyHistory[dateKey()]?.seconds ?? Math.round((Date.now() - startedAt) / 1000));
+  if (finished) showCompletion(!isDailyReplay ? state.dailyHistory[dateKey()]?.seconds ?? Math.round((Date.now() - startedAt) / 1000) : Math.round((Date.now() - startedAt) / 1000));
   else persistDaily();
 }
 
 // ---- Rendering -----------------------------------------------------------
 function render() {
+  const focusedWord = document.activeElement?.classList.contains("word")
+    ? document.activeElement.textContent : null;
   grid.innerHTML = "";
   words.forEach(word => {
     const b = document.createElement("button");
@@ -161,6 +164,7 @@ function render() {
     };
     grid.appendChild(b);
   });
+  if (focusedWord) [...grid.children].find(b => b.textContent === focusedWord)?.focus();
 }
 function renderSolved() {
   solvedBox.innerHTML = "";
@@ -191,9 +195,10 @@ function showCompletion(seconds) {
   $("learnPanel").classList.remove("hidden");
   const history = isDailyGame && state.dailyHistory[dateKey()];
   const summary = $("resultSummary");
-  const resultSeconds = history?.seconds ?? seconds;
-  const resultMistakes = history?.mistakes ?? mistakes;
-  const resultLabel = isDailyGame ? "Daily puzzle" : mode === "archive" ? "Archive puzzle" : "Training puzzle";
+  const replay = isDailyReplay;
+  const resultLabel = replay ? "Practice replay" : isDailyGame ? "Daily puzzle" : mode === "archive" ? "Archive puzzle" : "Training puzzle";
+  const resultSeconds = history && !replay ? history.seconds : seconds;
+  const resultMistakes = history && !replay ? history.mistakes : mistakes;
   summary.innerHTML = `<strong>${resultLabel} ${won ? "solved" : "complete"}</strong>` +
     `<span>${won ? `${resultSeconds}s · ${resultMistakes} mistake${resultMistakes === 1 ? "" : "s"} left` : "Answers revealed"}</span>` +
     (isDailyGame ? `<span>${BJJDaily.displayStreak(state)} day streak</span>` : "");
@@ -264,7 +269,7 @@ function shuffle() {
 
 // ---- Sharing -----------------------------------------------------------
 async function shareResult() {
-  const label = mode === "daily" ? `#${dayNumber()}` : mode === "archive" ? "Archive" : "Training";
+  const label = isDailyReplay ? "Practice replay" : mode === "daily" ? `#${dayNumber()}` : mode === "archive" ? "Archive" : "Training";
   const grid4 = guessLog.join("\n");
   const text = `BJJ Connections ${label}\n\n${grid4}\n\n${won ? "Solved" : "Played"} • ${mistakes} mistakes left\nbjjconnectionsbygabe.com`;
   if (navigator.share) {
@@ -294,8 +299,18 @@ function copyWithSelection(text) {
   area.select();
   let copied = false;
   try { copied = document.execCommand("copy"); } catch (e) { /* selection remains available */ }
-  if (copied) area.remove();
-  msg.textContent = copied ? "Results copied to clipboard." : "Your result is selected. Choose Copy to share it.";
+  if (copied) {
+    area.remove();
+    msg.textContent = "Results copied to clipboard.";
+  } else {
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "share-copy-close ctrl";
+    close.textContent = "Close copy box";
+    close.onclick = () => { area.remove(); close.remove(); share.focus(); };
+    document.body.appendChild(close);
+    msg.textContent = "Your result is selected. Choose Copy, then close the copy box.";
+  }
 }
 
 // ---- Stats ---------------------------------------------------------------

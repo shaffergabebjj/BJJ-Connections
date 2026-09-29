@@ -281,29 +281,8 @@
     weekday: "long", month: "long", day: "numeric"
   }).format(now);
   metaEl.textContent = "16 words · 4 groups · 4 mistakes";
-  function getDailyTheme(p) {
-    const text = p.groups.map(g => g.category + " " + g.items.join(" ")).join(" ").toUpperCase();
-    const themes = [
-      ["Leg Locks", ["LEG LOCK","HEEL HOOK","KNEEBAR","ASHI GARAMI","SINGLE LEG X","SANKAKU","CALF SLICER","TOEHOLD"]],
-      ["Guards", ["GUARD","DE LA RIVA","SPIDER","LASSO","BUTTERFLY","X-GUARD","HALF GUARD","DEEP HALF","K-GUARD","WORM GUARD"]],
-      ["Passing", ["PASS","TORIANDO","LEG DRAG","KNEE CUT","LONG STEP","STACK PASS","BODY LOCK","SMASH PASS","DOUBLE UNDER","OVER-UNDER"]],
-      ["Submissions", ["SUBMISSION","CHOKE","ARMBAR","KIMURA","OMOPLATA","TRIANGLE","GUILLOTINE","D'ARCE","ANACONDA"]],
-      ["Back Attacks", ["BACK","SEATBELT","BODY TRIANGLE","HOOKS","BACK TAKE","BACK ATTACK","BERIMBOLO","CHAIR SIT"]],
-      ["Gi", ["GI","COLLAR","LAPEL","GI GUARD","GI CHOKE","GI TECHNICIAN","GI CHAMPION"]],
-      ["No-Gi", ["NO-GI","NOGI","DANAHER"]],
-      ["Takedowns", ["TAKEDOWN","SINGLE LEG","DOUBLE LEG","ANKLE PICK","UCHI MATA","RUSSIAN TIE"]],
-      ["Positions", ["POSITION","MOUNT","SIDE CONTROL","NORTH-SOUTH","KESA","KNEE-ON-BELLY"]],
-      ["BJJ Competitors", ["LEGENDS","COMPETITORS","STARS","CHAMPIONS","POWERHOUSES","NAMES","TECHNICIANS","SPECIALISTS"]]
-    ];
-    let best = themes[0], bestScore = -1;
-    themes.forEach(([label, keys]) => {
-      const score = keys.reduce((n, key) => n + (text.includes(key) ? 1 : 0), 0);
-      if (score > bestScore) { bestScore = score; best = [label, keys]; }
-    });
-    return best[0];
-  }
-
-  focusEl.textContent = "Today's focus: " + getDailyTheme(puzzle);
+  // A true category makes a reliable daily hint without guessing from substrings.
+  focusEl.textContent = "Today's focus: " + puzzle.groups[0].category;
 
   function seeded(n) {
     const x = Math.sin(n) * 10000;
@@ -333,6 +312,8 @@
   }
 
   function render() {
+    const focusedWord = document.activeElement?.classList.contains("hero-mini-tile")
+      ? document.activeElement.textContent : null;
     grid.innerHTML = "";
     words.forEach(word => {
       const button = document.createElement("button");
@@ -353,6 +334,7 @@
       };
       grid.appendChild(button);
     });
+    if (focusedWord) [...grid.children].find(button => button.textContent === focusedWord)?.focus();
   }
 
   function update() {

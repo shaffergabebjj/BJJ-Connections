@@ -211,7 +211,7 @@ const ROUNDS = [
 
 /* 27 */
 [
-["DEMIAN MAIA","ANDRE GALVAO","MARCELO GARCIA","KRON GRACIE","SUBMISSION LEGENDS"],
+["DEMIAN MAIA","ANDRE GALVAO","ROGER GRACIE","RUBENS CHARLES","SUBMISSION LEGENDS"],
 ["GUILLOTINE","D'ARCE","ANACONDA","REAR NAKED CHOKE","CHOKES"],
 ["BUTTERFLY","CLOSED GUARD","HALF GUARD","DEEP HALF","GUARDS"],
 ["BACK TAKE","ARM DRAG","BERIMBOLO","CHAIR SIT","BACK ATTACKS"]
@@ -267,7 +267,7 @@ const ROUNDS = [
 
 /* 34 */
 [
-["RAFAEL MENDES","GUI MENDES","BRUNO MALFACINE","CAIO TERRA","LIGHTWEIGHTS"],
+["MICA GALVAO","TOMMY LANGAKER","ISAAC DOEDERLEIN","TOMOYUKI HASHIMOTO","LIGHTWEIGHTS"],
 ["SPIDER","LASSO","DE LA RIVA","COLLAR-SLEEVE","GUARDS"],
 ["BERIMBOLO","TORIANDO","LEG DRAG","KNEE CUT","PASSES"],
 ["ARMBAR","TRIANGLE","OMOPLATA","KIMURA","SUBMISSIONS"]
@@ -275,7 +275,7 @@ const ROUNDS = [
 
 /* 35 */
 [
-["MARCELO GARCIA","KRON GRACIE","DEMIAN MAIA","ANDRE GALVAO","SUBMISSION STYLE"],
+["LACHLAN GILES","GARRY TONON","CRAIG JONES","GORDON RYAN","SUBMISSION STYLE"],
 ["BUTTERFLY","CLOSED GUARD","DEEP HALF","HALF GUARD","GUARDS"],
 ["ARM DRAG","BACK TAKE","BERIMBOLO","CHAIR SIT","BACK TAKES"],
 ["GUILLOTINE","D'ARCE","ANACONDA","REAR NAKED CHOKE","CHOKES"]
@@ -349,7 +349,7 @@ const ROUNDS = [
 
 /* 44 */
 [
-["KAYNAN DUARTE","CRAIG JONES","GARRY TONON","NICK RODRIGUEZ","NO-GI STARS"],
+["KAYNAN DUARTE","FELIPE PENA","VAGNER ROCHA","ETHAN CRELINSTEN","NO-GI STARS"],
 ["HEEL HOOK","KNEEBAR","STRAIGHT ANKLE","CALF SLICER","LEG LOCKS"],
 ["ASHI GARAMI","SINGLE LEG X","INSIDE SANKAKU","OUTSIDE ASHI","LEG POSITIONS"],
 ["BODY LOCK","SMASH PASS","LEG DRAG","KNEE CUT","PASSES"]
@@ -966,8 +966,7 @@ const PUZZLES = ROUNDS.map((groups, index) => {
   return {
     id: index + 1,
     groups: builtGroups,
-    difficulty: classifyDifficulty(builtGroups.map(g => g.items)),
-    theme: ["Legends", "Techniques", "Competition", "Guards", "No-Gi"][index % 5]
+    difficulty: classifyDifficulty(builtGroups.map(g => g.items))
   };
 });
 
@@ -992,11 +991,15 @@ function validateAllPuzzles(puzzles) {
   const errors = [];
   puzzles.forEach(p => errors.push(...validatePuzzle(p).map(e => `Puzzle ${p.id}: ${e}`)));
   const seen = new Map();
+  const seenWords = new Map();
   puzzles.forEach(p => {
     const key = JSON.stringify(p.groups.map(g => ({ c: g.category, i: g.items.slice().sort() }))
       .sort((a, b) => a.c.localeCompare(b.c)));
     if (seen.has(key)) errors.push(`Puzzle ${p.id} is an exact duplicate of puzzle ${seen.get(key)}.`);
     else seen.set(key, p.id);
+    const wordsKey = JSON.stringify(p.groups.flatMap(g => g.items).slice().sort());
+    if (seenWords.has(wordsKey)) errors.push(`Puzzle ${p.id} repeats all 16 words from puzzle ${seenWords.get(wordsKey)}.`);
+    else seenWords.set(wordsKey, p.id);
   });
   return errors;
 }

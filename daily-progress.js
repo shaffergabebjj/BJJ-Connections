@@ -11,11 +11,17 @@ window.BJJDaily = (function () {
     try {
       const saved = JSON.parse(localStorage.getItem(key) || "null");
       const all = puzzle.groups.flatMap(g => g.items);
+      const solvedIndexes = Array.isArray(saved?.solved) ? saved.solved : [];
+      const remaining = puzzle.groups.filter((_, i) => !solvedIndexes.includes(i)).flatMap(g => g.items);
       if (!saved || saved.date !== dateKey() || saved.puzzle !== puzzle.id ||
           !Array.isArray(saved.words) || !Array.isArray(saved.selected) ||
           !Array.isArray(saved.solved) || !Array.isArray(saved.guessLog) ||
-          new Set(saved.words).size !== saved.words.length ||
-          !saved.words.every(w => all.includes(w)) ||
+           new Set(saved.words).size !== saved.words.length ||
+           new Set(saved.selected).size !== saved.selected.length ||
+           new Set(solvedIndexes).size !== solvedIndexes.length ||
+           !saved.words.every(w => all.includes(w)) ||
+           (!saved.finished && (saved.words.length !== remaining.length ||
+             !remaining.every(w => saved.words.includes(w)))) ||
           !saved.selected.every(w => saved.words.includes(w)) ||
           !saved.solved.every(i => Number.isInteger(i) && i >= 0 && i < 4) ||
           saved.selected.length > 4 || saved.solved.length > 4 ||
