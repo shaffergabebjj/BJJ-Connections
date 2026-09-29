@@ -15,6 +15,7 @@ Live at **[bjjconnectionsbygabe.com](https://bjjconnectionsbygabe.com)**.
 | `training.html` | Drilling ideas, solo drills, conditioning concepts, goal-setting tool |
 | `resources.html` | BJJ glossary, belt system reference, and curated links |
 | `about.html` | About Gabe Shaffer and the project |
+| `ask.html` | Ask BJJ chat interface (requires the separate Worker) |
 
 ## Features
 
@@ -63,6 +64,10 @@ Live at **[bjjconnectionsbygabe.com](https://bjjconnectionsbygabe.com)**.
 ## Deployment
 
 Static site, no build step. Fully compatible with GitHub Pages — push all files to the repository root of the `main` branch (configured via the `CNAME` file for the custom domain `bjjconnectionsbygabe.com`).
+
+### Ask BJJ setup
+
+The chat page sends questions to a Cloudflare Worker at `https://chat.bjjconnectionsbygabe.com/chat`. GitHub Pages alone cannot answer AI questions. The Worker code and Wrangler config are in `worker/`; see [`worker/README.md`](worker/README.md) for deployment. Until that Worker and its private API key are configured, the page displays an unavailable message and does not expose a key in site code. OpenAI API use is billed separately from ChatGPT; configure a project budget before making chat public.
 
 ## Adding or Editing Puzzles
 
