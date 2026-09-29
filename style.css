@@ -447,6 +447,33 @@ ul { list-style: none; }
 .solved:nth-child(4n+3) { background: var(--blue); }
 .solved:nth-child(4n) { background: var(--purple); }
 .solved b { display: block; margin-bottom: 4px; }
+.solved-0 { background: var(--green) !important; }
+.solved-1 { background: var(--yellow) !important; }
+.solved-2 { background: var(--blue) !important; }
+.solved-3 { background: var(--purple) !important; }
+.result-summary {
+  display: flex;
+  justify-content: center;
+  gap: 8px 18px;
+  flex-wrap: wrap;
+  margin: 16px 0 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-align: center;
+}
+.result-summary span { color: var(--muted); }
+.share-copy-fallback {
+  position: fixed;
+  inset: auto 16px 16px;
+  z-index: 1000;
+  min-height: 150px;
+  padding: 12px;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+}
 
 #puzzleMsg { text-align: center; min-height: 26px; font-weight: 800; margin: 14px; }
 

@@ -73,6 +73,7 @@ let mode = "daily", difficulty = "all", puzzle = null, isDailyGame = false;
 let words = [], selected = [], solved = [];
 let mistakes = 4, startedAt = 0, finished = false, won = false;
 let guessLog = []; // rows of 4 colored squares, one per guess attempt — used for sharing
+let loadedDateKey = dateKey();
 
 function persistDaily() {
   if (!isDailyGame) return;
@@ -87,7 +88,9 @@ function persistDaily() {
 // to force a specific past puzzle instead of the normal daily/training pick.
 function loadPuzzle(override) {
   finished = false; won = false; selected = []; solved = []; mistakes = 4; guessLog = [];
+  loadedDateKey = dateKey();
   $("learnPanel").classList.add("hidden");
+  $("resultSummary").classList.add("hidden");
   share.classList.add("hidden");
   next.classList.add("hidden");
 
@@ -163,7 +166,7 @@ function renderSolved() {
   solvedBox.innerHTML = "";
   solved.forEach(g => {
     const box = document.createElement("div");
-    box.className = "solved";
+    box.className = `solved solved-${puzzle.groups.indexOf(g)}`;
     box.innerHTML = `<b>${g.category}</b>${g.items.join(" · ")}`;
     solvedBox.appendChild(box);
   });
@@ -186,6 +189,15 @@ function showCompletion(seconds) {
   grid.innerHTML = "";
   $("learn").innerHTML = puzzle.groups.map(g => `<p><b>${g.category}</b><br>${g.explanation}</p>`).join("");
   $("learnPanel").classList.remove("hidden");
+  const history = isDailyGame && state.dailyHistory[dateKey()];
+  const summary = $("resultSummary");
+  const resultSeconds = history?.seconds ?? seconds;
+  const resultMistakes = history?.mistakes ?? mistakes;
+  const resultLabel = isDailyGame ? "Daily puzzle" : mode === "archive" ? "Archive puzzle" : "Training puzzle";
+  summary.innerHTML = `<strong>${resultLabel} ${won ? "solved" : "complete"}</strong>` +
+    `<span>${won ? `${resultSeconds}s · ${resultMistakes} mistake${resultMistakes === 1 ? "" : "s"} left` : "Answers revealed"}</span>` +
+    (isDailyGame ? `<span>${BJJDaily.displayStreak(state)} day streak</span>` : "");
+  summary.classList.remove("hidden");
   share.classList.remove("hidden");
   next.classList.remove("hidden");
   next.textContent = isDailyGame ? "Practice another" : "Next Puzzle";
@@ -267,11 +279,23 @@ async function shareResult() {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).then(
       () => { msg.textContent = "Results copied to clipboard."; },
-      () => { msg.textContent = "Couldn't copy automatically — you can select and copy the result manually."; }
+      () => copyWithSelection(text)
     );
   } else {
-    msg.textContent = "Clipboard isn't available in this browser.";
+    copyWithSelection(text);
   }
+}
+function copyWithSelection(text) {
+  const area = document.createElement("textarea");
+  area.value = text;
+  area.setAttribute("readonly", "");
+  area.className = "share-copy-fallback";
+  document.body.appendChild(area);
+  area.select();
+  let copied = false;
+  try { copied = document.execCommand("copy"); } catch (e) { /* selection remains available */ }
+  if (copied) area.remove();
+  msg.textContent = copied ? "Results copied to clipboard." : "Your result is selected. Choose Copy to share it.";
 }
 
 // ---- Stats ---------------------------------------------------------------
@@ -279,7 +303,7 @@ function showStats() {
   const winPct = state.gamesPlayed ? Math.round(state.gamesWon / state.gamesPlayed * 100) : 0;
   $("stats").innerHTML = [
     ["Played", state.gamesPlayed], ["Won", state.gamesWon], ["Win %", winPct + "%"],
-    ["Current streak", state.currentStreak], ["Best streak", state.longestStreak],
+    ["Current streak", BJJDaily.displayStreak(state)], ["Best streak", state.longestStreak],
     ["Best time", state.bestTime ? state.bestTime + "s" : "—"]
   ].map(([a, b]) => `<div class="stat"><b>${b}</b>${a}</div>`).join("");
 }
@@ -332,6 +356,16 @@ function setMode(m) {
   else loadPuzzle();
 }
 document.querySelectorAll(".tab").forEach(b => b.onclick = () => setMode(b.dataset.mode));
+document.querySelector(".puzzle-tabs").addEventListener("keydown", event => {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+  const tabs = [...document.querySelectorAll(".tab")];
+  const current = tabs.indexOf(document.activeElement);
+  const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1
+    : (current + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+  event.preventDefault();
+  tabs[nextIndex].focus();
+  setMode(tabs[nextIndex].dataset.mode);
+});
 
 // Difficulty filter buttons (Training mode only)
 ["all", "white", "blue", "purple", "black"].forEach(d => {
@@ -396,3 +430,13 @@ if (typeof validateAllPuzzles === "function") {
   });
 }
 loadPuzzle();
+
+// A long-open tab should roll over at the player's local midnight without
+// requiring a hard refresh. Checking on focus/visibility avoids a busy timer.
+function refreshForLocalDate() {
+  if (loadedDateKey !== dateKey() && mode === "daily") loadPuzzle();
+}
+window.addEventListener("focus", refreshForLocalDate);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") refreshForLocalDate();
+});
