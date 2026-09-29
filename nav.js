@@ -51,7 +51,9 @@
   var homeInstall = document.getElementById("homeInstall");
   var buttons = homeInstall ? [install, homeInstall] : [install];
   var isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
-  if (isIOS) buttons.forEach(function (button) { button.hidden = false; });
+  if (isIOS || /android/i.test(window.navigator.userAgent)) {
+    buttons.forEach(function (button) { button.hidden = false; });
+  }
 
   function showIOSInstructions(opener) {
     var dialog = document.createElement("dialog");

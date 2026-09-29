@@ -357,6 +357,7 @@
   function update() {
     mistakesEl.textContent = mistakes + (mistakes === 1 ? " mistake" : " mistakes") + " left";
     submitBtn.disabled = selected.length !== 4 || finished;
+    shuffleBtn.disabled = finished;
   }
 
   function renderSolved() {
