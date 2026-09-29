@@ -45,5 +45,12 @@ window.BJJDaily = (function () {
     state.dailyHistory[dateKey()] = {win, mistakes, seconds, puzzle: puzzle.id};
     return true;
   }
-  return {dateKey, dayNumber, read, save, recordResult};
+  function displayStreak(state, d = new Date()) {
+    if (!state || !state.currentStreak || !state.lastDaily) return 0;
+    const today = dateKey(d);
+    const yesterday = new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1);
+    return state.lastDaily === today || state.lastDaily === dateKey(yesterday)
+      ? state.currentStreak : 0;
+  }
+  return {dateKey, dayNumber, read, save, recordResult, displayStreak};
 })();

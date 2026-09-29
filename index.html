@@ -273,7 +273,7 @@
   function refreshStreak() {
     try {
       const state = JSON.parse(localStorage.getItem("bjjConnectionsState") || "{}");
-      streakEl.textContent = "Streak: " + (state.currentStreak || 0);
+      streakEl.textContent = "Streak: " + BJJDaily.displayStreak(state);
     } catch (e) { streakEl.textContent = "Daily puzzle"; }
   }
 
@@ -363,9 +363,9 @@
 
   function renderSolved() {
     solvedEl.innerHTML = "";
-    solved.forEach((group, index) => {
+    solved.forEach(group => {
       const row = document.createElement("div");
-      row.className = "home-solved-group home-solved-" + index;
+      row.className = "home-solved-group home-solved-" + puzzle.groups.indexOf(group);
       row.innerHTML = "<strong>" + group.category + "</strong><span>" + group.items.join(" · ") + "</span>";
       solvedEl.appendChild(row);
     });
@@ -449,6 +449,14 @@
     persist();
   }
   update();
+
+  function refreshForLocalDate() {
+    if (BJJDaily.dateKey() !== dateKey) location.reload();
+  }
+  window.addEventListener("focus", refreshForLocalDate);
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible") refreshForLocalDate();
+  });
 })();
 </script>
 <script src="nav.js"></script>
