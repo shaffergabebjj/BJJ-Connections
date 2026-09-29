@@ -1,4 +1,4 @@
-const CACHE_NAME = "bjj-connections-v7";
+const CACHE_NAME = "bjj-connections-v8";
 const APP_SHELL = [
   "/", "/index.html", "/puzzles.html", "/techniques.html",
   "/competition.html", "/training.html", "/resources.html", "/about.html",
@@ -24,7 +24,7 @@ self.addEventListener("fetch", event => {
   if (request.method !== "GET" || new URL(request.url).origin !== self.location.origin) return;
 
   // Fetch fresh content online and keep the last successful response for offline use.
-  event.respondWith(fetch(request).then(response => {
+  event.respondWith(fetch(request, {cache: "no-cache"}).then(response => {
     if (response.ok) {
       const copy = response.clone();
       event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put(request, copy)));
