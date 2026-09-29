@@ -734,8 +734,7 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 }
 
 /* ---- Dark mode ---- */
-@media (prefers-color-scheme: dark) {
-  :root {
+:root[data-theme="dark"] {
     --black: #050505;
     --white: #f0f0ee;
     --ink: #e8e8e6;
@@ -754,25 +753,24 @@ a:focus-visible, button:focus-visible, input:focus-visible,
     --shadow-lg: 0 8px 30px rgba(0,0,0,.5);
     --accent-soft: #2a1518;
   }
-  .callout { background: var(--accent-soft); }
-  .callout-info { background: #14202e; }
-  .callout-warn { background: #2a2410; }
-  .stat, .word, .archiveItem { background: var(--bg-alt); }
-  .word.sel { background: var(--white); color: var(--black); }
-  .tab.active, #submit:not(:disabled), .difficulty-bar button.active {
+  :root[data-theme="dark"] .callout { background: var(--accent-soft); }
+  :root[data-theme="dark"] .callout-info { background: #14202e; }
+  :root[data-theme="dark"] .callout-warn { background: #2a2410; }
+  :root[data-theme="dark"] .stat, :root[data-theme="dark"] .word, :root[data-theme="dark"] .archiveItem { background: var(--bg-alt); }
+  :root[data-theme="dark"] .word.sel { background: var(--white); color: var(--black); }
+  :root[data-theme="dark"] .tab.active, :root[data-theme="dark"] #submit:not(:disabled), :root[data-theme="dark"] .difficulty-bar button.active {
     background: var(--white); color: var(--black); border-color: var(--white);
   }
-  .belt-badge.belt-white { background: #2a2a28; color: var(--ink); border-color: var(--border-strong); }
-  .belt-badge.belt-blue { background: #1a2a4a; color: #6b9eff; }
-  .belt-badge.belt-purple { background: #2a1a4a; color: #b07eff; }
-  .belt-badge.belt-brown { background: #3a2a1a; color: #d4a070; }
-  .belt-badge.belt-black { background: var(--ink); color: var(--black); }
-  .checklist-item:hover { background: var(--bg-alt); }
-  .tech-card, .card, .drill-item, .glossary-item, .link-card, .panel, .checklist-item {
+  :root[data-theme="dark"] .belt-badge.belt-white { background: #2a2a28; color: var(--ink); border-color: var(--border-strong); }
+  :root[data-theme="dark"] .belt-badge.belt-blue { background: #1a2a4a; color: #6b9eff; }
+  :root[data-theme="dark"] .belt-badge.belt-purple { background: #2a1a4a; color: #b07eff; }
+  :root[data-theme="dark"] .belt-badge.belt-brown { background: #3a2a1a; color: #d4a070; }
+  :root[data-theme="dark"] .belt-badge.belt-black { background: var(--ink); color: var(--black); }
+  :root[data-theme="dark"] .checklist-item:hover { background: var(--bg-alt); }
+  :root[data-theme="dark"] .tech-card, :root[data-theme="dark"] .card, :root[data-theme="dark"] .drill-item, :root[data-theme="dark"] .glossary-item, :root[data-theme="dark"] .link-card, :root[data-theme="dark"] .panel, :root[data-theme="dark"] .checklist-item {
     background: var(--surface);
   }
-  .search-input { background: var(--surface); }
-}
+  :root[data-theme="dark"] .search-input { background: var(--surface); }
 
 /* ---- Responsive ---- */
 @media (max-width: 768px) {
@@ -1108,3 +1106,50 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 .faq-item h3 { font-size: 18px; margin-bottom: 10px; }
 .faq-item p { margin: 0; }
 .faq-item[hidden], #noQuestionResults[hidden] { display: none; }
+
+/* Persistent light/dark switch, available beside the menu on mobile. */
+html { color-scheme: light; }
+html[data-theme="dark"] { color-scheme: dark; }
+.theme-toggle { margin-left:auto; flex-shrink:0; width:44px; height:44px; padding:8px; border:1px solid rgba(255,255,255,.3); border-radius:50%; background:transparent; color:#fff; font:24px var(--font-body); cursor:pointer; }
+.theme-toggle:hover { background:rgba(255,255,255,.12); }
+.nav-toggle { margin-left:8px; }
+.nav-links { margin-left:12px; }
+@media (min-width:769px) and (max-width:1000px) {
+  .nav-toggle { display:block; }
+  .nav-links { display:none; position:absolute; top:60px; left:0; right:0; flex-direction:column; background:var(--black); padding:8px; gap:0; border-bottom:3px solid var(--accent); }
+  .nav-links.open { display:flex; }
+  .nav-links a { padding:14px 16px; width:100%; border-radius:0; }
+}
+@media (max-width:1000px) { .nav-links { margin-left:0; } }
+
+/* Let the game hero and navigation follow the chosen theme too. */
+:root[data-theme="light"] .site-header,
+:root[data-theme="light"] .site-footer,
+:root[data-theme="light"] .hero,
+:root[data-theme="light"] .page-header { background:var(--surface); color:var(--ink); }
+:root[data-theme="light"] .nav-logo,
+:root[data-theme="light"] .nav-toggle,
+:root[data-theme="light"] .nav-links a,
+:root[data-theme="light"] .hero h1,
+:root[data-theme="light"] .page-header h1,
+:root[data-theme="light"] .footer-brand,
+:root[data-theme="light"] .home-game-footer a { color:var(--ink); }
+:root[data-theme="light"] .nav-links a:hover,
+:root[data-theme="light"] .nav-links a.active { background:var(--bg-alt); }
+:root[data-theme="light"] .hero p,
+:root[data-theme="light"] .page-header p,
+:root[data-theme="light"] .hero-game-meta,
+:root[data-theme="light"] .hero-game-date,
+:root[data-theme="light"] .home-focus,
+:root[data-theme="light"] .home-game-status,
+:root[data-theme="light"] .home-game-footer,
+:root[data-theme="light"] .footer-links a,
+:root[data-theme="light"] .footer-bottom { color:var(--muted); }
+:root[data-theme="light"] .hero-game-card { background:var(--bg-alt); border-color:var(--border-strong); }
+:root[data-theme="light"] .home-focus { background:var(--surface); border-color:var(--border-strong); }
+:root[data-theme="light"] .home-game-footer,
+:root[data-theme="light"] .footer-bottom { border-color:var(--border); }
+:root[data-theme="light"] .btn-secondary { color:var(--ink); border-color:var(--border-strong); }
+:root[data-theme="light"] .btn-secondary:hover { background:var(--surface); }
+:root[data-theme="light"] .theme-toggle { color:var(--ink); border-color:var(--border-strong); }
+@media (max-width:1000px) { :root[data-theme="light"] .nav-links { background:var(--surface); } }
