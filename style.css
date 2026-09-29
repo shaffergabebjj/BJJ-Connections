@@ -474,8 +474,14 @@ ul { list-style: none; }
   border: 2px solid var(--accent);
   border-radius: var(--radius);
 }
+.share-copy-close {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1001;
+}
 
-#puzzleMsg { text-align: center; min-height: 26px; font-weight: 800; margin: 14px; }
+#msg { text-align: center; min-height: 26px; font-weight: 800; margin: 14px; }
 
 /* Panels */
 .panel {
@@ -1050,7 +1056,7 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 }
 .home-game-footer a { color:var(--white); }
 @media (max-width:560px) {
-  .hero-mini-tile { min-height:52px; font-size:9px; }
+  .hero-mini-tile { min-height:58px; font-size:11px; overflow-wrap:anywhere; }
   .home-game-status { font-size:11px; }
 }
 
