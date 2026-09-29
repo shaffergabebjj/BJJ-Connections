@@ -46,9 +46,11 @@ const save = () => writeStoredState(state);
 
 // ---- Dates & deterministic seeding ------------------------------------
 function dayNumberForDate(d) {
-  return Math.floor(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) / 86400000);
+  return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
 }
-function dateKeyForDate(d) { return d.toISOString().slice(0, 10); }
+function dateKeyForDate(d) {
+  return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, "0"), String(d.getDate()).padStart(2, "0")].join("-");
+}
 function dateKey() { return dateKeyForDate(new Date()); }
 function dayNumber() { return dayNumberForDate(new Date()); }
 function dailyIndexForDate(d) { return Math.abs(dayNumberForDate(d)) % PUZZLES.length; }
@@ -250,7 +252,8 @@ const ARCHIVE_DAYS = 30;
 function renderArchiveList() {
   archiveList.innerHTML = "";
   for (let i = 1; i <= ARCHIVE_DAYS; i++) {
-    const d = new Date(Date.now() - i * 86400000);
+    const d = new Date();
+    d.setDate(d.getDate() - i);
     const p = PUZZLES[dailyIndexForDate(d)];
     const dn = dayNumberForDate(d);
     const dateStr = dateKeyForDate(d);

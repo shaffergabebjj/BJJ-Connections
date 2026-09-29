@@ -305,9 +305,6 @@ var CHECKLISTS = {
     items.forEach(function(item, i) {
       var div = document.createElement("div");
       div.className = "checklist-item" + (checked[i] ? " checked" : "");
-      div.setAttribute("role", "checkbox");
-      div.setAttribute("aria-checked", checked[i] ? "true" : "false");
-      div.setAttribute("tabindex", "0");
 
       var cb = document.createElement("input");
       cb.type = "checkbox";
@@ -324,18 +321,13 @@ var CHECKLISTS = {
       container.appendChild(div);
 
       function toggle() {
-        checked[i] = !checked[i];
-        cb.checked = checked[i];
+        checked[i] = cb.checked;
         div.classList.toggle("checked", checked[i]);
-        div.setAttribute("aria-checked", checked[i] ? "true" : "false");
         setStored(listKey, checked);
         updateProgress(listKey);
       }
 
       cb.addEventListener("change", toggle);
-      div.addEventListener("keydown", function(e) {
-        if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggle(); }
-      });
     });
 
     updateProgress(listKey);
