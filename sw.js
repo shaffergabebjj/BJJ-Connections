@@ -1,9 +1,10 @@
-const CACHE_NAME = "bjj-connections-v3";
+const CACHE_NAME = "bjj-connections-v4";
 const APP_SHELL = [
   "/", "/index.html", "/puzzles.html", "/techniques.html",
   "/competition.html", "/training.html", "/resources.html", "/about.html",
-  "/style.css", "/nav.js", "/app.js", "/data.js", "/techniques.js",
-  "/favicon.svg", "/favicon-32.png", "/apple-touch-icon.png", "/manifest.json"
+  "/style.css", "/nav.js", "/app.js", "/data.js", "/daily-progress.js", "/techniques.js",
+  "/favicon.svg", "/favicon-32.png", "/apple-touch-icon.png",
+  "/icon-192.png", "/icon-512.png", "/manifest.json"
 ];
 
 self.addEventListener("install", event => {

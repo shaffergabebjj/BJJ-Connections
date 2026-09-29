@@ -1,6 +1,7 @@
 {
   "name": "BJJ Connections",
   "short_name": "BJJ Connections",
+  "id": "/",
   "description": "A growing collection of Brazilian Jiu-Jitsu techniques, training tools, competition resources, and daily puzzles for grapplers.",
   "start_url": "/",
   "scope": "/",
@@ -9,6 +10,18 @@
   "theme_color": "#0a0a0a",
   "orientation": "portrait-primary",
   "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/favicon.svg",
       "sizes": "any",

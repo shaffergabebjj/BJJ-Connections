@@ -89,10 +89,11 @@
         <div id="homeSolved" class="home-solved"></div>
         <div class="home-game-footer">
           <span id="homeStreak">Streak: 0</span>
-          <a href="puzzles.html">Open full game →</a>
+          <a id="homeFullGame" href="puzzles.html">Open full game →</a>
         </div>
       </div>
       <div class="hero-actions">
+        <button class="btn btn-primary" id="homeInstall" type="button" hidden>Install BJJ Connections</button>
         <a href="techniques.html" class="btn btn-secondary">Explore Techniques</a>
         <a href="training.html" class="btn btn-secondary">Build Your Game Plan</a>
       </div>
@@ -231,6 +232,7 @@
 </footer>
 
 <script src="data.js"></script>
+<script src="daily-progress.js"></script>
 <script>
 (function () {
   const grid = document.getElementById("homePuzzleGrid");
@@ -243,6 +245,7 @@
   const shuffleBtn = document.getElementById("homeShuffle");
   const solvedEl = document.getElementById("homeSolved");
   const streakEl = document.getElementById("homeStreak");
+  const fullGameLink = document.getElementById("homeFullGame");
 
   if (!grid || typeof PUZZLES === "undefined" || !PUZZLES.length) return;
 
@@ -255,6 +258,23 @@
   let solved = [];
   let mistakes = 4;
   let finished = false;
+  let won = false;
+  let startedAt = Date.now();
+  let guessLog = [];
+
+  function persist() {
+    BJJDaily.save(puzzle, {
+      words, selected, solved: solved.map(group => puzzle.groups.indexOf(group)),
+      mistakes, startedAt, guessLog, finished, won
+    });
+  }
+
+  function refreshStreak() {
+    try {
+      const state = JSON.parse(localStorage.getItem("bjjConnectionsState") || "{}");
+      streakEl.textContent = "Streak: " + (state.currentStreak || 0);
+    } catch (e) { streakEl.textContent = "Daily puzzle"; }
+  }
 
   dateEl.textContent = new Intl.DateTimeFormat(undefined, {
     weekday: "long", month: "long", day: "numeric"
@@ -299,6 +319,17 @@
   }
 
   words = dailyShuffle(words);
+  const saved = BJJDaily.read(puzzle);
+  if (saved) {
+    words = saved.words;
+    selected = saved.selected;
+    solved = saved.solved.map(i => puzzle.groups[i]);
+    mistakes = saved.mistakes;
+    finished = !!saved.finished;
+    won = !!saved.won;
+    guessLog = saved.guessLog;
+    if (Number.isFinite(saved.startedAt)) startedAt = saved.startedAt;
+  }
 
   function render() {
     grid.innerHTML = "";
@@ -317,6 +348,7 @@
         }
         render();
         update();
+        persist();
       };
       grid.appendChild(button);
     });
@@ -339,13 +371,24 @@
 
   function finish() {
     finished = true;
-    messageEl.textContent = "Puzzle complete. Open the full game to see the explanations.";
+    won = words.length === 0;
+    const seconds = Math.round((Date.now() - startedAt) / 1000);
+    let state;
+    try { state = JSON.parse(localStorage.getItem("bjjConnectionsState") || "{}"); }
+    catch (e) { state = {}; }
+    if (BJJDaily.recordResult(state, puzzle, won, mistakes, seconds)) {
+      try { localStorage.setItem("bjjConnectionsState", JSON.stringify(state)); } catch (e) {}
+    }
+    messageEl.textContent = won ? "Connected! View your results and explanations." : "Puzzle complete. View the answers and explanations.";
     puzzle.groups.forEach(group => {
       if (!solved.includes(group)) solved.push(group);
     });
     renderSolved();
     grid.innerHTML = "";
+    fullGameLink.textContent = "View results →";
     update();
+    refreshStreak();
+    persist();
   }
 
   function submitGuess() {
@@ -353,6 +396,10 @@
     const found = puzzle.groups.find(group =>
       group.items.every(word => selected.includes(word))
     );
+    guessLog.push(selected.map(word => {
+      const index = puzzle.groups.findIndex(group => group.items.includes(word));
+      return ["🟩", "🟨", "🟦", "🟪"][index];
+    }).join(""));
 
     if (found) {
       solved.push(found);
@@ -371,6 +418,7 @@
       if (mistakes <= 0) finish();
     }
     update();
+    persist();
   }
 
   shuffleBtn.onclick = function () {
@@ -380,18 +428,24 @@
       [words[i], words[j]] = [words[j], words[i]];
     }
     render();
+    persist();
   };
 
   submitBtn.onclick = submitGuess;
 
-  try {
-    const saved = JSON.parse(localStorage.getItem("bjjConnectionsState") || "{}");
-    streakEl.textContent = "Streak: " + (saved.currentStreak || 0);
-  } catch (e) {
-    streakEl.textContent = "Daily puzzle";
-  }
+  refreshStreak();
 
   render();
+  if (finished) {
+    messageEl.textContent = won ? "Connected! View your results and explanations." : "Puzzle complete. View the answers and explanations.";
+    puzzle.groups.forEach(group => { if (!solved.includes(group)) solved.push(group); });
+    renderSolved();
+    grid.innerHTML = "";
+    fullGameLink.textContent = "View results →";
+  } else {
+    renderSolved();
+    persist();
+  }
   update();
 })();
 </script>

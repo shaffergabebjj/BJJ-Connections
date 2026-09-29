@@ -69,10 +69,18 @@ function queryPuzzle() {
 
 // ---- Game state --------------------------------------------------------
 const RESULT_COLORS = ["🟩", "🟨", "🟦", "🟪"]; // fixed per puzzle group, order = data order
-let mode = "daily", difficulty = "all", puzzle = null;
+let mode = "daily", difficulty = "all", puzzle = null, isDailyGame = false;
 let words = [], selected = [], solved = [];
 let mistakes = 4, startedAt = 0, finished = false, won = false;
 let guessLog = []; // rows of 4 colored squares, one per guess attempt — used for sharing
+
+function persistDaily() {
+  if (!isDailyGame) return;
+  BJJDaily.save(puzzle, {
+    words, selected, solved: solved.map(g => puzzle.groups.indexOf(g)),
+    mistakes, startedAt, guessLog, finished, won
+  });
+}
 
 // ---- Loading a puzzle ---------------------------------------------------
 // `override` (optional) = { puzzle, metaLabel } — used by the Archive view
@@ -88,6 +96,7 @@ function loadPuzzle(override) {
   } else {
     puzzle = queryPuzzle() || (mode === "daily" ? PUZZLES[dailyIndex()] : pickTraining());
   }
+  isDailyGame = mode === "daily" && !override && !queryPuzzle();
 
   // Assign each group a fixed share-color for this play-through, by the
   // order it's defined in data.js (not by the order it's solved in).
@@ -102,7 +111,18 @@ function loadPuzzle(override) {
     [words[i], words[j]] = [words[j], words[i]];
   }
 
-  startedAt = Date.now();
+  const saved = isDailyGame ? BJJDaily.read(puzzle) : null;
+  if (saved) {
+    words = saved.words;
+    selected = saved.selected;
+    solved = saved.solved.map(i => puzzle.groups[i]);
+    mistakes = saved.mistakes;
+    guessLog = saved.guessLog;
+    finished = !!saved.finished;
+    won = !!saved.won;
+  }
+
+  startedAt = saved && Number.isFinite(saved.startedAt) ? saved.startedAt : Date.now();
   if (override && override.metaLabel) {
     meta.textContent = override.metaLabel;
   } else if (mode === "daily") {
@@ -110,13 +130,15 @@ function loadPuzzle(override) {
   } else {
     meta.textContent = `Training • ${puzzle.difficulty.toUpperCase()} BELT • Puzzle ${puzzle.id}`;
   }
-  msg.textContent = (mode === "daily" && !override && state.dailyHistory[dateKey()])
+  msg.textContent = (isDailyGame && !saved && state.dailyHistory[dateKey()])
     ? "Already completed today — replaying for practice."
     : "";
 
   render();
   renderSolved();
   update();
+  if (finished) showCompletion(state.dailyHistory[dateKey()]?.seconds ?? Math.round((Date.now() - startedAt) / 1000));
+  else persistDaily();
 }
 
 // ---- Rendering -----------------------------------------------------------
@@ -132,7 +154,7 @@ function render() {
     b.onclick = () => {
       selected.includes(word) ? selected = selected.filter(x => x !== word)
         : selected.length < 4 && selected.push(word);
-      render(); update();
+      render(); update(); persistDaily();
     };
     grid.appendChild(b);
   });
@@ -151,26 +173,12 @@ function update() {
   dots.textContent = "● ".repeat(mistakes).trim();
   dots.setAttribute("aria-label", `${mistakes} mistake${mistakes === 1 ? "" : "s"} remaining`);
   submit.disabled = selected.length !== 4 || finished;
+  $("shuffle").disabled = finished;
 }
 
 // ---- Gameplay --------------------------------------------------------
-function finish(win) {
-  finished = true; won = win;
-  const seconds = Math.round((Date.now() - startedAt) / 1000);
-  state.gamesPlayed++;
-  if (win) {
-    state.gamesWon++;
-    if (mode === "daily" && !state.dailyHistory[dateKey()]) {
-      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-      state.currentStreak = state.lastDaily === yesterday ? state.currentStreak + 1 : 1;
-      state.longestStreak = Math.max(state.longestStreak, state.currentStreak);
-      state.lastDaily = dateKey();
-      state.dailyHistory[dateKey()] = { win: true, mistakes, seconds, puzzle: puzzle.id };
-    }
-    if (state.bestTime === null || seconds < state.bestTime) state.bestTime = seconds;
-  }
-  save();
-  msg.textContent = win
+function showCompletion(seconds) {
+  msg.textContent = won
     ? `Connected. ${seconds}s • ${mistakes} mistakes left.`
     : "Puzzle complete. Review the answers below.";
   puzzle.groups.filter(g => !solved.includes(g)).forEach(g => solved.push(g));
@@ -180,7 +188,25 @@ function finish(win) {
   $("learnPanel").classList.remove("hidden");
   share.classList.remove("hidden");
   next.classList.remove("hidden");
+  next.textContent = isDailyGame ? "Practice another" : "Next Puzzle";
   update();
+}
+
+function finish(win) {
+  finished = true; won = win;
+  const seconds = Math.round((Date.now() - startedAt) / 1000);
+  if (isDailyGame) {
+    BJJDaily.recordResult(state, puzzle, win, mistakes, seconds);
+  } else {
+    state.gamesPlayed++;
+    if (win) {
+      state.gamesWon++;
+      if (state.bestTime === null || seconds < state.bestTime) state.bestTime = seconds;
+    }
+  }
+  save();
+  showCompletion(seconds);
+  persistDaily();
 }
 
 function submitGuess() {
@@ -212,6 +238,7 @@ function submitGuess() {
     render();
   }
   update();
+  persistDaily();
 }
 
 function shuffle() {
@@ -220,13 +247,23 @@ function shuffle() {
     [words[i], words[j]] = [words[j], words[i]];
   }
   render();
+  persistDaily();
 }
 
 // ---- Sharing -----------------------------------------------------------
-function shareResult() {
+async function shareResult() {
   const label = mode === "daily" ? `#${dayNumber()}` : mode === "archive" ? "Archive" : "Training";
   const grid4 = guessLog.join("\n");
   const text = `BJJ Connections ${label}\n\n${grid4}\n\n${won ? "Solved" : "Played"} • ${mistakes} mistakes left\nbjjconnectionsbygabe.com`;
+  if (navigator.share) {
+    try {
+      await navigator.share({text});
+      msg.textContent = "Results shared.";
+    } catch (e) {
+      if (e.name !== "AbortError") msg.textContent = "Couldn't open the share sheet. Try again or copy the result.";
+    }
+    return;
+  }
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).then(
       () => { msg.textContent = "Results copied to clipboard."; },
@@ -321,7 +358,10 @@ next.onclick = () => {
 share.onclick = shareResult;
 $("resetStats").onclick = () => {
   if (confirm("Reset all BJJ Connections stats?")) {
-    try { localStorage.removeItem("bjjConnectionsState"); } catch (e) { /* ignore */ }
+    try {
+      localStorage.removeItem("bjjConnectionsState");
+      localStorage.removeItem("bjjDailyProgress");
+    } catch (e) { /* ignore */ }
     location.reload();
   }
 };

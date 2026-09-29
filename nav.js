@@ -48,10 +48,12 @@
   install.textContent = "Install App";
   install.hidden = true;
   navLinks.appendChild(install);
+  var homeInstall = document.getElementById("homeInstall");
+  var buttons = homeInstall ? [install, homeInstall] : [install];
   var isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
-  if (isIOS) install.hidden = false;
+  if (isIOS) buttons.forEach(function (button) { button.hidden = false; });
 
-  function showIOSInstructions() {
+  function showIOSInstructions(opener) {
     var dialog = document.createElement("dialog");
     dialog.className = "install-dialog";
     dialog.setAttribute("aria-labelledby", "install-dialog-title");
@@ -63,29 +65,33 @@
       '<button type="button" class="btn btn-primary install-dialog-close">Got it</button>';
     document.body.appendChild(dialog);
     dialog.querySelector("button").addEventListener("click", function () { dialog.close(); });
-    dialog.addEventListener("close", function () { dialog.remove(); install.focus(); });
+    dialog.addEventListener("close", function () { dialog.remove(); opener.focus(); });
     dialog.showModal();
   }
 
   window.addEventListener("beforeinstallprompt", function (event) {
     event.preventDefault();
     deferredPrompt = event;
-    install.hidden = false;
+    buttons.forEach(function (button) { button.hidden = false; });
   });
 
-  install.addEventListener("click", async function () {
+  async function handleInstall() {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       await deferredPrompt.userChoice;
       deferredPrompt = null;
-      install.hidden = true;
+      buttons.forEach(function (button) { button.hidden = true; });
       return;
     }
 
     if (isIOS) {
-      showIOSInstructions();
+      showIOSInstructions(this);
     } else {
       alert("Use your browser's Install App or Add to Home Screen option to install BJJ Connections.");
     }
+  }
+  buttons.forEach(function (button) { button.addEventListener("click", handleInstall); });
+  window.addEventListener("appinstalled", function () {
+    buttons.forEach(function (button) { button.hidden = true; });
   });
 })();

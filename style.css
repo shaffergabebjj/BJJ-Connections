@@ -1027,6 +1027,7 @@ a:focus-visible, button:focus-visible, input:focus-visible,
 .nav-install-btn[hidden] {
   display: none;
 }
+#homeInstall[hidden] { display: none; }
 .install-dialog {
   width: min(440px, calc(100% - 32px));
   max-height: calc(100dvh - 32px);
