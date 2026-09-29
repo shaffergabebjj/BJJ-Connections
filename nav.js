@@ -97,3 +97,22 @@
     buttons.forEach(function (button) { button.hidden = true; });
   });
 })();
+
+(function () {
+  var nav = document.querySelector(".nav");
+  var menu = document.querySelector(".nav-toggle");
+  if (!nav || !window.BJJTheme) return;
+  var button = document.createElement("button");
+  button.type = "button";
+  button.className = "theme-toggle";
+  nav.insertBefore(button, menu || null);
+  function update() {
+    var dark = document.documentElement.dataset.theme === "dark";
+    button.textContent = dark ? "☀" : "☾";
+    button.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
+    button.title = button.getAttribute("aria-label");
+  }
+  button.addEventListener("click", window.BJJTheme.toggle);
+  window.addEventListener("bjjthemechange", update);
+  update();
+})();
