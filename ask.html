@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a0a0a">
+<title>Ask BJJ Connections — BJJ Questions</title>
+<meta name="description" content="Ask a BJJ question about positions, techniques, training, or competition preparation.">
+<link rel="canonical" href="https://bjjconnectionsbygabe.com/ask.html">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+<header class="site-header"><div class="container"><nav class="nav" aria-label="Main navigation">
+  <a href="/" class="nav-logo"><img src="favicon.svg" alt="" aria-hidden="true"><span class="logo-text">BJJ Connections</span></a>
+  <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  <div class="nav-links">
+    <a href="/">Home</a><a href="techniques.html">Techniques</a><a href="puzzles.html">Puzzles</a>
+    <a href="competition.html">Competition</a><a href="training.html">Training</a>
+    <a href="resources.html">Resources</a><a href="ask.html" class="active" aria-current="page">Ask BJJ</a>
+    <a href="about.html">About</a>
+  </div>
+</nav></div></header>
+<main id="main" class="section"><div class="container ask-layout">
+  <div class="ask-intro">
+    <span class="hero-eyebrow">BJJ Connections · AI Guide</span>
+    <h1>Ask BJJ Connections</h1>
+    <p>Questions about positions, techniques, training, or getting ready to compete? Ask here.</p>
+    <p class="ask-note">AI can make mistakes. Check competition rules with the event organizer and technique details with your coach.</p>
+  </div>
+  <section class="ask-card" aria-label="BJJ chat">
+    <div class="ask-header"><strong>Ask BJJ</strong><span id="chatStatus" role="status">Ready for a question</span></div>
+    <div class="ask-messages" id="chatMessages" role="log" aria-label="Conversation" aria-live="polite" aria-relevant="additions text">
+      <div class="ask-message ask-assistant">Hey! What would you like to know about BJJ?</div>
+    </div>
+    <div class="ask-prompts" aria-label="Example questions">
+      <button type="button" data-question="What is a knee cut pass?">What is a knee cut pass?</button>
+      <button type="button" data-question="What should I bring to my first BJJ competition?">First competition checklist</button>
+      <button type="button" data-question="What is the difference between gi and no-gi?">Gi vs. no-gi</button>
+    </div>
+    <form id="chatForm" class="ask-form">
+      <label for="chatInput">Your question</label>
+      <div class="ask-input-row">
+        <input id="chatInput" name="question" type="text" maxlength="500" required autocomplete="off" placeholder="Ask a BJJ question…">
+        <button type="submit" class="btn btn-primary" id="chatSend">Send</button>
+      </div>
+      <p class="ask-privacy">Your question is sent to an AI service to generate an answer. Don't include private information.</p>
+    </form>
+  </section>
+</div></main>
+<footer class="site-footer"><div class="container"><div class="footer-bottom">
+  <p style="margin:0">BJJ Connections · <a href="/">Back to the daily puzzle</a> · <a href="about.html#contact">Contact Gabe</a></p>
+</div></div></footer>
+<script src="nav.js"></script>
+<script src="chat.js"></script>
+</body>
+</html>

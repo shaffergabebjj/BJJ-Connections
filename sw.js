@@ -1,8 +1,8 @@
-const CACHE_NAME = "bjj-connections-v11";
+const CACHE_NAME = "bjj-connections-v12";
 const APP_SHELL = [
   "/", "/index.html", "/puzzles.html", "/techniques.html",
-  "/competition.html", "/training.html", "/resources.html", "/about.html",
-  "/style.css", "/nav.js", "/app.js", "/data.js", "/daily-progress.js", "/techniques.js",
+  "/competition.html", "/training.html", "/resources.html", "/about.html", "/ask.html",
+  "/style.css", "/nav.js", "/app.js", "/data.js", "/daily-progress.js", "/techniques.js", "/chat.js",
   "/favicon.svg", "/favicon-32.png", "/apple-touch-icon.png",
   "/icon-192.png", "/icon-512.png", "/manifest.json"
 ];
