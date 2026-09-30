@@ -77,7 +77,8 @@
           </div>
           <span class="hero-game-meta" id="homePuzzleMeta">16 words · 4 groups · 4 mistakes</span>
         </div>
-        <div class="home-focus" id="homePuzzleFocus"></div>
+        <p class="home-instructions">Find four groups of four related words. Select a group, then tap Submit.</p>
+        <details class="home-hint"><summary>Need a hint?</summary><p id="homePuzzleFocus"></p></details>
         <div class="hero-mini-grid home-mini-grid" id="homePuzzleGrid" aria-label="Today's BJJ Connections puzzle"></div>
         <div class="home-game-status">
           <span id="homeMistakes">4 mistakes</span>
@@ -85,9 +86,11 @@
         </div>
         <div class="home-game-controls">
           <button class="btn btn-secondary home-game-btn" id="homeShuffle" type="button">Shuffle</button>
+          <button class="btn btn-secondary home-game-btn" id="homeDeselect" type="button" disabled>Deselect</button>
           <button class="btn btn-primary home-game-btn" id="homeSubmit" type="button" disabled>Submit</button>
         </div>
-        <div id="homeSolved" class="home-solved"></div>
+        <div id="homeSolved" class="home-solved" aria-live="polite"></div>
+        <details id="homeLearn" class="home-learn" hidden><summary>Why these words connect</summary><div id="homeExplanations"></div></details>
         <div class="home-game-footer">
           <span id="homeStreak">Streak: 0</span>
           <a id="homeFullGame" href="puzzles.html">Open full game →</a>
@@ -169,32 +172,6 @@
     </div>
   </section>
 
-  <!-- Puzzle Preview -->
-  <section class="section section-alt">
-    <div class="container">
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:24px">
-        <div>
-          <h2 class="section-title mb-0">Daily Puzzle</h2>
-          <p class="section-sub mb-0" style="margin-bottom:0">New challenge every day. Everyone gets the same puzzle.</p>
-        </div>
-        <a href="puzzles.html" class="btn btn-dark btn-sm">Play full puzzle →</a>
-      </div>
-      <div class="card">
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:480px;margin:0 auto">
-          <div class="word" style="min-height:60px;cursor:default" aria-hidden="true">KIMURA</div>
-          <div class="word sel" style="min-height:60px;cursor:default" aria-hidden="true">ARMBAR</div>
-          <div class="word" style="min-height:60px;cursor:default" aria-hidden="true">TRIANGLE</div>
-          <div class="word" style="min-height:60px;cursor:default" aria-hidden="true">OMOPLATA</div>
-          <div class="word" style="min-height:60px;cursor:default" aria-hidden="true">MOUNT</div>
-          <div class="word" style="min-height:60px;cursor:default" aria-hidden="true">SIDE CONTROL</div>
-          <div class="word" style="min-height:60px;cursor:default" aria-hidden="true">BACK</div>
-          <div class="word" style="min-height:60px;cursor:default" aria-hidden="true">HALF GUARD</div>
-        </div>
-        <p style="text-align:center;color:var(--muted);font-size:14px;margin-top:16px;margin-bottom:0">16 words. 4 hidden groups of 4. Can you find them all?</p>
-      </div>
-    </div>
-  </section>
-
   <!-- About Preview -->
   <section class="section">
     <div class="container">
@@ -244,6 +221,7 @@
   const mistakesEl = document.getElementById("homeMistakes");
   const messageEl = document.getElementById("homeMessage");
   const submitBtn = document.getElementById("homeSubmit");
+  const deselectBtn = document.getElementById("homeDeselect");
   const shuffleBtn = document.getElementById("homeShuffle");
   const solvedEl = document.getElementById("homeSolved");
   const streakEl = document.getElementById("homeStreak");
@@ -263,11 +241,12 @@
   let won = false;
   let startedAt = Date.now();
   let guessLog = [];
+  let attemptedGuesses = [];
 
   function persist() {
     BJJDaily.save(puzzle, {
       words, selected, solved: solved.map(group => puzzle.groups.indexOf(group)),
-      mistakes, startedAt, guessLog, finished, won
+      mistakes, startedAt, guessLog, attemptedGuesses, finished, won
     });
   }
 
@@ -309,6 +288,7 @@
     finished = !!saved.finished;
     won = !!saved.won;
     guessLog = saved.guessLog;
+    attemptedGuesses = saved.attemptedGuesses || [];
     if (Number.isFinite(saved.startedAt)) startedAt = saved.startedAt;
   }
 
@@ -341,6 +321,8 @@
   function update() {
     mistakesEl.textContent = mistakes + (mistakes === 1 ? " mistake" : " mistakes") + " left";
     submitBtn.disabled = selected.length !== 4 || finished;
+    submitBtn.textContent = finished ? "Complete" : "Submit (" + selected.length + "/4)";
+    deselectBtn.disabled = !selected.length || finished;
     shuffleBtn.disabled = finished;
   }
 
@@ -349,9 +331,26 @@
     solved.forEach(group => {
       const row = document.createElement("div");
       row.className = "home-solved-group home-solved-" + puzzle.groups.indexOf(group);
-      row.innerHTML = "<strong>" + group.category + "</strong><span>" + group.items.join(" · ") + "</span>";
+      const title = document.createElement("strong");
+      title.textContent = group.category;
+      const items = document.createElement("span");
+      items.textContent = group.items.join(" · ");
+      row.append(title, items);
       solvedEl.appendChild(row);
     });
+  }
+
+  function showExplanations() {
+    const box = document.getElementById("homeExplanations");
+    box.replaceChildren();
+    puzzle.groups.forEach(group => {
+      const paragraph = document.createElement("p");
+      const title = document.createElement("strong");
+      title.textContent = group.category;
+      paragraph.append(title, document.createElement("br"), document.createTextNode(group.explanation));
+      box.appendChild(paragraph);
+    });
+    document.getElementById("homeLearn").hidden = false;
   }
 
   function finish() {
@@ -370,7 +369,8 @@
     });
     renderSolved();
     grid.innerHTML = "";
-    fullGameLink.textContent = "View results →";
+    fullGameLink.textContent = "View results & share →";
+    showExplanations();
     update();
     refreshStreak();
     persist();
@@ -378,6 +378,12 @@
 
   function submitGuess() {
     if (selected.length !== 4 || finished) return;
+    const attempt = BJJDaily.guessKey(selected);
+    if (attemptedGuesses.includes(attempt)) {
+      messageEl.textContent = "Already tried that group. Change a word and try again.";
+      return;
+    }
+    attemptedGuesses.push(attempt);
     const found = puzzle.groups.find(group =>
       group.items.every(word => selected.includes(word))
     );
@@ -416,6 +422,17 @@
     persist();
   };
 
+  deselectBtn.onclick = function () {
+    selected = [];
+    messageEl.textContent = "Select 4 words.";
+    render(); update(); persist();
+  };
+  grid.addEventListener("keydown", function (event) {
+    if (event.key === "Enter" && selected.length === 4) {
+      event.preventDefault();
+      submitGuess();
+    }
+  });
   submitBtn.onclick = submitGuess;
 
   refreshStreak();
@@ -426,7 +443,8 @@
     puzzle.groups.forEach(group => { if (!solved.includes(group)) solved.push(group); });
     renderSolved();
     grid.innerHTML = "";
-    fullGameLink.textContent = "View results →";
+    fullGameLink.textContent = "View results & share →";
+    showExplanations();
   } else {
     renderSolved();
     persist();

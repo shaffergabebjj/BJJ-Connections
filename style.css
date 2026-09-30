@@ -1155,3 +1155,17 @@ html[data-theme="dark"] { color-scheme: dark; }
 :root[data-theme="light"] .btn-secondary:hover { background:var(--surface); }
 :root[data-theme="light"] .theme-toggle { color:var(--ink); border-color:var(--border-strong); }
 @media (max-width:1000px) { :root[data-theme="light"] .nav-links { background:var(--surface); } }
+
+/* Daily game controls and optional learning help. */
+.home-instructions { color:var(--muted); font-size:14px; margin:0 0 10px; }
+.home-hint, .home-learn { color:var(--ink); font-size:13px; margin:0 0 14px; }
+.home-hint summary, .home-learn summary { cursor:pointer; font-weight:700; padding:8px 0; }
+.home-hint p { margin:4px 0 10px; }
+.home-learn { margin:14px 0 0; padding:12px; background:var(--surface); border-radius:8px; }
+.home-learn p { margin:12px 0; line-height:1.6; }
+.home-game-btn { min-height:44px; padding:10px 8px; }
+.hero-mini-tile:focus-visible, .home-hint summary:focus-visible, .home-learn summary:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+@media (max-width:380px) {
+  .home-game-controls { flex-wrap:wrap; }
+  #homeSubmit { flex-basis:100%; }
+}

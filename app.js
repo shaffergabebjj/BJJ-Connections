@@ -72,6 +72,7 @@ const RESULT_COLORS = ["🟩", "🟨", "🟦", "🟪"]; // fixed per puzzle grou
 let mode = "daily", difficulty = "all", puzzle = null, isDailyGame = false, isDailyReplay = false;
 let words = [], selected = [], solved = [];
 let mistakes = 4, startedAt = 0, finished = false, won = false;
+let attemptedGuesses = [];
 let guessLog = []; // rows of 4 colored squares, one per guess attempt — used for sharing
 let loadedDateKey = dateKey();
 
@@ -79,7 +80,7 @@ function persistDaily() {
   if (!isDailyGame) return;
   BJJDaily.save(puzzle, {
     words, selected, solved: solved.map(g => puzzle.groups.indexOf(g)),
-    mistakes, startedAt, guessLog, finished, won, replay: isDailyReplay
+    mistakes, startedAt, guessLog, attemptedGuesses, finished, won, replay: isDailyReplay
   });
 }
 
@@ -87,7 +88,7 @@ function persistDaily() {
 // `override` (optional) = { puzzle, metaLabel } — used by the Archive view
 // to force a specific past puzzle instead of the normal daily/training pick.
 function loadPuzzle(override) {
-  finished = false; won = false; selected = []; solved = []; mistakes = 4; guessLog = [];
+  finished = false; won = false; selected = []; solved = []; mistakes = 4; guessLog = []; attemptedGuesses = [];
   loadedDateKey = dateKey();
   $("learnPanel").classList.add("hidden");
   $("resultSummary").classList.add("hidden");
@@ -122,6 +123,7 @@ function loadPuzzle(override) {
     solved = saved.solved.map(i => puzzle.groups[i]);
     mistakes = saved.mistakes;
     guessLog = saved.guessLog;
+    attemptedGuesses = saved.attemptedGuesses || [];
     finished = !!saved.finished;
     won = !!saved.won;
   }
@@ -180,6 +182,8 @@ function update() {
   dots.textContent = "● ".repeat(mistakes).trim();
   dots.setAttribute("aria-label", `${mistakes} mistake${mistakes === 1 ? "" : "s"} remaining`);
   submit.disabled = selected.length !== 4 || finished;
+  submit.textContent = finished ? "Complete" : `Submit (${selected.length}/4)`;
+  $("deselect").disabled = !selected.length || finished;
   $("shuffle").disabled = finished;
 }
 
@@ -228,6 +232,12 @@ function finish(win) {
 
 function submitGuess() {
   if (selected.length !== 4 || finished) return;
+  const attempt = BJJDaily.guessKey(selected);
+  if (attemptedGuesses.includes(attempt)) {
+    msg.textContent = "Already tried that group. Change a word and try again.";
+    return;
+  }
+  attemptedGuesses.push(attempt);
   const attempted = selected.slice(); // capture before we clear it below
   const found = puzzle.groups.find(g => g.items.every(w => attempted.includes(w)));
 
@@ -397,6 +407,15 @@ document.querySelector(".puzzle-tabs").addEventListener("keydown", event => {
 });
 
 // ---- Controls -------------------------------------------------------------
+$("deselect").onclick = () => {
+  selected = []; msg.textContent = "Select 4 words.";
+  render(); update(); persistDaily();
+};
+grid.addEventListener("keydown", event => {
+  if (event.key === "Enter" && selected.length === 4) {
+    event.preventDefault(); submitGuess();
+  }
+});
 submit.onclick = submitGuess;
 $("shuffle").onclick = shuffle;
 next.onclick = () => {

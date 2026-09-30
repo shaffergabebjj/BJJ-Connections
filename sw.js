@@ -1,4 +1,4 @@
-const CACHE_NAME = "bjj-connections-v15";
+const CACHE_NAME = "bjj-connections-v16";
 const APP_SHELL = [
   "/", "/index.html", "/puzzles.html", "/techniques.html",
   "/competition.html", "/training.html", "/resources.html", "/about.html",
