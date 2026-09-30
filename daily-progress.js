@@ -7,6 +7,9 @@ window.BJJDaily = (function () {
   function dayNumber(d = new Date()) {
     return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
   }
+  function guessKey(words) {
+    return JSON.stringify(words.slice().sort());
+  }
   function read(puzzle) {
     try {
       const saved = JSON.parse(localStorage.getItem(key) || "null");
@@ -26,6 +29,14 @@ window.BJJDaily = (function () {
           !saved.solved.every(i => Number.isInteger(i) && i >= 0 && i < 4) ||
           saved.selected.length > 4 || saved.solved.length > 4 ||
           !Number.isInteger(saved.mistakes) || saved.mistakes < 0 || saved.mistakes > 4) return null;
+      saved.attemptedGuesses = Array.isArray(saved.attemptedGuesses)
+        ? saved.attemptedGuesses.filter(key => {
+            try {
+              const words = JSON.parse(key);
+              return Array.isArray(words) && words.length === 4 &&
+                new Set(words).size === 4 && words.every(w => all.includes(w));
+            } catch (e) { return false; }
+          }) : [];
       return saved;
     } catch (e) { return null; }
   }
@@ -58,5 +69,5 @@ window.BJJDaily = (function () {
     return state.lastDaily === today || state.lastDaily === dateKey(yesterday)
       ? state.currentStreak : 0;
   }
-  return {dateKey, dayNumber, read, save, recordResult, displayStreak};
+  return {guessKey, dateKey, dayNumber, read, save, recordResult, displayStreak};
 })();

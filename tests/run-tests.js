@@ -86,3 +86,77 @@ for (const file of fs.readdirSync(root).filter(file => file.endsWith(".html"))) 
 }
 
 console.log("All game-state, puzzle-bank, and internal-link checks passed.");
+
+// Exercise real click handlers in both entry points with shared browser storage.
+function gameHarness(page, values = new Map()) {
+  const elements = new Map();
+  function element() {
+    const classes = new Set();
+    const node = {
+      children: [], dataset: {}, hidden: false, disabled: false, textContent: "",
+      classList: {add: x => classes.add(x), remove: x => classes.delete(x),
+        contains: x => classes.has(x), toggle(x, force) {
+          const on = force ?? !classes.has(x); on ? classes.add(x) : classes.delete(x);
+        }},
+      setAttribute() {}, addEventListener() {}, focus() {},
+      appendChild(child) { this.children.push(child); return child; },
+      append(...children) { this.children.push(...children); },
+      replaceChildren(...children) { this.children = children; }
+    };
+    Object.defineProperty(node, "innerHTML", {set() { this.children = []; }});
+    return node;
+  }
+  const html = fs.readFileSync(path.join(root, page), "utf8");
+  for (const [, id] of html.matchAll(/id="([^"]+)"/g)) elements.set(id, element());
+  const context = {
+    console, Date, Intl, URLSearchParams, location: {search: "", reload() {}},
+    navigator: {}, addEventListener() {},
+    localStorage: {getItem: key => values.get(key) || null,
+      setItem: (key, value) => values.set(key, value)},
+    document: {getElementById: id => elements.get(id), createElement: element,
+      createTextNode: text => ({textContent: text}), addEventListener() {},
+      querySelectorAll: () => [], querySelector: () => element()}
+  };
+  context.window = context;
+  vm.createContext(context);
+  for (const file of ["data.js", "daily-progress.js"]) {
+    vm.runInContext(fs.readFileSync(path.join(root, file), "utf8"), context);
+  }
+  const script = page === "index.html"
+    ? html.match(/<script>\s*\(function \(\) \{([\s\S]*?)<\/script>/)[0].replace(/<\/?script>/g, "")
+    : fs.readFileSync(path.join(root, "app.js"), "utf8");
+  vm.runInContext(script, context);
+  const prefix = page === "index.html" ? "home" : "";
+  return {elements, values, grid: elements.get(prefix ? "homePuzzleGrid" : "grid"),
+    submit: elements.get(prefix ? "homeSubmit" : "submit"),
+    deselect: elements.get(prefix ? "homeDeselect" : "deselect"),
+    message: elements.get(prefix ? "homeMessage" : "msg"),
+    progress: () => JSON.parse(values.get("bjjDailyProgress"))};
+}
+const homeGame = gameHarness("index.html");
+const today = PUZZLES[Math.abs(daily.dayNumber(new Date())) % PUZZLES.length];
+const wrongGuess = [today.groups[0].items[0], today.groups[1].items[0],
+  today.groups[2].items[0], today.groups[3].items[0]];
+for (const word of wrongGuess) homeGame.grid.children.find(b => b.textContent === word).onclick();
+assert.equal(homeGame.submit.textContent, "Submit (4/4)");
+homeGame.submit.onclick();
+assert.equal(homeGame.progress().mistakes, 3);
+homeGame.submit.onclick();
+assert.equal(homeGame.progress().mistakes, 3, "duplicate guesses cannot cost another mistake");
+assert.match(homeGame.message.textContent, /Already tried/);
+const fullGame = gameHarness("puzzles.html", homeGame.values);
+fullGame.submit.onclick();
+assert.equal(fullGame.progress().mistakes, 3, "duplicate guard survives switching game views");
+fullGame.deselect.onclick();
+assert.equal(fullGame.progress().selected.length, 0);
+for (const group of today.groups) {
+  for (const word of group.items) fullGame.grid.children.find(b => b.textContent === word).onclick();
+  fullGame.submit.onclick();
+}
+assert.equal(fullGame.progress().won, true);
+const completedHome = gameHarness("index.html", fullGame.values);
+assert.equal(completedHome.elements.get("homeLearn").hidden, false);
+assert.equal(completedHome.elements.get("homeExplanations").children.length, 4);
+assert.equal(completedHome.grid.children.length, 0);
+assert.equal(completedHome.submit.disabled, true);
+console.log("Homepage/full-game duplicate guesses, progress transfer, deselect, and explanations passed.");
