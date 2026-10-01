@@ -75,3 +75,9 @@ Puzzles live in the `ROUNDS` array in `data.js`. Difficulty is inferred automati
 - Shared navigation included in each page with `nav.js` for mobile menu toggle
 - All interactive features use `localStorage` for persistence with safe fallbacks
 - Mobile-first responsive design with dark mode support
+
+### Personal tools
+- Competition checklists include overall progress, remaining-only filtering, and print styles.
+- Training plans restore saved choices; goals and session logs are stored in the current browser.
+- Export the session log as CSV for a portable backup. Browser data does not sync between devices.
+- Run `node tests/run-tests.js` and `node tests/tools-tests.js` for regression checks.

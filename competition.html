@@ -53,15 +53,21 @@
 <main id="main">
   <section class="page-header">
     <div class="container">
-      <h1>Competition Prep</h1>
+      <div class="hero-eyebrow">03 / Compete</div><h1>Arrive ready.</h1>
       <p>Interactive checklists and resources to help you prepare for Brazilian Jiu-Jitsu competition. Track your progress — your checkmarks save automatically.</p>
     </div>
   </section>
 
   <section class="section">
     <div class="container">
+      <div class="tool-dashboard">
+        <div><span class="hero-eyebrow">Your preparation</span><h2 id="prepSummary" role="status">Loading your checklist…</h2><p>Check off what applies to your event. Your progress stays in this browser.</p></div>
+        <div class="dashboard-actions"><button class="btn btn-outline btn-sm" id="remainingOnly" type="button" aria-pressed="false">Show remaining</button><button class="btn btn-outline btn-sm" id="printChecklist" type="button">Print checklist</button></div>
+      </div>
+<nav class="section-nav" aria-label="Competition sections"><a href="#prep-weekBefore">The week before</a><a href="#prep-giPrep">Gi</a><a href="#prep-nogiPrep">No-gi</a><a href="#prep-bring">Packing list</a><a href="#prep-matchDay">Match day</a><a href="#prep-weighIn">Weigh-in</a><a href="#rules">Rules</a></nav>
+      <div class="prep-grid">
 
-      <!-- Week Before -->
+      <section class="prep-panel" id="prep-weekBefore">
       <h2 class="section-title">The Week Before</h2>
       <div class="checklist-progress">
         <span id="weekBeforeProgress">0/0</span>
@@ -69,7 +75,8 @@
       </div>
       <div class="checklist" id="weekBefore" data-key="comp-weekBefore"></div>
 
-      <!-- Gi Preparation -->
+      </section>
+      <section class="prep-panel" id="prep-giPrep">
       <h2 class="section-title mt-3">Gi Preparation</h2>
       <div class="callout callout-info">
         <strong>Tip:</strong> Always check the tournament rules for gi requirements (patch placement, sleeve length, etc.) well before competition day.
@@ -80,7 +87,8 @@
       </div>
       <div class="checklist" id="giPrep" data-key="comp-giPrep"></div>
 
-      <!-- No-Gi Preparation -->
+      </section>
+      <section class="prep-panel" id="prep-nogiPrep">
       <h2 class="section-title mt-3">No-Gi Preparation</h2>
       <div class="checklist-progress">
         <span id="nogiPrepProgress">0/0</span>
@@ -88,7 +96,8 @@
       </div>
       <div class="checklist" id="nogiPrep" data-key="comp-nogiPrep"></div>
 
-      <!-- What to Bring -->
+      </section>
+      <section class="prep-panel" id="prep-bring">
       <h2 class="section-title mt-3">What to Bring</h2>
       <div class="checklist-progress">
         <span id="bringProgress">0/0</span>
@@ -96,7 +105,8 @@
       </div>
       <div class="checklist" id="bring" data-key="comp-bring"></div>
 
-      <!-- Match Day -->
+      </section>
+      <section class="prep-panel" id="prep-matchDay">
       <h2 class="section-title mt-3">Match-Day Organization</h2>
       <div class="checklist-progress">
         <span id="matchDayProgress">0/0</span>
@@ -104,7 +114,8 @@
       </div>
       <div class="checklist" id="matchDay" data-key="comp-matchDay"></div>
 
-      <!-- Weigh-In -->
+      </section>
+      <section class="prep-panel" id="prep-weighIn">
       <h2 class="section-title mt-3">Weigh-In Preparation</h2>
       <div class="callout callout-warn">
         <strong>Important:</strong> Never cut weight dangerously. Consult a qualified coach or nutritionist before making significant weight changes. This checklist is for organization, not medical advice.
@@ -115,6 +126,8 @@
       </div>
       <div class="checklist" id="weighIn" data-key="comp-weighIn"></div>
 
+      </section>
+      </div>
       <div class="mt-3">
         <button class="btn btn-ghost btn-sm" id="resetChecklists">Reset all checklists</button>
       </div>
@@ -124,7 +137,7 @@
   <!-- Rules & Organizations -->
   <section class="section section-alt">
     <div class="container">
-      <h2 class="section-title">Rules & Organizations</h2>
+      <h2 class="section-title" id="rules">Rules & Organizations</h2>
       <p class="section-sub">Always check the official rulebook for your specific tournament. Rules differ between organizations and can change.</p>
       <div class="grid-cards">
         <a href="https://ibjjf.com/rules/" target="_blank" rel="noopener" class="link-card" style="text-decoration:none;color:inherit">
@@ -213,7 +226,7 @@ var CHECKLISTS = {
     "Confirm registration and division details",
     "Review the tournament ruleset (IBJJF, ADCC, NAGA, etc.)",
     "Check which techniques are legal at your belt level",
-    "Plan your weight cut strategy (if needed) — consult your coach",
+    "Confirm your division and weigh-in requirements with your coach",
     "Increase rolling intensity to simulate match pace",
     "Practice your game plan and competition techniques",
     "Review bracket format (single-elim vs round-robin)",
@@ -289,7 +302,7 @@ var CHECKLISTS = {
 
 (function() {
   function getStored(key) {
-    try { return JSON.parse(localStorage.getItem("bjjChecklist_" + key) || "[]"); }
+    try { var value = JSON.parse(localStorage.getItem("bjjChecklist_" + key) || "[]"); return Array.isArray(value) ? value.slice(0, CHECKLISTS[key].length).map(function(v) { return v === true; }) : []; }
     catch(e) { return []; }
   }
   function setStored(key, data) {
@@ -297,11 +310,14 @@ var CHECKLISTS = {
     catch(e) {}
   }
 
+  var remainingOnly = false;
+  var progress = {};
   Object.keys(CHECKLISTS).forEach(function(listKey) {
     var container = document.getElementById(listKey);
     if (!container) return;
     var items = CHECKLISTS[listKey];
     var checked = getStored(listKey);
+    progress[listKey] = checked;
 
     items.forEach(function(item, i) {
       var div = document.createElement("div");
@@ -336,7 +352,7 @@ var CHECKLISTS = {
 
   function updateProgress(key) {
     var items = CHECKLISTS[key];
-    var checked = getStored(key);
+    var checked = progress[key] || [];
     var done = checked.filter(Boolean).length;
     var total = items.length;
     var pct = total ? (done / total * 100) : 0;
@@ -345,7 +361,27 @@ var CHECKLISTS = {
     var barEl = document.getElementById(key + "Bar");
     if (progressEl) progressEl.textContent = done + "/" + total;
     if (barEl) barEl.style.width = pct + "%";
+    updateOverview();
   }
+
+  function updateOverview() {
+    var total = 0, done = 0;
+    Object.keys(CHECKLISTS).forEach(function(key) {
+      total += CHECKLISTS[key].length;
+      done += (progress[key] || []).filter(Boolean).length;
+    });
+    document.getElementById("prepSummary").textContent = done + " of " + total + " tasks complete";
+    document.querySelectorAll(".checklist-item").forEach(function(row) {
+      row.hidden = remainingOnly && row.classList.contains("checked");
+    });
+  }
+  document.getElementById("remainingOnly").addEventListener("click", function() {
+    remainingOnly = !remainingOnly;
+    this.setAttribute("aria-pressed", String(remainingOnly));
+    this.textContent = remainingOnly ? "Show all tasks" : "Show remaining";
+    updateOverview();
+  });
+  document.getElementById("printChecklist").addEventListener("click", function() { window.print(); });
 
   // Reset button
   var resetBtn = document.getElementById("resetChecklists");
