@@ -36,13 +36,13 @@
       <a href="/" class="nav-logo" aria-label="BJJ Connections home">
         <img src="logo.svg" width="44" height="44" alt="" aria-hidden="true">
       </a>
-      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
-      <div class="nav-links">
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="primaryNav">☰</button>
+      <div class="nav-links" id="primaryNav">
         <a href="/">Home</a>
         <a href="techniques.html">Techniques</a>
         <a href="puzzles.html">Puzzles</a>
         <a href="competition.html">Competition</a>
-        <a href="training.html" class="active">Training</a>
+        <a href="training.html" class="active" aria-current="page">Training</a>
         <a href="resources.html">Resources</a>
         <a href="about.html">About</a>
       </div>
@@ -306,7 +306,7 @@
     <div class="footer-grid">
       <div>
         <div class="footer-brand">BJJ Connections</div>
-        <p style="font-size:14px;color:rgba(255,255,255,.5);margin:0">Training resources for BJJ practitioners. Always train under qualified supervision and consult professionals for fitness and health advice.</p>
+        <p class="footer-description">Training resources for BJJ practitioners. Always train under qualified supervision and consult professionals for fitness and health advice.</p>
       </div>
       <div class="footer-links">
         <a href="techniques.html">Techniques</a>

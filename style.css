@@ -1222,3 +1222,125 @@ html[data-theme="dark"] { color-scheme: dark; }
   .group-enter { animation:none; }
   .hero-mini-tile:hover, .hero-mini-tile.selected { transform:none; }
 }
+
+/* A quieter frame for the game and the tools around it. */
+body { text-rendering:optimizeLegibility; }
+button, a, input, select, summary { -webkit-tap-highlight-color:transparent; }
+button, .btn { touch-action:manipulation; }
+[id] { scroll-margin-top:88px; }
+.footer-description { font-size:14px; color:#b6b6b6; margin:0; max-width:460px; }
+:root[data-theme="light"] .footer-description { color:var(--muted); }
+.site-footer { border-top:1px solid var(--border); }
+.nav-links a { font-size:13px; }
+.nav-links a.active { box-shadow:inset 0 -2px var(--accent); }
+.page-header { padding:40px 0 32px; border-bottom:1px solid var(--border); }
+.page-header h1 { letter-spacing:-.045em; }
+.page-header p { margin-bottom:0; }
+:root[data-theme] .hero.game-hero { padding:42px 0; background:var(--bg); color:var(--ink); }
+.game-hero::after { display:none; }
+.game-layout { display:grid; grid-template-columns:minmax(0,.78fr) minmax(0,1.5fr); gap:44px; align-items:center; }
+.hero-intro { padding:16px 0; }
+.hero-intro .hero-eyebrow { font-size:10px; letter-spacing:1.5px; }
+.hero .hero-intro h1 { color:var(--ink); font-size:clamp(36px,4.5vw,58px); line-height:1.02; letter-spacing:-.06em; margin:0 0 22px; }
+.title-dot { color:var(--accent); }
+.hero .hero-description { color:var(--muted); font-size:17px; line-height:1.65; margin:0; max-width:310px; }
+.connection-stripes { display:flex; gap:5px; width:104px; margin:25px 0; }
+.connection-stripes i { height:6px; flex:1; border-radius:2px; background:var(--green); }
+.connection-stripes i:nth-child(2) { background:var(--yellow); }
+.connection-stripes i:nth-child(3) { background:var(--blue); }
+.connection-stripes i:nth-child(4) { background:var(--purple); }
+.game-shortcuts { display:grid; margin-bottom:22px; }
+.game-shortcuts a { display:grid; grid-template-columns:1fr auto; padding:13px 0; border-bottom:1px solid var(--border); color:var(--ink); }
+.game-shortcuts span { font-size:15px; font-weight:750; }
+.game-shortcuts small { color:var(--muted); font-size:12px; grid-row:2; }
+.game-shortcuts b { grid-column:2; grid-row:1 / 3; align-self:center; color:var(--accent); font-size:19px; transition:transform var(--transition); }
+.game-shortcuts a:hover b { transform:translate(2px,-2px); }
+.game-shortcuts a:hover span { color:var(--accent); }
+:root[data-theme] .game-hero .hero-game-card { width:100%; margin:0; padding:24px; background:var(--surface); border:1px solid var(--border); box-shadow:0 12px 40px #00000009; color:var(--ink); border-radius:20px; }
+.game-hero .hero-game-label { color:var(--accent); font-size:10px; letter-spacing:1.5px; }
+.game-hero .hero-game-date { font-size:14px; color:var(--ink); }
+.game-hero .hero-game-meta { color:var(--muted); font-size:10px; }
+.game-hero .home-instructions { color:var(--muted); font-size:13px; line-height:1.6; margin:0 0 3px; }
+.game-hero .home-hint { margin-bottom:8px; }
+.game-hero .home-hint p { font-size:13px; margin:0 0 10px; color:var(--muted); }
+.game-hero .home-game-status, .game-hero .home-game-footer { color:var(--muted); }
+.game-hero .home-game-footer { border-color:var(--border); }
+.game-hero .home-game-footer a { color:var(--ink); }
+.game-hero .hero-mini-tile { background:var(--bg-alt); color:var(--ink); }
+.game-hero .hero-mini-tile.selected { background:var(--ink); color:var(--surface); border-color:var(--ink); }
+.game-hero .btn-secondary { color:var(--ink); border-color:var(--border-strong); }
+.game-hero .btn-secondary:hover { background:var(--bg-alt); }
+.hero-mini-tile, .word { min-height:76px; font-size:clamp(12px,1.4vw,15px); transition:background 120ms,color 120ms,border-color 120ms; }
+.hero-mini-tile:hover, .hero-mini-tile.selected { transform:none; }
+.home-game-status { align-items:flex-start; }
+#homeMistakes { flex-shrink:0; }
+#homeMessage { text-align:right; }
+.tools-section { border-top:1px solid var(--border); padding:48px 0 0; }
+.section-heading { display:flex; gap:28px; justify-content:space-between; align-items:end; margin-bottom:26px; }
+.section-heading .hero-eyebrow { font-size:10px; }
+.section-heading h2 { font-size:clamp(24px,3vw,32px); letter-spacing:-.035em; margin:0; }
+.section-heading > p { max-width:290px; color:var(--muted); font-size:14px; margin:0; }
+.tool-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
+.tool-card { display:flex; flex-direction:column; padding:24px 20px; background:var(--surface); border:1px solid var(--border); border-radius:14px; color:var(--ink); transition:border-color var(--transition),box-shadow var(--transition); }
+.tool-card:hover { color:var(--ink); border-color:var(--accent); box-shadow:var(--shadow); }
+.tool-number { font-size:10px; letter-spacing:1.3px; font-weight:800; color:var(--accent); margin-bottom:32px; }
+.tool-card h3 { font-size:21px; line-height:1.2; margin-bottom:12px; }
+.tool-card p { color:var(--muted); font-size:14px; line-height:1.65; margin-bottom:24px; }
+.tool-card .card-link { margin-top:auto; display:flex; justify-content:space-between; gap:8px; font-size:12px; }
+.creator-note { display:flex; justify-content:space-between; align-items:center; gap:20px; margin-top:30px; padding:26px 0; border-top:1px solid var(--border); font-size:13px; }
+.creator-note p { margin:0; color:var(--muted); }
+.creator-note a { white-space:nowrap; font-weight:700; }
+.puzzle-header { display:flex; justify-content:space-between; align-items:center; text-align:left; gap:16px; }
+.puzzle-header .puzzle-sub { margin:0; font-size:13px; max-width:470px; }
+.puzzle-header .ctrl { flex-shrink:0; }
+.puzzle-tabs { padding:5px; background:var(--bg-alt); border-radius:12px; }
+.puzzle-tabs .tab { border:0; border-radius:8px; }
+.puzzle-tabs .tab.active { box-shadow:var(--shadow-sm); }
+.tech-toolbar { border:1px solid var(--border); background:var(--surface); border-radius:16px; padding:22px; margin-bottom:24px; }
+.tech-toolbar .search-bar { margin-top:0; }
+.tech-results-bar { display:flex; align-items:center; justify-content:space-between; gap:12px; border-top:1px solid var(--border); padding-top:16px; margin-top:16px; color:var(--muted); font-size:13px; }
+.tech-results-actions { display:flex; align-items:center; flex-wrap:wrap; gap:12px; }
+.text-button { border:0; background:none; color:var(--accent); font:600 13px var(--font-body); min-height:44px; cursor:pointer; }
+.tech-card { border-radius:14px; }
+.tech-favorite { min-height:40px; }
+@media (max-width:1000px) {
+  .game-layout { gap:28px; grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr); }
+  .hero .hero-intro h1 { font-size:40px; }
+  .game-hero .hero-game-card { padding:18px; }
+  .tool-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width:760px) {
+  .hero.game-hero { padding:26px 0 32px; }
+  .game-layout { grid-template-columns:1fr; gap:20px; }
+  .hero-intro { padding:0; text-align:center; }
+  .hero .hero-intro h1 { font-size:36px; margin-bottom:10px; }
+  .hero-intro h1 br { display:none; }
+  .hero-intro h1 br::after { content:" "; }
+  .hero .hero-description { max-width:400px; margin:auto; font-size:14px; }
+  .connection-stripes { display:none; }
+  .game-shortcuts { grid-template-columns:repeat(3,1fr); gap:8px; margin:18px 0 0; }
+  .game-shortcuts a { display:block; border:1px solid var(--border); padding:9px 6px; border-radius:8px; }
+  .game-shortcuts small, .game-shortcuts b { display:none; }
+  .game-shortcuts span { font-size:13px; }
+  #homeInstall { margin-top:14px; }
+  .game-hero .hero-game-card { padding:16px; }
+  .hero-mini-tile, .word { font-size:12px; min-height:72px; }
+  .section-heading { display:block; }
+  .section-heading > p { max-width:none; margin-top:12px; }
+  .tools-section { padding-top:32px; }
+  .creator-note { align-items:flex-start; flex-direction:column; gap:10px; }
+  .tech-toolbar { padding:16px; }
+}
+@media (max-width:440px) {
+  .hero .hero-intro h1 { font-size:32px; }
+  .game-hero .hero-game-meta { display:none; }
+  .tool-grid { grid-template-columns:1fr; }
+  .tool-number { margin-bottom:18px; }
+  .tool-card { padding:22px; }
+  .tech-results-bar { align-items:flex-start; flex-direction:column; gap:8px; }
+  .puzzle-header { align-items:flex-start; }
+}
+@media (prefers-reduced-motion:reduce) {
+  *, *::before, *::after { scroll-behavior:auto !important; }
+  .game-shortcuts a:hover b { transform:none; }
+}

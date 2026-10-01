@@ -36,12 +36,12 @@
       <a href="/" class="nav-logo" aria-label="BJJ Connections home">
         <img src="logo.svg" width="44" height="44" alt="" aria-hidden="true">
       </a>
-      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
-      <div class="nav-links">
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="primaryNav">☰</button>
+      <div class="nav-links" id="primaryNav">
         <a href="/">Home</a>
         <a href="techniques.html">Techniques</a>
         <a href="puzzles.html">Puzzles</a>
-        <a href="competition.html" class="active">Competition</a>
+        <a href="competition.html" class="active" aria-current="page">Competition</a>
         <a href="training.html">Training</a>
         <a href="resources.html">Resources</a>
         <a href="about.html">About</a>
@@ -185,7 +185,7 @@
     <div class="footer-grid">
       <div>
         <div class="footer-brand">BJJ Connections</div>
-        <p style="font-size:14px;color:rgba(255,255,255,.5);margin:0">Competition preparation checklists and resources for BJJ tournaments. Always verify rules with your specific tournament organizer.</p>
+        <p class="footer-description">Competition preparation checklists and resources for BJJ tournaments. Always verify rules with your specific tournament organizer.</p>
       </div>
       <div class="footer-links">
         <a href="techniques.html">Techniques</a>

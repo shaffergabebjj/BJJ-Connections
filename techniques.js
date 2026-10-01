@@ -48,12 +48,12 @@ const TECHNIQUES = [
   { name: "Von Flue Choke", cat: "submission", belt: "black", desc: "Shoulder choke from side control when the opponent has an underhook, using your shoulder to compress their neck. Named after Jason Von Flue." },
   { name: "Gogoplata", cat: "submission", belt: "black", desc: "Choke using the shin across the opponent's throat while pulling their head down. Rare but effective from rubber guard." },
   { name: "Buggy Choke", cat: "submission", belt: "black", desc: "Triangle-style choke from bottom side control using the legs to trap the opponent's arm and neck together." },
-  { name: "Wristlock", cat: "submission", belt: "blue", desc: "Joint lock targeting the wrist, often available when the opponent grabs your gi or holds a grip. Legal at all belt levels." },
+  { name: "Wristlock", cat: "submission", belt: "blue", desc: "Joint lock targeting the wrist, often available when the opponent grabs your gi or holds a grip." },
   { name: "Bicep Slicer", cat: "submission", belt: "purple", desc: "Compression lock targeting the bicep or forearm by wedging the shin or forearm behind the opponent's arm and applying pressure." },
   { name: "Calf Slicer", cat: "submission", belt: "black", desc: "Compression lock targeting the calf muscle by wedging the shin behind the knee and applying pressure. Legal at advanced levels." },
   { name: "Heel Hook", cat: "submission", belt: "black", desc: "Leg lock attacking the knee by rotating the foot, controlling the heel. One of the most dangerous submissions in grappling." },
   { name: "Kneebar", cat: "submission", belt: "purple", desc: "Leg lock that hyperextends the knee by isolating the leg between your legs and applying leverage to the joint." },
-  { name: "Straight Ankle Lock", cat: "submission", belt: "blue", desc: "Foot lock that extends and plantarflexes the ankle, targeting the Achilles and foot. Legal at all belt levels in most rulesets." },
+  { name: "Straight Ankle Lock", cat: "submission", belt: "blue", desc: "Foot lock that extends and plantarflexes the ankle, targeting the Achilles and foot." },
   { name: "Toehold", cat: "submission", belt: "purple", desc: "Foot lock using a figure-four grip on the foot to apply rotational pressure to the ankle and knee." },
 
   // ---- Escapes ----

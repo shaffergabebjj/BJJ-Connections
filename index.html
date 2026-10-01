@@ -48,9 +48,9 @@
       <a href="/" class="nav-logo" aria-label="BJJ Connections home">
         <img src="logo.svg" width="44" height="44" alt="" aria-hidden="true">
       </a>
-      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
-      <div class="nav-links">
-        <a href="/" class="active">Home</a>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="primaryNav">☰</button>
+      <div class="nav-links" id="primaryNav">
+        <a href="/" class="active" aria-current="page">Home</a>
         <a href="techniques.html">Techniques</a>
         <a href="puzzles.html">Puzzles</a>
         <a href="competition.html">Competition</a>
@@ -65,9 +65,19 @@
 <main id="main">
   <!-- Hero -->
   <section class="hero game-hero">
-    <div class="container">
-      <div class="hero-eyebrow">Brazilian Jiu-Jitsu · Daily Game</div>
-      <h1>BJJ Connections</h1>
+    <div class="container game-layout">
+      <div class="hero-intro">
+        <div class="hero-eyebrow">Your daily mental mat time</div>
+        <h1>BJJ <br>Connections<span class="title-dot">.</span></h1>
+        <p class="hero-description">Four groups. One connection at a time. Put your grappling knowledge to work.</p>
+        <div class="connection-stripes" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <nav class="game-shortcuts" aria-label="More ways to play">
+          <a href="puzzles.html?mode=training"><span>Practice</span><small>Another round, any time</small><b aria-hidden="true">↗</b></a>
+          <a href="puzzles.html?mode=archive"><span>Archive</span><small>Revisit past daily puzzles</small><b aria-hidden="true">↗</b></a>
+          <a href="puzzles.html?mode=stats"><span>Your stats</span><small>See how your game is growing</small><b aria-hidden="true">↗</b></a>
+        </nav>
+        <button class="btn btn-outline" id="homeInstall" type="button" hidden>Install the app</button>
+      </div>
       <div class="hero-game-card">
         <div class="hero-game-top">
           <div>
@@ -106,90 +116,19 @@
           <a id="homeFullGame" href="puzzles.html">Open full game →</a>
         </div>
       </div>
-      <div class="hero-actions">
-        <button class="btn btn-primary" id="homeInstall" type="button" hidden>Install BJJ Connections</button>
-        <a href="techniques.html" class="btn btn-secondary">Explore Techniques</a>
-        <a href="training.html" class="btn btn-secondary">Build Your Game Plan</a>
-      </div>
     </div>
   </section>
 
-  <!-- Featured Tools -->
-  <section class="section">
+  <section class="section tools-section">
     <div class="container">
-      <h2 class="section-title">More Than a Game</h2>
-      <p class="section-sub">The daily puzzle stays at the center. These tools help turn what you know into what you train.</p>
-      <div class="grid-cards">
-        <a href="puzzles.html" class="card" style="text-decoration:none;color:inherit">
-          <div class="card-icon">⊞</div>
-          <h3>Daily BJJ Puzzle</h3>
-          <p>A free Connections-style word puzzle with a new challenge every day. Find four groups of four and learn BJJ along the way.</p>
-          <span class="card-link">Play now →</span>
-        </a>
-        <a href="techniques.html" class="card" style="text-decoration:none;color:inherit">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M2 8H22"/>
-              <path d="M2 14H22"/>
-              <rect x="9" y="6" width="6" height="10"/>
-              <path d="M10.5 16 8.5 22"/>
-              <path d="M13.5 16 15.5 22"/>
-            </svg>
-          </div>
-          <h3>Technique Explorer</h3>
-          <p>Search and filter through positions, submissions, escapes, sweeps, takedowns, guards, passes, and more.</p>
-          <span class="card-link">Browse techniques →</span>
-        </a>
-        <a href="competition.html" class="card" style="text-decoration:none;color:inherit">
-          <div class="card-icon">☑</div>
-          <h3>Competition Prep</h3>
-          <p>Interactive checklists for gi and no-gi competition, weigh-in prep, match-day organization, and rules resources.</p>
-          <span class="card-link">Get prepared →</span>
-        </a>
-        <a href="training.html" class="card" style="text-decoration:none;color:inherit">
-          <div class="card-icon">◈</div>
-          <h3>Training Resources</h3>
-          <p>Drilling ideas, solo drills, conditioning concepts, grip training, warm-ups, and goal-setting tools.</p>
-          <span class="card-link">Train smarter →</span>
-        </a>
-        <a href="resources.html" class="card" style="text-decoration:none;color:inherit">
-          <div class="card-icon">☆</div>
-          <h3>BJJ Resources &amp; Answers</h3>
-          <p>A searchable glossary and quick answers to common BJJ questions, plus rules and learning resources.</p>
-          <span class="card-link">Explore resources →</span>
-        </a>
-        <a href="about.html" class="card" style="text-decoration:none;color:inherit">
-          <div class="card-icon">○</div>
-          <h3>About the Project</h3>
-          <p>Built by Gabe Shaffer, a BJJ practitioner who started training in 2025. Learn about the person behind the project.</p>
-          <span class="card-link">Learn more →</span>
-        </a>
+      <div class="section-heading"><div><div class="hero-eyebrow">Off the screen. Onto the mat.</div><h2 class="section-title">Build the rest of your game.</h2></div><p>Useful tools for your next class, next round, and next competition.</p></div>
+      <div class="tool-grid">
+        <a href="techniques.html" class="tool-card"><span class="tool-number">01 / LEARN</span><h3>Explore techniques</h3><p>Find the position, pass, or finish you’re working on. Save it for your next session.</p><span class="card-link">Open the explorer <b aria-hidden="true">↗</b></span></a>
+        <a href="training.html" class="tool-card"><span class="tool-number">02 / TRAIN</span><h3>Make a game plan</h3><p>Connect your takedowns, passes, and submissions into a plan you can take to the mat.</p><span class="card-link">Plan your training <b aria-hidden="true">↗</b></span></a>
+        <a href="competition.html" class="tool-card"><span class="tool-number">03 / COMPETE</span><h3>Show up ready</h3><p>Work through your competition checklist, organize your gear, and find the rules.</p><span class="card-link">Get competition ready <b aria-hidden="true">↗</b></span></a>
+        <a href="resources.html" class="tool-card"><span class="tool-number">04 / DISCOVER</span><h3>Know the language</h3><p>Look up unfamiliar terms and find answers to common questions about jiu-jitsu.</p><span class="card-link">Browse the resources <b aria-hidden="true">↗</b></span></a>
       </div>
-    </div>
-  </section>
-
-  <!-- Game Callout -->
-  <section class="section game-feature-section">
-    <div class="container">
-      <div class="game-feature">
-        <div>
-          <div class="hero-eyebrow">PLAY EVERY DAY</div>
-          <h2>Keep Your BJJ Brain Sharp</h2>
-          <p>Find four hidden groups, learn why each group connects, and build a streak through the Daily, Training, Archive, and Stats modes.</p>
-        </div>
-        <a href="puzzles.html" class="btn btn-primary">Enter the Game →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- About Preview -->
-  <section class="section">
-    <div class="container">
-      <div style="max-width:640px;margin:0 auto;text-align:center">
-        <h2 class="section-title">About BJJ Connections</h2>
-        <p style="font-size:17px;color:var(--muted)">BJJ Connections is a personal project built by Gabe Shaffer, a BJJ practitioner who started training in 2025. The goal is to organize useful grappling information and tools in one place — techniques, puzzles, competition prep, and training resources.</p>
-        <a href="about.html" class="btn btn-outline btn-sm">Read more →</a>
-      </div>
+      <div class="creator-note"><p>Built by a grappler, for grapplers. A growing project by <strong>Gabe Shaffer.</strong></p><a href="about.html">Meet the creator →</a></div>
     </div>
   </section>
 </main>
@@ -199,7 +138,7 @@
     <div class="footer-grid">
       <div>
         <div class="footer-brand">BJJ Connections</div>
-        <p style="font-size:14px;color:rgba(255,255,255,.5);margin:0">A growing collection of Brazilian Jiu-Jitsu techniques, training tools, competition resources, and daily puzzles for grapplers. Built by Gabe Shaffer.</p>
+        <p class="footer-description">A growing collection of Brazilian Jiu-Jitsu techniques, training tools, competition resources, and daily puzzles for grapplers. Built by Gabe Shaffer.</p>
       </div>
       <div class="footer-links">
         <a href="techniques.html">Techniques</a>
@@ -321,13 +260,21 @@
         } else if (selected.length < 4) {
           selected.push(word);
         }
-        render();
+        syncSelection();
         update();
         persist();
       };
       grid.appendChild(button);
     });
     if (focusedWord) [...grid.children].find(button => button.textContent === focusedWord)?.focus();
+  }
+
+  function syncSelection() {
+    [...grid.children].forEach(button => {
+      const active = selected.includes(button.textContent);
+      button.classList.toggle("selected", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
   }
 
   function update() {
@@ -466,7 +413,7 @@
   deselectBtn.onclick = function () {
     selected = [];
     messageEl.textContent = "Select 4 words.";
-    render(); update(); persist();
+    syncSelection(); update(); persist();
   };
   grid.addEventListener("keydown", function (event) {
     if (event.key === "Enter" && selected.length === 4) {

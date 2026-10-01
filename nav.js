@@ -14,6 +14,12 @@
         toggle.setAttribute('aria-expanded', 'false');
       });
     });
+    document.addEventListener('click', function (event) {
+      if (!links.contains(event.target) && !toggle.contains(event.target)) {
+        links.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
     // Close on Escape
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && links.classList.contains('open')) {
@@ -50,7 +56,8 @@
   navLinks.appendChild(install);
   var homeInstall = document.getElementById("homeInstall");
   var buttons = homeInstall ? [install, homeInstall] : [install];
-  var isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+  var isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent) ||
+    (window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1);
   if (isIOS || /android/i.test(window.navigator.userAgent)) {
     buttons.forEach(function (button) { button.hidden = false; });
   }

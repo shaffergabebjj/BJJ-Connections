@@ -52,10 +52,12 @@ function seeded(n) { let x = Math.sin(n) * 10000; return x - Math.floor(x); }
 
 function pickTraining() {
   const pool = difficulty === "all" ? PUZZLES : PUZZLES.filter(p => p.difficulty === difficulty);
-  return pool[Math.floor(Math.random() * pool.length)];
+  const choices = pool.filter(p => p !== puzzle);
+  return (choices.length ? choices : pool)[Math.floor(Math.random() * (choices.length || pool.length))];
 }
 function queryPuzzle() {
   const p = new URLSearchParams(location.search).get("p");
+  if (!p || !/^\d+$/.test(p)) return null;
   const id = Number(p);
   return PUZZLES.find(x => x.id === id);
 }
@@ -93,9 +95,9 @@ function loadPuzzle(override) {
   if (override) {
     puzzle = override.puzzle;
   } else {
-    puzzle = queryPuzzle() || (mode === "daily" ? PUZZLES[dailyIndex()] : pickTraining());
+    puzzle = mode === "daily" ? PUZZLES[dailyIndex()] : pickTraining();
   }
-  isDailyGame = mode === "daily" && !override && !queryPuzzle();
+  isDailyGame = mode === "daily" && !override;
 
   // Assign each group a fixed share-color for this play-through, by the
   // order it's defined in data.js (not by the order it's solved in).
@@ -159,11 +161,18 @@ function render() {
     b.onclick = () => {
       selected.includes(word) ? selected = selected.filter(x => x !== word)
         : selected.length < 4 && selected.push(word);
-      render(); update(); persistDaily();
+      syncSelection(); update(); persistDaily();
     };
     grid.appendChild(b);
   });
   if (focusedWord) [...grid.children].find(b => b.textContent === focusedWord)?.focus();
+}
+function syncSelection() {
+  [...grid.children].forEach(button => {
+    const active = selected.includes(button.textContent);
+    button.classList.toggle("sel", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
 }
 function renderSolved(animateGroup) {
   solvedBox.innerHTML = "";
@@ -362,7 +371,7 @@ function openArchivedPuzzle(p, dateStr, dayNum) {
 }
 
 // ---- Mode switching ------------------------------------------------------
-function setMode(m) {
+function setMode(m, override) {
   mode = m;
   document.querySelectorAll(".tab").forEach(b => {
     const active = b.dataset.mode === m;
@@ -376,7 +385,7 @@ function setMode(m) {
 
   if (m === "stats") showStats();
   else if (m === "archive") renderArchiveList();
-  else loadPuzzle();
+  else loadPuzzle(override);
 }
 document.querySelectorAll(".tab").forEach(b => b.onclick = () => setMode(b.dataset.mode));
 document.querySelector(".puzzle-tabs").addEventListener("keydown", event => {
@@ -407,7 +416,7 @@ document.querySelector(".puzzle-tabs").addEventListener("keydown", event => {
 // ---- Controls -------------------------------------------------------------
 $("deselect").onclick = () => {
   selected = []; msg.textContent = "Select 4 words.";
-  render(); update(); persistDaily();
+  syncSelection(); update(); persistDaily();
 };
 grid.addEventListener("keydown", event => {
   if (event.key === "Enter" && selected.length === 4) {
@@ -461,7 +470,13 @@ if (typeof validateAllPuzzles === "function") {
     if (errors.length) console.warn("Puzzle", p.id, errors);
   });
 }
-setMode(new URLSearchParams(location.search).get("mode") === "training" ? "training" : "daily");
+const initialMode = new URLSearchParams(location.search).get("mode");
+const linkedPuzzle = queryPuzzle();
+if (linkedPuzzle && !initialMode) {
+  setMode("training", {puzzle: linkedPuzzle, metaLabel: `Shared puzzle • ${linkedPuzzle.difficulty.toUpperCase()} BELT • Puzzle ${linkedPuzzle.id}`});
+} else {
+  setMode(["training", "archive", "stats"].includes(initialMode) ? initialMode : "daily");
+}
 
 // A long-open tab should roll over at the player's local midnight without
 // requiring a hard refresh. Checking on focus/visibility avoids a busy timer.
