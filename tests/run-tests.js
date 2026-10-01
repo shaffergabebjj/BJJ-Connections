@@ -266,7 +266,7 @@ for (const mode of ["archive", "stats"]) {
 }
 console.log("Stable tile selection, shared-link recovery, and mode deep links passed.");
 
-function techniqueHarness(saved) {
+function techniqueHarness(saved, search = "") {
   const nodes = new Map();
   const values = new Map([["bjjFavoriteTechniques", saved]]);
   function node() {
@@ -281,7 +281,7 @@ function techniqueHarness(saved) {
   }
   const html = fs.readFileSync(path.join(root, "techniques.html"), "utf8");
   for (const [,id] of html.matchAll(/id="([^"]+)"/g)) nodes.set(id, node());
-  const context = {console, setTimeout: () => {}, window: {addEventListener() {}},
+  const context = {console, URLSearchParams, location: {search}, setTimeout: () => {}, window: {addEventListener() {}},
     localStorage: {getItem: k => values.get(k), setItem: (k,v) => values.set(k,v)},
     document: {getElementById: id => nodes.get(id), createElement: node}};
   vm.createContext(context);
@@ -303,3 +303,12 @@ for (const saved of ["null", "{}", "7", "{broken", '["Armbar (from Mount)","Armb
   assert.equal(nodes.get("techCount").textContent, count);
 }
 console.log("Technique storage recovery, saved filtering, and search reset passed.");
+
+const searchedTechniques = techniqueHarness("[]", "?q=Armbar%20(from%20Mount)");
+assert.equal(searchedTechniques.get("techCount").textContent, "1 technique");
+const sortedTechniques = techniqueHarness("[]");
+sortedTechniques.get("techSort").value = "az";
+sortedTechniques.get("techSort").events.change();
+const sortedNames = [...sortedTechniques.get("techResults").innerHTML.matchAll(/<h3>(.*?)<\/h3>/g)].map(m => m[1]);
+assert.deepEqual(sortedNames, [...sortedNames].sort((a,b) => a.localeCompare(b)));
+console.log("Technique search links and alphabetical sorting passed.");

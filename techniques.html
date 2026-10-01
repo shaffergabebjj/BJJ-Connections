@@ -53,8 +53,8 @@
 <main id="main">
   <section class="page-header">
     <div class="container">
-      <h1>Technique Explorer</h1>
-      <p>Search and filter through Brazilian Jiu-Jitsu techniques by category and approximate difficulty level.</p>
+      <div class="hero-eyebrow">01 / Learn</div><h1>Find your next connection.</h1>
+      <p>Explore the technique library. Find what you’re working on, save your favorites, and bring a focus to your next class.</p>
     </div>
   </section>
 
@@ -66,13 +66,15 @@
         <button class="btn btn-dark btn-sm" id="randomTechnique" type="button">Random Technique</button>
       </div>
 
+      <div class="filter-caption">Category</div>
       <div class="filter-chips" id="techFilters" role="group" aria-label="Filter by category"></div>
 
+      <div class="filter-caption">Learning level</div>
       <div class="filter-chips" id="beltFilters" role="group" aria-label="Filter by belt level"></div>
 
       <div class="tech-results-bar" id="techProgress">
         <span id="techCount" role="status" aria-live="polite">Loading...</span>
-        <div class="tech-results-actions"><button class="chip" id="savedTechniques" type="button" aria-pressed="false">☆ Saved only</button><button class="text-button" id="clearTechFilters" type="button">Clear filters</button></div>
+        <div class="tech-results-actions"><label class="sort-label" for="techSort">Sort <select id="techSort"><option value="category">Category</option><option value="az">A–Z</option></select></label><button class="chip" id="savedTechniques" type="button" aria-pressed="false">☆ Saved only</button><button class="text-button" id="clearTechFilters" type="button">Clear filters</button></div>
       </div>
       </div>
 
@@ -125,6 +127,7 @@
   var activeBelt = "all";
   var searchTerm = "";
   var savedOnly = false;
+  var sortEl = document.getElementById("techSort");
   var favorites = getFavorites();
   var savedButton = document.getElementById("savedTechniques");
 
@@ -241,6 +244,8 @@
       return catMatch && beltMatch && searchMatch && (!savedOnly || isFavorite(t.name));
     });
 
+    if (sortEl.value === "az") filtered.sort(function(a, b) { return a.name.localeCompare(b.name); });
+
     countEl.textContent = filtered.length + " technique" + (filtered.length === 1 ? "" : "s");
 
     noResults.textContent = savedOnly ? "No saved techniques match. Save techniques with the ☆ Save button, or clear your filters." : "No techniques match. Try another search or clear your filters.";
@@ -295,6 +300,9 @@
     render();
   });
 
+  sortEl.addEventListener("change", render);
+  var query = new URLSearchParams(location.search).get("q");
+  if (query) { searchEl.value = query; searchTerm = query.toLowerCase().trim(); }
   render();
 })();
 </script>
