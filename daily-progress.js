@@ -7,6 +7,29 @@ window.BJJDaily = (function () {
   function dayNumber(d = new Date()) {
     return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
   }
+  function progressSnapshot() {
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+  }
+  function readState() {
+    let state;
+    try { state = JSON.parse(localStorage.getItem("bjjConnectionsState") || "{}"); }
+    catch (e) { state = {}; }
+    if (!state || typeof state !== "object" || Array.isArray(state)) state = {};
+    for (const field of ["gamesPlayed", "gamesWon", "currentStreak", "longestStreak"]) {
+      if (!Number.isSafeInteger(state[field]) || state[field] < 0) state[field] = 0;
+    }
+    if (!Number.isFinite(state.bestTime) || state.bestTime < 0) state.bestTime = null;
+    if (!state.dailyHistory || typeof state.dailyHistory !== "object" || Array.isArray(state.dailyHistory)) {
+      state.dailyHistory = {};
+    }
+    for (const [date, result] of Object.entries(state.dailyHistory)) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !result || typeof result.win !== "boolean" ||
+          !Number.isInteger(result.mistakes) || result.mistakes < 0 || result.mistakes > 4 ||
+          !Number.isFinite(result.seconds) || result.seconds < 0) delete state.dailyHistory[date];
+    }
+    if (typeof state.lastDaily !== "string") state.lastDaily = null;
+    return state;
+  }
   function guessKey(words) {
     return JSON.stringify(words.slice().sort());
   }
@@ -69,5 +92,5 @@ window.BJJDaily = (function () {
     return state.lastDaily === today || state.lastDaily === dateKey(yesterday)
       ? state.currentStreak : 0;
   }
-  return {guessKey, dateKey, dayNumber, read, save, recordResult, displayStreak};
+  return {readState, progressSnapshot, guessKey, dateKey, dayNumber, read, save, recordResult, displayStreak};
 })();
