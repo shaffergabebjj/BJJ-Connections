@@ -1148,7 +1148,7 @@ html[data-theme="dark"] { color-scheme: dark; }
 :root[data-theme="light"] .home-game-footer,
 :root[data-theme="light"] .footer-links a,
 :root[data-theme="light"] .footer-bottom { color:var(--muted); }
-:root[data-theme="light"] .hero-game-card { background:var(--bg-alt); border-color:var(--border-strong); }
+:root[data-theme="light"] .hero-game-card { background:var(--surface); border-color:var(--border); }
 :root[data-theme="light"] .home-focus { background:var(--surface); border-color:var(--border-strong); }
 :root[data-theme="light"] .home-game-footer,
 :root[data-theme="light"] .footer-bottom { border-color:var(--border); }
@@ -1236,7 +1236,8 @@ button, .btn { touch-action:manipulation; }
 .page-header { padding:40px 0 32px; border-bottom:1px solid var(--border); }
 .page-header h1 { letter-spacing:-.045em; }
 .page-header p { margin-bottom:0; }
-:root[data-theme] .hero.game-hero { padding:42px 0; background:var(--bg); color:var(--ink); }
+.hero.game-hero { padding:42px 0; background:var(--bg); color:var(--ink); }
+:root[data-theme="light"] .hero.game-hero { background:var(--bg); color:var(--ink); }
 .game-hero::after { display:none; }
 .game-layout { display:grid; grid-template-columns:minmax(0,.78fr) minmax(0,1.5fr); gap:44px; align-items:center; }
 .hero-intro { padding:16px 0; }
@@ -1256,7 +1257,7 @@ button, .btn { touch-action:manipulation; }
 .game-shortcuts b { grid-column:2; grid-row:1 / 3; align-self:center; color:var(--accent); font-size:19px; transition:transform var(--transition); }
 .game-shortcuts a:hover b { transform:translate(2px,-2px); }
 .game-shortcuts a:hover span { color:var(--accent); }
-:root[data-theme] .game-hero .hero-game-card { width:100%; margin:0; padding:24px; background:var(--surface); border:1px solid var(--border); box-shadow:0 12px 40px #00000009; color:var(--ink); border-radius:20px; }
+.game-hero .hero-game-card { width:100%; margin:0; padding:24px; background:var(--surface); border:1px solid var(--border); box-shadow:0 12px 40px #00000009; color:var(--ink); border-radius:20px; }
 .game-hero .hero-game-label { color:var(--accent); font-size:10px; letter-spacing:1.5px; }
 .game-hero .hero-game-date { font-size:14px; color:var(--ink); }
 .game-hero .hero-game-meta { color:var(--muted); font-size:10px; }
