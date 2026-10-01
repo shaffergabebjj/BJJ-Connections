@@ -90,6 +90,8 @@ console.log("All game-state, puzzle-bank, and internal-link checks passed.");
 // Exercise real click handlers in both entry points with shared browser storage.
 function gameHarness(page, values = new Map()) {
   const elements = new Map();
+  const events = new Map();
+  let reloads = 0;
   function element() {
     const classes = new Set();
     const node = {
@@ -109,8 +111,8 @@ function gameHarness(page, values = new Map()) {
   const html = fs.readFileSync(path.join(root, page), "utf8");
   for (const [, id] of html.matchAll(/id="([^"]+)"/g)) elements.set(id, element());
   const context = {
-    console, Date, Intl, URLSearchParams, location: {search: "", reload() {}},
-    navigator: {}, addEventListener() {},
+    console, Date, Intl, URLSearchParams, location: {search: "", reload() { reloads++; }},
+    navigator: {}, addEventListener(type, handler) { events.set(type, handler); },
     localStorage: {getItem: key => values.get(key) || null,
       setItem: (key, value) => values.set(key, value)},
     document: {getElementById: id => elements.get(id), createElement: element,
@@ -127,7 +129,8 @@ function gameHarness(page, values = new Map()) {
     : fs.readFileSync(path.join(root, "app.js"), "utf8");
   vm.runInContext(script, context);
   const prefix = page === "index.html" ? "home" : "";
-  return {elements, values, grid: elements.get(prefix ? "homePuzzleGrid" : "grid"),
+  return {elements, values, focus: () => events.get("focus")?.(),
+    reloadCount: () => reloads, grid: elements.get(prefix ? "homePuzzleGrid" : "grid"),
     submit: elements.get(prefix ? "homeSubmit" : "submit"),
     deselect: elements.get(prefix ? "homeDeselect" : "deselect"),
     message: elements.get(prefix ? "homeMessage" : "msg"),
@@ -160,3 +163,71 @@ assert.equal(completedHome.elements.get("homeExplanations").children.length, 4);
 assert.equal(completedHome.grid.children.length, 0);
 assert.equal(completedHome.submit.disabled, true);
 console.log("Homepage/full-game duplicate guesses, progress transfer, deselect, and explanations passed.");
+
+// A lost game must reveal answers without repopulating the playable grid.
+for (const page of ["index.html", "puzzles.html"]) {
+  const game = gameHarness(page);
+  for (let i = 0; i < 4; i++) {
+    game.deselect.onclick();
+    const guess = [today.groups[0].items[i], today.groups[1].items[0],
+      today.groups[2].items[0], today.groups[3].items[0]];
+    for (const word of guess) game.grid.children.find(b => b.textContent === word).onclick();
+    game.submit.onclick();
+  }
+  assert.equal(game.progress().won, false);
+  assert.equal(game.progress().finished, true);
+  assert.equal(game.grid.children.length, 0, "loss should not restore disabled word tiles");
+  assert.equal(game.submit.disabled, true);
+}
+// Return to an older tab after another view has advanced the game.
+const sharedValues = new Map();
+const oldHome = gameHarness("index.html", sharedValues);
+const olderFullGame = gameHarness("puzzles.html", sharedValues);
+oldHome.focus();
+assert.equal(oldHome.reloadCount(), 0, "own unchanged progress must not reload");
+for (const word of today.groups[0].items) olderFullGame.grid.children.find(b => b.textContent === word).onclick();
+olderFullGame.submit.onclick();
+oldHome.focus();
+assert.equal(oldHome.reloadCount(), 1, "homepage must refresh stale progress on focus");
+const newHome = gameHarness("index.html", sharedValues);
+for (const word of today.groups[1].items) newHome.grid.children.find(b => b.textContent === word).onclick();
+newHome.submit.onclick();
+olderFullGame.focus();
+assert.equal(olderFullGame.grid.children.length, 8, "full game must restore latest groups on focus");
+assert.equal(olderFullGame.progress().solved.length, 2);
+
+for (const badState of ["null", "[]", "7", '"text"', '{broken',
+  '{"dailyHistory":7,"gamesPlayed":"bad","bestTime":"bad"}',
+  '{"dailyHistory":{"2026-10-01":null},"gamesWon":-2}']) {
+  for (const page of ["index.html", "puzzles.html"]) {
+    const values = new Map([["bjjConnectionsState", badState]]);
+    const game = gameHarness(page, values);
+    for (const group of today.groups) {
+      for (const word of group.items) game.grid.children.find(b => b.textContent === word).onclick();
+      game.submit.onclick();
+    }
+    assert.equal(game.progress().won, true, "malformed stats cannot block play or completion");
+    assert.equal(JSON.parse(values.get("bjjConnectionsState")).gamesWon, 1);
+  }
+}
+console.log("Loss rendering, stale-tab recovery, and malformed saved-stats checks passed.");
+
+async function testOfflineLinks() {
+  const handlers = {};
+  let response;
+  const cachedPage = {page: "puzzles"};
+  const context = {
+    self: {location: {origin: "https://bjjconnectionsbygabe.com"},
+      addEventListener: (name, handler) => { handlers[name] = handler; }},
+    URL, Response, fetch: async () => { throw new Error("offline"); },
+    caches: {match: async target => target === "/puzzles.html" ? cachedPage : undefined}
+  };
+  vm.createContext(context);
+  vm.runInContext(fs.readFileSync(path.join(root, "sw.js"), "utf8"), context);
+  handlers.fetch({request: {method: "GET", mode: "navigate",
+    url: "https://bjjconnectionsbygabe.com/puzzles.html?p=27"},
+    respondWith: promise => { response = promise; }});
+  assert.equal(await response, cachedPage, "offline puzzle links must open the cached puzzle page");
+  console.log("Offline puzzle-link navigation passed.");
+}
+testOfflineLinks().catch(error => { console.error(error); process.exitCode = 1; });

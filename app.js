@@ -23,14 +23,7 @@ if (typeof PUZZLES === "undefined" || !Array.isArray(PUZZLES) || PUZZLES.length 
 }
 
 // ---- Storage (resilient to private-browsing / disabled storage) ------
-function readStoredState() {
-  try {
-    return JSON.parse(localStorage.getItem("bjjConnectionsState") || "{}");
-  } catch (e) {
-    console.warn("BJJ Connections: localStorage unavailable, stats will not persist this session.", e);
-    return {};
-  }
-}
+function readStoredState() { return BJJDaily.readState(); }
 function writeStoredState(stateObj) {
   try {
     localStorage.setItem("bjjConnectionsState", JSON.stringify(stateObj));
@@ -75,6 +68,7 @@ let mistakes = 4, startedAt = 0, finished = false, won = false;
 let attemptedGuesses = [];
 let guessLog = []; // rows of 4 colored squares, one per guess attempt — used for sharing
 let loadedDateKey = dateKey();
+let trackedProgress = BJJDaily.progressSnapshot();
 
 function persistDaily() {
   if (!isDailyGame) return;
@@ -82,6 +76,7 @@ function persistDaily() {
     words, selected, solved: solved.map(g => puzzle.groups.indexOf(g)),
     mistakes, startedAt, guessLog, attemptedGuesses, finished, won, replay: isDailyReplay
   });
+  trackedProgress = BJJDaily.progressSnapshot();
 }
 
 // ---- Loading a puzzle ---------------------------------------------------
@@ -145,6 +140,7 @@ function loadPuzzle(override) {
   update();
   if (finished) showCompletion(!isDailyReplay ? state.dailyHistory[dateKey()]?.seconds ?? Math.round((Date.now() - startedAt) / 1000) : Math.round((Date.now() - startedAt) / 1000));
   else persistDaily();
+  trackedProgress = BJJDaily.progressSnapshot();
 }
 
 // ---- Rendering -----------------------------------------------------------
@@ -152,6 +148,7 @@ function render() {
   const focusedWord = document.activeElement?.classList.contains("word")
     ? document.activeElement.textContent : null;
   grid.innerHTML = "";
+  if (finished) return;
   words.forEach(word => {
     const b = document.createElement("button");
     const isSelected = selected.includes(word);
@@ -468,7 +465,12 @@ loadPuzzle();
 // A long-open tab should roll over at the player's local midnight without
 // requiring a hard refresh. Checking on focus/visibility avoids a busy timer.
 function refreshForLocalDate() {
-  if (loadedDateKey !== dateKey() && mode === "daily") loadPuzzle();
+  const latestState = readStoredState();
+  for (const field of Object.keys(state)) delete state[field];
+  Object.assign(state, latestState);
+  if (mode === "daily" && (loadedDateKey !== dateKey() ||
+      (isDailyGame && trackedProgress !== BJJDaily.progressSnapshot()))) loadPuzzle();
+  if (mode === "stats") showStats();
 }
 window.addEventListener("focus", refreshForLocalDate);
 document.addEventListener("visibilitychange", () => {

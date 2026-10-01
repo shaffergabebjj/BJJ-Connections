@@ -1,4 +1,4 @@
-const CACHE_NAME = "bjj-connections-v18";
+const CACHE_NAME = "bjj-connections-v19";
 const APP_SHELL = [
   "/", "/index.html", "/puzzles.html", "/techniques.html",
   "/competition.html", "/training.html", "/resources.html", "/about.html",
@@ -35,6 +35,9 @@ self.addEventListener("fetch", event => {
     const cached = await caches.match(request);
     if (cached) return cached;
     if (request.mode === "navigate") {
+      // Query links still belong to the same cached page (for example ?p=42).
+      const page = await caches.match(new URL(request.url).pathname);
+      if (page) return page;
       const fallback = await caches.match("/index.html");
       if (fallback) return fallback;
     }

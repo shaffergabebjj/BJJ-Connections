@@ -241,17 +241,19 @@
   let startedAt = Date.now();
   let guessLog = [];
   let attemptedGuesses = [];
+  let trackedProgress = BJJDaily.progressSnapshot();
 
   function persist() {
     BJJDaily.save(puzzle, {
       words, selected, solved: solved.map(group => puzzle.groups.indexOf(group)),
-      mistakes, startedAt, guessLog, attemptedGuesses, finished, won
+      mistakes, startedAt, guessLog, attemptedGuesses, finished, won, replay: !!saved?.replay
     });
+    trackedProgress = BJJDaily.progressSnapshot();
   }
 
   function refreshStreak() {
     try {
-      const state = JSON.parse(localStorage.getItem("bjjConnectionsState") || "{}");
+      const state = BJJDaily.readState();
       streakEl.textContent = "Streak: " + BJJDaily.displayStreak(state);
     } catch (e) { streakEl.textContent = "Daily puzzle"; }
   }
@@ -356,9 +358,7 @@
     finished = true;
     won = words.length === 0;
     const seconds = Math.round((Date.now() - startedAt) / 1000);
-    let state;
-    try { state = JSON.parse(localStorage.getItem("bjjConnectionsState") || "{}"); }
-    catch (e) { state = {}; }
+    const state = BJJDaily.readState();
     if (BJJDaily.recordResult(state, puzzle, won, mistakes, seconds)) {
       try { localStorage.setItem("bjjConnectionsState", JSON.stringify(state)); } catch (e) {}
     }
@@ -451,7 +451,8 @@
   update();
 
   function refreshForLocalDate() {
-    if (BJJDaily.dateKey() !== dateKey) location.reload();
+    if (BJJDaily.dateKey() !== dateKey || trackedProgress !== BJJDaily.progressSnapshot()) location.reload();
+    else refreshStreak();
   }
   window.addEventListener("focus", refreshForLocalDate);
   document.addEventListener("visibilitychange", function () {
