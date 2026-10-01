@@ -48,11 +48,11 @@
       <a href="/" class="nav-logo" aria-label="BJJ Connections home">
         <img src="logo.svg" width="44" height="44" alt="" aria-hidden="true">
       </a>
-      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
-      <div class="nav-links">
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="primaryNav">☰</button>
+      <div class="nav-links" id="primaryNav">
         <a href="/">Home</a>
         <a href="techniques.html">Techniques</a>
-        <a href="puzzles.html" class="active">Puzzles</a>
+        <a href="puzzles.html" class="active" aria-current="page">Puzzles</a>
         <a href="competition.html">Competition</a>
         <a href="training.html">Training</a>
         <a href="resources.html">Resources</a>
@@ -65,16 +65,13 @@
 <main id="main">
   <section class="page-header">
     <div class="container">
-      <h1>BJJ Connections Puzzle</h1>
+      <h1>The puzzle room.</h1>
       <p>Find four groups of four. Learn BJJ history, athletes, techniques, positions, and more. New puzzle every day.</p>
     </div>
   </section>
 
   <div class="puzzle-wrap">
     <div class="puzzle-header">
-      <div class="puzzle-eyebrow">The Daily BJJ Puzzle</div>
-      <h2 class="puzzle-title">BJJ Connections</h2>
-      <div class="puzzle-creator">Created by Gabe Shaffer</div>
       <p class="puzzle-sub">16 words. 4 hidden groups of 4. Tap a word to select it, tap 3 more, then hit Submit.</p>
       <button class="ctrl" id="howToBtn" aria-expanded="false" aria-controls="howToPanel">How to play</button>
     </div>
@@ -152,7 +149,7 @@
     <div class="footer-grid">
       <div>
         <div class="footer-brand">BJJ Connections</div>
-        <p style="font-size:14px;color:rgba(255,255,255,.5);margin:0">A daily BJJ puzzle with training mode and archive. Daily puzzles are deterministic — everyone gets the same puzzle each day.</p>
+        <p class="footer-description">A daily BJJ puzzle with training mode and archive. Daily puzzles are deterministic — everyone gets the same puzzle each day.</p>
       </div>
       <div class="footer-links">
         <a href="techniques.html">Techniques</a>

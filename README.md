@@ -8,8 +8,8 @@ Live at **[bjjconnectionsbygabe.com](https://bjjconnectionsbygabe.com)**.
 
 | Page | Description |
 |------|-------------|
-| `index.html` | Home page — hero, featured tools, puzzle preview, about |
-| `techniques.html` | Searchable/filterable technique explorer with 80+ techniques |
+| `index.html` | Home page — playable daily puzzle, mode shortcuts, training tools |
+| `techniques.html` | Technique explorer with search, filters, and saved favorites |
 | `puzzles.html` | Daily Connections-style BJJ word puzzle with training mode and archive |
 | `competition.html` | Interactive competition prep checklists (gi, no-gi, weigh-in, match-day) |
 | `training.html` | Drilling ideas, solo drills, conditioning concepts, goal-setting tool |
@@ -29,7 +29,7 @@ Live at **[bjjconnectionsbygabe.com](https://bjjconnectionsbygabe.com)**.
 - 100-puzzle bank with automated duplicate/structure checking
 
 ### Technique Explorer (techniques.html)
-- 80+ techniques across 9 categories
+- Technique library with category, belt, search, and saved-only filters
 - Search by name or description
 - Filter by category and approximate belt difficulty
 - Belt-level badges for difficulty indication

@@ -36,10 +36,10 @@
       <a href="/" class="nav-logo" aria-label="BJJ Connections home">
         <img src="logo.svg" width="44" height="44" alt="" aria-hidden="true">
       </a>
-      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
-      <div class="nav-links">
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="primaryNav">☰</button>
+      <div class="nav-links" id="primaryNav">
         <a href="/">Home</a>
-        <a href="techniques.html" class="active">Techniques</a>
+        <a href="techniques.html" class="active" aria-current="page">Techniques</a>
         <a href="puzzles.html">Puzzles</a>
         <a href="competition.html">Competition</a>
         <a href="training.html">Training</a>
@@ -60,6 +60,7 @@
 
   <section class="section">
     <div class="container">
+      <div class="tech-toolbar">
       <div class="search-bar">
         <input type="search" class="search-input" id="techSearch" placeholder="Search techniques..." aria-label="Search techniques">
         <button class="btn btn-dark btn-sm" id="randomTechnique" type="button">Random Technique</button>
@@ -69,8 +70,10 @@
 
       <div class="filter-chips" id="beltFilters" role="group" aria-label="Filter by belt level"></div>
 
-      <div class="checklist-progress" id="techProgress">
-        <span id="techCount">Loading...</span>
+      <div class="tech-results-bar" id="techProgress">
+        <span id="techCount" role="status" aria-live="polite">Loading...</span>
+        <div class="tech-results-actions"><button class="chip" id="savedTechniques" type="button" aria-pressed="false">☆ Saved only</button><button class="text-button" id="clearTechFilters" type="button">Clear filters</button></div>
+      </div>
       </div>
 
       <div class="tech-results" id="techResults"></div>
@@ -92,7 +95,7 @@
     <div class="footer-grid">
       <div>
         <div class="footer-brand">BJJ Connections</div>
-        <p style="font-size:14px;color:rgba(255,255,255,.5);margin:0">A growing collection of Brazilian Jiu-Jitsu techniques, training tools, competition resources, and daily puzzles for grapplers.</p>
+        <p class="footer-description">A growing collection of Brazilian Jiu-Jitsu techniques, training tools, competition resources, and daily puzzles for grapplers.</p>
       </div>
       <div class="footer-links">
         <a href="techniques.html">Techniques</a>
@@ -121,6 +124,9 @@
   var activeCat = "all";
   var activeBelt = "all";
   var searchTerm = "";
+  var savedOnly = false;
+  var favorites = getFavorites();
+  var savedButton = document.getElementById("savedTechniques");
 
   var catFilters = document.getElementById("techFilters");
   var beltFilters = document.getElementById("beltFilters");
@@ -131,7 +137,12 @@
   var randomBtn = document.getElementById("randomTechnique");
 
   function getFavorites() {
-    try { return JSON.parse(localStorage.getItem("bjjFavoriteTechniques") || "[]"); }
+    try {
+      var items = JSON.parse(localStorage.getItem("bjjFavoriteTechniques") || "[]");
+      return Array.isArray(items) ? [...new Set(items.filter(function(name) {
+        return typeof name === "string" && TECHNIQUES.some(function(t) { return t.name === name; });
+      }))] : [];
+    }
     catch(e) { return []; }
   }
   function saveFavorites(items) {
@@ -139,16 +150,42 @@
     catch(e) {}
   }
   function isFavorite(name) {
-    return getFavorites().indexOf(name) !== -1;
+    return favorites.indexOf(name) !== -1;
   }
-  function toggleFavorite(name) {
-    var favorites = getFavorites();
+  function toggleFavorite(name, button) {
     var index = favorites.indexOf(name);
     if (index === -1) favorites.push(name);
     else favorites.splice(index, 1);
     saveFavorites(favorites);
-    render();
+    if (savedOnly) render();
+    else {
+      var active = isFavorite(name);
+      button.classList.toggle("is-favorite", active);
+      button.setAttribute("aria-pressed", String(active));
+      button.setAttribute("aria-label", (active ? "Remove " : "Save ") + name + (active ? " from favorites" : " to favorites"));
+      button.textContent = active ? "★ Saved" : "☆ Save";
+      updateSavedButton();
+    }
   }
+  function updateSavedButton() {
+    savedButton.textContent = "☆ Saved only (" + favorites.length + ")";
+    savedButton.classList.toggle("active", savedOnly);
+    savedButton.setAttribute("aria-pressed", String(savedOnly));
+  }
+  savedButton.onclick = function() { savedOnly = !savedOnly; render(); };
+  function clearFilters() {
+    searchEl.value = "";
+    searchTerm = "";
+    activeCat = "all";
+    activeBelt = "all";
+    savedOnly = false;
+    updateFilters(catFilters, allChip);
+    updateFilters(beltFilters, beltAll);
+  }
+  document.getElementById("clearTechFilters").onclick = function() { clearFilters(); render(); searchEl.focus(); };
+  window.addEventListener("storage", function(event) {
+    if (event.key === "bjjFavoriteTechniques" || event.key === null) { favorites = getFavorites(); render(); }
+  });
 
   // Category filter chips
   var allChip = document.createElement("button");
@@ -187,21 +224,26 @@
   });
 
   function updateFilters(container, activeChip) {
-    container.querySelectorAll(".chip").forEach(function(c) { c.classList.remove("active"); });
+    container.querySelectorAll(".chip").forEach(function(c) {
+      c.classList.remove("active"); c.setAttribute("aria-pressed", "false");
+    });
     activeChip.classList.add("active");
+    activeChip.setAttribute("aria-pressed", "true");
   }
 
   function render() {
+    updateSavedButton();
     var filtered = TECHNIQUES.filter(function(t) {
       var catMatch = activeCat === "all" || t.cat === activeCat;
       var beltMatch = activeBelt === "all" || t.belt === activeBelt;
       var searchMatch = !searchTerm || t.name.toLowerCase().indexOf(searchTerm) > -1 ||
         t.desc.toLowerCase().indexOf(searchTerm) > -1;
-      return catMatch && beltMatch && searchMatch;
+      return catMatch && beltMatch && searchMatch && (!savedOnly || isFavorite(t.name));
     });
 
     countEl.textContent = filtered.length + " technique" + (filtered.length === 1 ? "" : "s");
 
+    noResults.textContent = savedOnly ? "No saved techniques match. Save techniques with the ☆ Save button, or clear your filters." : "No techniques match. Try another search or clear your filters.";
     if (filtered.length === 0) {
       results.innerHTML = "";
       noResults.classList.remove("hidden");
@@ -216,7 +258,7 @@
         '<div class="tech-category">' + (catLabel ? catLabel.label : t.cat) + '</div>' +
         '<p class="tech-desc">' + t.desc + '</p>' +
         '<span class="belt-badge belt-' + t.belt + '">' + t.belt + ' Belt</span>' +
-        '<button class="tech-favorite ' + (isFavorite(t.name) ? 'is-favorite' : '') + '" data-favorite="' + t.name.replace(/"/g, '&quot;') + '" type="button" aria-label="' + (isFavorite(t.name) ? 'Remove ' : 'Save ') + t.name + ' ' + (isFavorite(t.name) ? 'from favorites' : 'to favorites') + '">' +
+        '<button class="tech-favorite ' + (isFavorite(t.name) ? 'is-favorite' : '') + '" data-favorite="' + t.name.replace(/"/g, '&quot;') + '" type="button" aria-pressed="' + isFavorite(t.name) + '" aria-label="' + (isFavorite(t.name) ? 'Remove ' : 'Save ') + t.name + ' ' + (isFavorite(t.name) ? 'from favorites' : 'to favorites') + '">' +
           (isFavorite(t.name) ? '★ Saved' : '☆ Save') +
         '</button>' +
       '</div>';
@@ -224,7 +266,7 @@
 
     results.querySelectorAll("[data-favorite]").forEach(function(btn) {
       btn.addEventListener("click", function() {
-        toggleFavorite(btn.getAttribute("data-favorite"));
+        toggleFavorite(btn.getAttribute("data-favorite"), btn);
       });
     });
   }
@@ -232,22 +274,21 @@
   if (randomBtn) randomBtn.addEventListener("click", function() {
     if (!TECHNIQUES.length) return;
     var t = TECHNIQUES[Math.floor(Math.random() * TECHNIQUES.length)];
-    searchEl.value = "";
-    activeCat = "all";
-    activeBelt = "all";
-    updateFilters(catFilters, allChip);
-    updateFilters(beltFilters, beltAll);
+    clearFilters();
     render();
     setTimeout(function() {
       var cards = Array.prototype.slice.call(results.querySelectorAll(".tech-card"));
       var card = cards.find(function(el) { return el.querySelector("h3") && el.querySelector("h3").textContent === t.name; });
       if (card) {
-        card.scrollIntoView({ behavior: "smooth", block: "center" });
+        card.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
         card.classList.add("random-highlight");
         setTimeout(function() { card.classList.remove("random-highlight"); }, 1400);
       }
     }, 0);
   });
+
+  updateFilters(catFilters, allChip);
+  updateFilters(beltFilters, beltAll);
 
   searchEl.addEventListener("input", function() {
     searchTerm = searchEl.value.toLowerCase().trim();

@@ -129,7 +129,7 @@ function gameHarness(page, values = new Map(), search = "") {
     : fs.readFileSync(path.join(root, "app.js"), "utf8");
   vm.runInContext(script, context);
   const prefix = page === "index.html" ? "home" : "";
-  return {elements, values, focus: () => events.get("focus")?.(),
+  return {elements, values, setMode: mode => context.setMode(mode), focus: () => events.get("focus")?.(),
     reloadCount: () => reloads, grid: elements.get(prefix ? "homePuzzleGrid" : "grid"),
     submit: elements.get(prefix ? "homeSubmit" : "submit"),
     deselect: elements.get(prefix ? "homeDeselect" : "deselect"),
@@ -236,3 +236,70 @@ async function testOfflineLinks() {
   console.log("Offline puzzle-link navigation passed.");
 }
 testOfflineLinks().catch(error => { console.error(error); process.exitCode = 1; });
+
+// Selections preserve live buttons (and their focus) instead of rebuilding the board.
+for (const page of ["index.html", "puzzles.html"]) {
+  const game = gameHarness(page);
+  const buttons = game.grid.children.slice();
+  buttons[0].onclick();
+  assert.strictEqual(game.grid.children[0], buttons[0]);
+  game.deselect.onclick();
+  assert.strictEqual(game.grid.children[0], buttons[0]);
+}
+const sharedPuzzle = PUZZLES.find(p => p.id !== today.id);
+const linked = gameHarness("puzzles.html", new Map(), "?p=" + sharedPuzzle.id);
+assert.match(linked.elements.get("puzzleMeta").textContent, /^Shared puzzle/);
+assert.equal(linked.values.has("bjjDailyProgress"), false);
+for (const group of sharedPuzzle.groups) {
+  for (const word of group.items) linked.grid.children.find(b => b.textContent === word).onclick();
+  linked.submit.onclick();
+}
+linked.elements.get("next").onclick();
+assert.match(linked.elements.get("puzzleMeta").textContent, /^Training/);
+assert.ok(!linked.elements.get("puzzleMeta").textContent.endsWith("Puzzle " + sharedPuzzle.id), "next must leave the linked puzzle");
+linked.setMode("daily");
+assert.equal(linked.progress().puzzle, today.id, "Daily must leave the shared link and restore today's puzzle");
+for (const mode of ["archive", "stats"]) {
+  const game = gameHarness("puzzles.html", new Map(), "?mode=" + mode);
+  assert.equal(game.elements.get(mode + "View").classList.contains("hidden"), false);
+  assert.equal(game.elements.get("gameView").classList.contains("hidden"), true);
+}
+console.log("Stable tile selection, shared-link recovery, and mode deep links passed.");
+
+function techniqueHarness(saved) {
+  const nodes = new Map();
+  const values = new Map([["bjjFavoriteTechniques", saved]]);
+  function node() {
+    const classes = new Set();
+    return {children: [], value: "", textContent: "", innerHTML: "", events: {}, attrs: {},
+      classList: {add: c => classes.add(c), remove: c => classes.delete(c),
+        toggle: (c, on) => on ? classes.add(c) : classes.delete(c)},
+      setAttribute(k, v) { this.attrs[k] = v; },
+      addEventListener(k, fn) { this.events[k] = fn; },
+      appendChild(n) { this.children.push(n); },
+      querySelectorAll(selector) { return selector === ".chip" ? this.children : []; }, focus() {}};
+  }
+  const html = fs.readFileSync(path.join(root, "techniques.html"), "utf8");
+  for (const [,id] of html.matchAll(/id="([^"]+)"/g)) nodes.set(id, node());
+  const context = {console, setTimeout: () => {}, window: {addEventListener() {}},
+    localStorage: {getItem: k => values.get(k), setItem: (k,v) => values.set(k,v)},
+    document: {getElementById: id => nodes.get(id), createElement: node}};
+  vm.createContext(context);
+  vm.runInContext(fs.readFileSync(path.join(root, "techniques.js"), "utf8"), context);
+  vm.runInContext(html.match(/<script>\s*\(function[\s\S]*?<\/script>/)[0].replace(/<\/?script>/g, ""), context);
+  return nodes;
+}
+for (const saved of ["null", "{}", "7", "{broken", '["Armbar (from Mount)","Armbar (from Mount)",null,"unknown"]']) {
+  const nodes = techniqueHarness(saved);
+  const count = nodes.get("techCount").textContent;
+  const search = nodes.get("techSearch");
+  search.value = "zzzz-no-match"; search.events.input();
+  assert.equal(nodes.get("techCount").textContent, "0 techniques");
+  nodes.get("randomTechnique").events.click();
+  assert.equal(nodes.get("techCount").textContent, count, "Random must clear the active search as well as its input");
+  nodes.get("savedTechniques").onclick();
+  assert.equal(nodes.get("techCount").textContent, saved.startsWith("[") ? "1 technique" : "0 techniques");
+  nodes.get("clearTechFilters").onclick();
+  assert.equal(nodes.get("techCount").textContent, count);
+}
+console.log("Technique storage recovery, saved filtering, and search reset passed.");
