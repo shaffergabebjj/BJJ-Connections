@@ -88,7 +88,7 @@ for (const file of fs.readdirSync(root).filter(file => file.endsWith(".html"))) 
 console.log("All game-state, puzzle-bank, and internal-link checks passed.");
 
 // Exercise real click handlers in both entry points with shared browser storage.
-function gameHarness(page, values = new Map()) {
+function gameHarness(page, values = new Map(), search = "") {
   const elements = new Map();
   const events = new Map();
   let reloads = 0;
@@ -111,7 +111,7 @@ function gameHarness(page, values = new Map()) {
   const html = fs.readFileSync(path.join(root, page), "utf8");
   for (const [, id] of html.matchAll(/id="([^"]+)"/g)) elements.set(id, element());
   const context = {
-    console, Date, Intl, URLSearchParams, location: {search: "", reload() { reloads++; }},
+    console, Date, Intl, URLSearchParams, location: {search, reload() { reloads++; }},
     navigator: {}, addEventListener(type, handler) { events.set(type, handler); },
     localStorage: {getItem: key => values.get(key) || null,
       setItem: (key, value) => values.set(key, value)},
@@ -162,6 +162,11 @@ assert.equal(completedHome.elements.get("homeLearn").hidden, false);
 assert.equal(completedHome.elements.get("homeExplanations").children.length, 4);
 assert.equal(completedHome.grid.children.length, 0);
 assert.equal(completedHome.submit.disabled, true);
+assert.equal(completedHome.elements.get("homeResult").hidden, false);
+assert.equal(completedHome.elements.get("homeResultTitle").textContent, "Every connection found.");
+const practice = gameHarness("puzzles.html", new Map(), "?mode=training");
+assert.match(practice.elements.get("puzzleMeta").textContent, /^Training/);
+assert.equal(practice.values.has("bjjDailyProgress"), false, "practice entry must not overwrite the daily game");
 console.log("Homepage/full-game duplicate guesses, progress transfer, deselect, and explanations passed.");
 
 // A lost game must reveal answers without repopulating the playable grid.
