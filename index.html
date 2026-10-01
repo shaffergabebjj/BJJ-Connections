@@ -78,6 +78,7 @@
         </div>
         <p class="home-instructions">Find four groups of four related words. Select a group, then tap Submit.</p>
         <details class="home-hint"><summary>Need a hint?</summary><p id="homePuzzleFocus"></p></details>
+        <div id="homeSolved" class="home-solved" aria-live="polite"></div>
         <div class="hero-mini-grid home-mini-grid" id="homePuzzleGrid" aria-label="Today's BJJ Connections puzzle"></div>
         <div class="home-game-status">
           <span id="homeMistakes">4 mistakes</span>
@@ -88,7 +89,17 @@
           <button class="btn btn-secondary home-game-btn" id="homeDeselect" type="button" disabled>Deselect</button>
           <button class="btn btn-primary home-game-btn" id="homeSubmit" type="button" disabled>Submit</button>
         </div>
-        <div id="homeSolved" class="home-solved" aria-live="polite"></div>
+        <section id="homeResult" class="home-result" hidden aria-label="Puzzle results">
+          <span class="result-eyebrow">TODAY’S RESULTS</span>
+          <h2 id="homeResultTitle"></h2>
+          <p id="homeResultDetails"></p>
+          <div class="home-result-actions">
+            <button id="homeShare" class="btn btn-primary" type="button">Share results</button>
+            <a class="btn btn-outline" href="puzzles.html?mode=training">Practice another →</a>
+          </div>
+          <label id="homeCopyLabel" for="homeCopy" hidden>Copy your result below:</label>
+          <textarea id="homeCopy" class="home-copy" rows="7" readonly hidden></textarea>
+        </section>
         <details id="homeLearn" class="home-learn" hidden><summary>Why these words connect</summary><div id="homeExplanations"></div></details>
         <div class="home-game-footer">
           <span id="homeStreak">Streak: 0</span>
@@ -327,11 +338,11 @@
     shuffleBtn.disabled = finished;
   }
 
-  function renderSolved() {
+  function renderSolved(animateGroup) {
     solvedEl.innerHTML = "";
     solved.forEach(group => {
       const row = document.createElement("div");
-      row.className = "home-solved-group home-solved-" + puzzle.groups.indexOf(group);
+      row.className = "home-solved-group home-solved-" + puzzle.groups.indexOf(group) + (group === animateGroup ? " group-enter" : "");
       const title = document.createElement("strong");
       title.textContent = group.category;
       const items = document.createElement("span");
@@ -341,7 +352,38 @@
     });
   }
 
+  function showResults() {
+    const state = BJJDaily.readState();
+    document.getElementById("homeResult").hidden = false;
+    document.getElementById("homeResultTitle").textContent = won ? "Every connection found." : "Round complete.";
+    document.getElementById("homeResultDetails").textContent =
+      (won ? "4 of 4 groups · " + mistakes + " mistakes left" : "Answers revealed") +
+      " · " + BJJDaily.displayStreak(state) + " day streak";
+    document.querySelector(".home-game-controls").hidden = true;
+  }
+
+  document.getElementById("homeShare").onclick = async function () {
+    const text = "BJJ Connections #" + dayNumber + "\n\n" + guessLog.join("\n") +
+      "\n\n" + (won ? "Solved" : "Played") + " · " + mistakes + " mistakes left\nbjjconnectionsbygabe.com";
+    if (navigator.share) {
+      try { await navigator.share({text}); messageEl.textContent = "Results shared."; return; }
+      catch (error) { if (error.name === "AbortError") return; }
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      messageEl.textContent = "Results copied. Paste them into a message or post.";
+    } catch (error) {
+      const copy = document.getElementById("homeCopy");
+      copy.value = text;
+      copy.hidden = false;
+      document.getElementById("homeCopyLabel").hidden = false;
+      copy.focus(); copy.select();
+      messageEl.textContent = "Select Copy to share your result.";
+    }
+  };
+
   function showExplanations() {
+    showResults();
     const box = document.getElementById("homeExplanations");
     box.replaceChildren();
     puzzle.groups.forEach(group => {
@@ -354,7 +396,7 @@
     document.getElementById("homeLearn").hidden = false;
   }
 
-  function finish() {
+  function finish(animateGroup) {
     finished = true;
     won = words.length === 0;
     const seconds = Math.round((Date.now() - startedAt) / 1000);
@@ -366,7 +408,7 @@
     puzzle.groups.forEach(group => {
       if (!solved.includes(group)) solved.push(group);
     });
-    renderSolved();
+    renderSolved(animateGroup);
     grid.innerHTML = "";
     fullGameLink.textContent = "View results & share →";
     showExplanations();
@@ -396,8 +438,8 @@
       words = words.filter(word => !found.items.includes(word));
       selected = [];
       messageEl.textContent = "Connected.";
-      renderSolved();
-      if (!words.length) finish();
+      renderSolved(found);
+      if (!words.length) finish(found);
       else render();
     } else {
       const near = puzzle.groups.some(group =>

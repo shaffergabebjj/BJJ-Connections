@@ -165,11 +165,11 @@ function render() {
   });
   if (focusedWord) [...grid.children].find(b => b.textContent === focusedWord)?.focus();
 }
-function renderSolved() {
+function renderSolved(animateGroup) {
   solvedBox.innerHTML = "";
   solved.forEach(g => {
     const box = document.createElement("div");
-    box.className = `solved solved-${puzzle.groups.indexOf(g)}`;
+    box.className = `solved solved-${puzzle.groups.indexOf(g)}` + (g === animateGroup ? " group-enter" : "");
     box.innerHTML = `<b>${g.category}</b>${g.items.join(" · ")}`;
     solvedBox.appendChild(box);
   });
@@ -182,15 +182,16 @@ function update() {
   submit.textContent = finished ? "Complete" : `Submit (${selected.length}/4)`;
   $("deselect").disabled = !selected.length || finished;
   $("shuffle").disabled = finished;
+  [$("shuffle"), $("deselect"), submit].forEach(button => button.classList.toggle("hidden", finished));
 }
 
 // ---- Gameplay --------------------------------------------------------
-function showCompletion(seconds) {
+function showCompletion(seconds, animateGroup) {
   msg.textContent = won
     ? `Connected. ${seconds}s • ${mistakes} mistakes left.`
     : "Puzzle complete. Review the answers below.";
   puzzle.groups.filter(g => !solved.includes(g)).forEach(g => solved.push(g));
-  renderSolved();
+  renderSolved(animateGroup);
   grid.innerHTML = "";
   $("learn").innerHTML = puzzle.groups.map(g => `<p><b>${g.category}</b><br>${g.explanation}</p>`).join("");
   $("learnPanel").classList.remove("hidden");
@@ -210,7 +211,7 @@ function showCompletion(seconds) {
   update();
 }
 
-function finish(win) {
+function finish(win, animateGroup) {
   finished = true; won = win;
   const seconds = Math.round((Date.now() - startedAt) / 1000);
   if (isDailyGame) {
@@ -223,7 +224,7 @@ function finish(win) {
     }
   }
   save();
-  showCompletion(seconds);
+  showCompletion(seconds, animateGroup);
   persistDaily();
 }
 
@@ -248,8 +249,8 @@ function submitGuess() {
     words = words.filter(w => !found.items.includes(w));
     selected = [];
     msg.textContent = "Correct.";
-    renderSolved(); render();
-    if (words.length === 0) finish(true);
+    renderSolved(found); render();
+    if (words.length === 0) finish(true, found);
   } else {
     const near = puzzle.groups.some(g => g.items.filter(w => attempted.includes(w)).length === 3);
     mistakes--;
@@ -460,7 +461,7 @@ if (typeof validateAllPuzzles === "function") {
     if (errors.length) console.warn("Puzzle", p.id, errors);
   });
 }
-loadPuzzle();
+setMode(new URLSearchParams(location.search).get("mode") === "training" ? "training" : "daily");
 
 // A long-open tab should roll over at the player's local midnight without
 // requiring a hard refresh. Checking on focus/visibility avoids a busy timer.
