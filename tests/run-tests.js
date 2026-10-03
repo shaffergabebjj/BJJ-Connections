@@ -121,7 +121,7 @@ function gameHarness(page, values = new Map(), search = "") {
   };
   context.window = context;
   vm.createContext(context);
-  for (const file of ["data.js", "daily-progress.js"]) {
+  for (const file of ["data.js", "daily-progress.js", "game-core.js"]) {
     vm.runInContext(fs.readFileSync(path.join(root, file), "utf8"), context);
   }
   const script = page === "index.html"

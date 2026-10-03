@@ -20,7 +20,8 @@ Live at **[bjjconnectionsbygabe.com](https://bjjconnectionsbygabe.com)**.
 
 ### Daily Puzzle (puzzles.html)
 - Daily deterministic puzzle (everyone gets the same puzzle each day)
-- Training mode with content-based difficulty filter (white/blue/purple/black)
+- Training mode with belt difficulty, unseen-first rotation, Unplayed and Practice mistakes queues
+- Exact four-word groups capped at three appearances across the bank
 - Archive — replay any of the last 30 days' puzzles
 - Streaks and local stats (persisted to `localStorage`)
 - "One away" feedback
@@ -52,6 +53,7 @@ Live at **[bjjconnectionsbygabe.com](https://bjjconnectionsbygabe.com)**.
 - `index.html`, `techniques.html`, `puzzles.html`, `competition.html`, `training.html`, `resources.html`, `about.html` — site pages
 - `style.css` — full design system (black/white combat-sports aesthetic, dark mode, responsive)
 - `data.js` — puzzle bank, difficulty classification, and validation logic
+- `game-core.js` — shared guess rules, seeded board order, and resilient Training history
 - `app.js` — puzzle gameplay logic (daily/training/archive modes, stats, sharing)
 - `techniques.js` — technique database (categories, belt levels, descriptions)
 - `nav.js` — shared navigation (mobile menu toggle, active states)
@@ -80,4 +82,4 @@ Puzzles live in the `ROUNDS` array in `data.js`. Difficulty is inferred automati
 - Competition checklists include overall progress, remaining-only filtering, and print styles.
 - Training plans restore saved choices; goals and session logs are stored in the current browser.
 - Export the session log as CSV for a portable backup. Browser data does not sync between devices.
-- Run `node tests/run-tests.js` and `node tests/tools-tests.js` for regression checks.
+- Run `node tests/run-tests.js` and `node tests/tools-tests.js` and `node tests/practice-tests.js` for regression checks.
