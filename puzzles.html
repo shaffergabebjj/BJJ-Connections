@@ -93,6 +93,15 @@
 
     <section id="gameView">
       <div id="difficultyWrap" class="difficulty-bar hidden" role="group" aria-label="Difficulty filter"></div>
+      <div id="trainingTools" class="training-tools hidden">
+        <label for="trainingQueue">Practice queue</label>
+        <select id="trainingQueue">
+          <option value="all">Smart rotation</option>
+          <option value="unplayed">Unplayed</option>
+          <option value="mistakes">Practice mistakes</option>
+        </select>
+        <p id="trainingSummary" role="status"></p>
+      </div>
       <div class="puzzle-meta" id="puzzleMeta"></div>
 
       <div class="puzzle-status">
@@ -171,6 +180,7 @@
 
 <script src="data.js"></script>
 <script src="daily-progress.js"></script>
+<script src="game-core.js"></script>
 <script src="app.js"></script>
 <script src="nav.js"></script>
 </body>

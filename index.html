@@ -161,6 +161,7 @@
 
 <script src="data.js"></script>
 <script src="daily-progress.js"></script>
+<script src="game-core.js"></script>
 <script>
 (function () {
   const grid = document.getElementById("homePuzzleGrid");
@@ -179,8 +180,8 @@
   if (!grid || typeof PUZZLES === "undefined" || !PUZZLES.length) return;
 
   const now = new Date();
-  const dayNumber = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);
-  const dateKey = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, "0"), String(now.getDate()).padStart(2, "0")].join("-");
+  const dayNumber = BJJDaily.dayNumber(now);
+  const dateKey = BJJDaily.dateKey(now);
   const puzzle = PUZZLES[Math.abs(dayNumber) % PUZZLES.length];
   let words = puzzle.groups.flatMap(g => g.items);
   let selected = [];
@@ -215,21 +216,7 @@
   // A true category makes a reliable daily hint without guessing from substrings.
   focusEl.textContent = "Today's focus: " + puzzle.groups[0].category;
 
-  function seeded(n) {
-    const x = Math.sin(n) * 10000;
-    return x - Math.floor(x);
-  }
-
-  function dailyShuffle(list) {
-    const out = list.slice();
-    for (let i = out.length - 1; i > 0; i--) {
-      const j = Math.floor(seeded(dayNumber + i + puzzle.id) * (i + 1));
-      [out[i], out[j]] = [out[j], out[i]];
-    }
-    return out;
-  }
-
-  words = dailyShuffle(words);
+  words = BJJGame.shuffled(words, dayNumber + puzzle.id);
   const saved = BJJDaily.read(puzzle);
   if (saved) {
     words = saved.words;
@@ -294,7 +281,14 @@
       title.textContent = group.category;
       const items = document.createElement("span");
       items.textContent = group.items.join(" · ");
-      row.append(title, items);
+      const explanation = document.createElement("details");
+      explanation.className = "connection-explanation";
+      const summary = document.createElement("summary");
+      summary.textContent = "Why these connect";
+      const text = document.createElement("p");
+      text.textContent = group.explanation;
+      explanation.append(summary, text);
+      row.append(title, items, explanation);
       solvedEl.appendChild(row);
     });
   }
@@ -366,19 +360,15 @@
 
   function submitGuess() {
     if (selected.length !== 4 || finished) return;
-    const attempt = BJJDaily.guessKey(selected);
-    if (attemptedGuesses.includes(attempt)) {
+    const result = BJJGame.attempt(puzzle, selected, attemptedGuesses);
+    if (result.type === "duplicate") {
       messageEl.textContent = "Already tried that group. Change a word and try again.";
       return;
     }
-    attemptedGuesses.push(attempt);
-    const found = puzzle.groups.find(group =>
-      group.items.every(word => selected.includes(word))
-    );
-    guessLog.push(selected.map(word => {
-      const index = puzzle.groups.findIndex(group => group.items.includes(word));
-      return ["🟩", "🟨", "🟦", "🟪"][index];
-    }).join(""));
+    if (result.type === "invalid") return;
+    attemptedGuesses.push(result.key);
+    guessLog.push(result.row);
+    const found = result.group;
 
     if (found) {
       solved.push(found);
@@ -389,11 +379,9 @@
       if (!words.length) finish(found);
       else render();
     } else {
-      const near = puzzle.groups.some(group =>
-        group.items.filter(word => selected.includes(word)).length === 3
-      );
+      const near = result.near;
       mistakes--;
-      messageEl.textContent = near ? "One away." : "Not a group.";
+      messageEl.textContent = near ? `One away. ${4 - solved.length} groups remain.` : "Not a group.";
       if (mistakes <= 0) finish();
     }
     update();

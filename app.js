@@ -38,22 +38,23 @@ state.bestTime ??= null; state.dailyHistory ??= {}; state.lastDaily ??= null;
 const save = () => writeStoredState(state);
 
 // ---- Dates & deterministic seeding ------------------------------------
-function dayNumberForDate(d) {
-  return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
-}
-function dateKeyForDate(d) {
-  return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, "0"), String(d.getDate()).padStart(2, "0")].join("-");
-}
-function dateKey() { return dateKeyForDate(new Date()); }
-function dayNumber() { return dayNumberForDate(new Date()); }
+function dayNumberForDate(d) { return BJJDaily.dayNumber(d); }
+function dateKeyForDate(d) { return BJJDaily.dateKey(d); }
+function dateKey() { return BJJDaily.dateKey(); }
+function dayNumber() { return BJJDaily.dayNumber(); }
 function dailyIndexForDate(d) { return Math.abs(dayNumberForDate(d)) % PUZZLES.length; }
 function dailyIndex() { return dailyIndexForDate(new Date()); }
-function seeded(n) { let x = Math.sin(n) * 10000; return x - Math.floor(x); }
 
+let trainingHistory = BJJTraining.read(PUZZLES);
+let trainingQueue = "all";
 function pickTraining() {
-  const pool = difficulty === "all" ? PUZZLES : PUZZLES.filter(p => p.difficulty === difficulty);
-  const choices = pool.filter(p => p !== puzzle);
-  return (choices.length ? choices : pool)[Math.floor(Math.random() * (choices.length || pool.length))];
+  const candidates = BJJTraining.pool(PUZZLES, trainingHistory, difficulty, trainingQueue);
+  return BJJTraining.pick(candidates, trainingHistory, puzzle);
+}
+function updateTrainingSummary() {
+  const candidates = PUZZLES.filter(p => difficulty === "all" || p.difficulty === difficulty);
+  const remaining = candidates.filter(p => !trainingHistory[p.id]?.completed).length;
+  $("trainingSummary").textContent = `${remaining}/${candidates.length} unplayed · Progress saved on this browser`;
 }
 function queryPuzzle() {
   const p = new URLSearchParams(location.search).get("p");
@@ -98,6 +99,18 @@ function loadPuzzle(override) {
     puzzle = mode === "daily" ? PUZZLES[dailyIndex()] : pickTraining();
   }
   isDailyGame = mode === "daily" && !override;
+  if (!puzzle) {
+    grid.innerHTML = ""; solvedBox.innerHTML = "";
+    finished = true;
+    meta.textContent = "Training";
+    msg.textContent = trainingQueue === "mistakes" ? "No mistakes to practice at this difficulty. Try another queue or play a new round." : "You completed every puzzle at this difficulty. Choose Smart rotation to revisit them.";
+    update(); updateTrainingSummary(); return;
+  }
+  if (mode === "training") {
+    trainingHistory[puzzle.id] = {...trainingHistory[puzzle.id], seen: Date.now()};
+    BJJTraining.save(trainingHistory);
+    updateTrainingSummary();
+  }
 
   // Assign each group a fixed share-color for this play-through, by the
   // order it's defined in data.js (not by the order it's solved in).
@@ -107,10 +120,7 @@ function loadPuzzle(override) {
   // Deterministic shuffle for the daily puzzle (everyone sees the same
   // layout); random shuffle otherwise.
   const seed = mode === "daily" && !override ? dayNumber() + puzzle.id : Date.now();
-  for (let i = words.length - 1; i > 0; i--) {
-    const j = Math.floor(seeded(seed + i) * (i + 1));
-    [words[i], words[j]] = [words[j], words[i]];
-  }
+  words = BJJGame.shuffled(words, seed);
 
   const saved = isDailyGame ? BJJDaily.read(puzzle) : null;
   isDailyReplay = isDailyGame && (!!saved?.replay || (!saved && !!state.dailyHistory[dateKey()]));
@@ -179,7 +189,7 @@ function renderSolved(animateGroup) {
   solved.forEach(g => {
     const box = document.createElement("div");
     box.className = `solved solved-${puzzle.groups.indexOf(g)}` + (g === animateGroup ? " group-enter" : "");
-    box.innerHTML = `<b>${g.category}</b>${g.items.join(" · ")}`;
+    box.innerHTML = `<b>${g.category}</b>${g.items.join(" · ")}<details class="connection-explanation"><summary>Why these connect</summary><p>${g.explanation}</p></details>`;
     solvedBox.appendChild(box);
   });
 }
@@ -216,7 +226,7 @@ function showCompletion(seconds, animateGroup) {
   summary.classList.remove("hidden");
   share.classList.remove("hidden");
   next.classList.remove("hidden");
-  next.textContent = isDailyGame ? "Practice another" : "Next Puzzle";
+  next.textContent = isDailyGame ? "Play Training" : mode === "archive" ? "Open Archive" : "New Training Puzzle";
   update();
 }
 
@@ -232,6 +242,10 @@ function finish(win, animateGroup) {
       if (state.bestTime === null || seconds < state.bestTime) state.bestTime = seconds;
     }
   }
+  if (mode === "training") {
+    trainingHistory[puzzle.id] = {seen:Date.now(), completed:true, win, mistakes};
+    BJJTraining.save(trainingHistory); updateTrainingSummary();
+  }
   save();
   showCompletion(seconds, animateGroup);
   persistDaily();
@@ -239,19 +253,15 @@ function finish(win, animateGroup) {
 
 function submitGuess() {
   if (selected.length !== 4 || finished) return;
-  const attempt = BJJDaily.guessKey(selected);
-  if (attemptedGuesses.includes(attempt)) {
+  const result = BJJGame.attempt(puzzle, selected, attemptedGuesses);
+  if (result.type === "duplicate") {
     msg.textContent = "Already tried that group. Change a word and try again.";
     return;
   }
-  attemptedGuesses.push(attempt);
-  const attempted = selected.slice(); // capture before we clear it below
-  const found = puzzle.groups.find(g => g.items.every(w => attempted.includes(w)));
-
-  // Log this attempt's colors for the share grid: each square is the
-  // TRUE color of that word's category, whether or not it was correct —
-  // this is what makes the shared pattern meaningfully show "how close".
-  guessLog.push(attempted.map(w => puzzle.groups.find(g => g.items.includes(w)).color).join(""));
+  if (result.type === "invalid") return;
+  attemptedGuesses.push(result.key);
+  guessLog.push(result.row);
+  const found = result.group;
 
   if (found) {
     solved.push(found);
@@ -261,14 +271,14 @@ function submitGuess() {
     renderSolved(found); render();
     if (words.length === 0) finish(true, found);
   } else {
-    const near = puzzle.groups.some(g => g.items.filter(w => attempted.includes(w)).length === 3);
+    const near = result.near;
     mistakes--;
     // Match the real NYT Connections behavior: a wrong guess does NOT
     // clear the selection. The words stay selected so the player can
     // just tap off the wrong one(s) and tap in a replacement, instead
     // of re-selecting all 4 from scratch every time.
     if (mistakes <= 0) finish(false);
-    else msg.textContent = near ? "One away." : "Not a group.";
+    else msg.textContent = near ? `One away. ${4 - solved.length} groups remain.` : "Not a group.";
     render();
   }
   update();
@@ -286,7 +296,7 @@ function shuffle() {
 
 // ---- Sharing -----------------------------------------------------------
 async function shareResult() {
-  const label = isDailyReplay ? "Practice replay" : mode === "daily" ? `#${dayNumber()}` : mode === "archive" ? "Archive" : "Training";
+  const label = isDailyReplay ? "Practice replay" : mode === "daily" ? `#${dayNumber()} • ${dateKey()}` : mode === "archive" ? "Archive" : "Training";
   const grid4 = guessLog.join("\n");
   const text = `BJJ Connections ${label}\n\n${grid4}\n\n${won ? "Solved" : "Played"} • ${mistakes} mistakes left\nbjjconnectionsbygabe.com`;
   if (navigator.share) {
@@ -382,6 +392,7 @@ function setMode(m, override) {
   $("statsView").classList.toggle("hidden", m !== "stats");
   $("archiveView").classList.toggle("hidden", m !== "archive");
   difficultyWrap.classList.toggle("hidden", m !== "training");
+  $("trainingTools").classList.toggle("hidden", m !== "training");
 
   if (m === "stats") showStats();
   else if (m === "archive") renderArchiveList();
@@ -413,6 +424,11 @@ document.querySelector(".puzzle-tabs").addEventListener("keydown", event => {
   difficultyWrap.appendChild(b);
 });
 
+$("trainingQueue").onchange = () => {
+  trainingQueue = $("trainingQueue").value;
+  loadPuzzle();
+};
+
 // ---- Controls -------------------------------------------------------------
 $("deselect").onclick = () => {
   selected = []; msg.textContent = "Select 4 words.";
@@ -426,7 +442,7 @@ grid.addEventListener("keydown", event => {
 submit.onclick = submitGuess;
 $("shuffle").onclick = shuffle;
 next.onclick = () => {
-  if (mode === "daily") { mode = "training"; setMode("training"); }
+  if (mode === "daily") { setMode("training"); }
   else if (mode === "archive") { setMode("archive"); }
   else { loadPuzzle(); }
 };
@@ -436,6 +452,7 @@ $("resetStats").onclick = () => {
     try {
       localStorage.removeItem("bjjConnectionsState");
       localStorage.removeItem("bjjDailyProgress");
+      localStorage.removeItem("bjjTrainingHistory");
     } catch (e) { /* ignore */ }
     location.reload();
   }

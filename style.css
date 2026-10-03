@@ -1440,3 +1440,24 @@ button, .btn { touch-action:manipulation; }
   .checklist-item[hidden] { display:flex !important; }
   .checklist-item, .checklist-item label, .tool-dashboard p { color:#111 !important; }
 }
+
+/* Keep practice choices readable and gameplay controls within reach. */
+.training-tools { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:12px 0 18px; padding:14px; border:1px solid var(--border); border-radius:12px; background:var(--bg-alt); }
+.training-tools.hidden { display:none; }
+.training-tools label { font-weight:800; font-size:13px; }
+.training-tools select { min-height:44px; max-width:100%; padding:8px 12px; border:1px solid var(--border-strong); border-radius:8px; background:var(--bg); color:var(--ink); font:inherit; }
+#trainingSummary { width:100%; margin:0; font-size:13px; color:var(--muted); }
+.grid, .home-mini-grid { grid-auto-rows:1fr; }
+.word, .hero-mini-tile { min-width:0; overflow-wrap:anywhere; }
+.ctrl, .tab, .difficulty-bar button, .home-game-btn { min-height:44px; }
+@media (max-width:640px) {
+  .puzzle-buttons, .home-game-controls { position:sticky; bottom:12px; z-index:20; padding:10px; border:1px solid var(--border-strong); border-radius:14px; background:var(--bg); box-shadow:0 6px 24px rgba(0,0,0,.15); margin-top:14px; }
+  .puzzle-buttons .ctrl, .home-game-controls .btn { flex:1; padding:10px 6px; min-height:48px; font-size:12px; }
+  .puzzle-buttons { bottom:calc(12px + env(safe-area-inset-bottom, 0px)); }
+  .home-game-controls { bottom:calc(12px + env(safe-area-inset-bottom, 0px)); }
+  .word, .hero-mini-tile { min-height:84px; padding:10px 4px; line-height:1.2; }
+  .puzzle-status { position:sticky; top:74px; z-index:10; background:var(--bg); padding:8px 0; }
+}
+.connection-explanation { margin-top:8px; font-size:12px; font-weight:500; line-height:1.5; text-transform:none; }
+.connection-explanation summary { cursor:pointer; font-weight:700; padding:6px 0; }
+.connection-explanation p { margin:6px 0 0; }
