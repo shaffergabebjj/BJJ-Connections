@@ -296,7 +296,9 @@ for (const saved of ["null", "{}", "7", "{broken", '["Armbar (from Mount)","Armb
   search.value = "zzzz-no-match"; search.events.input();
   assert.equal(nodes.get("techCount").textContent, "0 techniques");
   nodes.get("randomTechnique").events.click();
-  assert.equal(nodes.get("techCount").textContent, count, "Random must clear the active search as well as its input");
+  assert.equal(nodes.get("techCount").textContent, "0 techniques", "Random must preserve an empty filtered result");
+  assert.equal(nodes.get("randomTechnique").disabled, true);
+  nodes.get("clearTechFilters").onclick();
   nodes.get("savedTechniques").onclick();
   assert.equal(nodes.get("techCount").textContent, saved.startsWith("[") ? "1 technique" : "0 techniques");
   nodes.get("clearTechFilters").onclick();
@@ -305,6 +307,9 @@ for (const saved of ["null", "{}", "7", "{broken", '["Armbar (from Mount)","Armb
 console.log("Technique storage recovery, saved filtering, and search reset passed.");
 
 const searchedTechniques = techniqueHarness("[]", "?q=Armbar%20(from%20Mount)");
+assert.equal(searchedTechniques.get("techCount").textContent, "1 technique");
+searchedTechniques.get("randomTechnique").events.click();
+assert.equal(searchedTechniques.get("techSearch").value, "Armbar (from Mount)", "random respects the current search");
 assert.equal(searchedTechniques.get("techCount").textContent, "1 technique");
 const sortedTechniques = techniqueHarness("[]");
 sortedTechniques.get("techSort").value = "az";

@@ -27,6 +27,7 @@
     const done = goals.filter(g => g.done).length;
     $("goalCount").textContent = done + " of " + goals.length + " goals complete";
     $("goalsEmpty").hidden = goals.length > 0;
+    $("activeGoals").textContent = goals.length - done;
   }
   function renderGoals() {
     $("goalsList").innerHTML = "";
@@ -60,6 +61,17 @@
     sessions.sort((a,b) => b.date.localeCompare(a.date));
     const minutes = sessions.reduce((sum,s) => sum + Number(s.duration || 0),0);
     $("logSummary").textContent = sessions.length + " session" + (sessions.length === 1 ? "" : "s") + " · " + Math.floor(minutes/60) + "h " + minutes%60 + "m logged";
+    const current = new Date();
+    const start = new Date(current.getFullYear(),current.getMonth(),current.getDate());
+    start.setDate(start.getDate() - (start.getDay()+6)%7);
+    const end = new Date(start); end.setDate(end.getDate()+7);
+    const week = sessions.filter(s => { const d = new Date(s.date+'T12:00:00'); return d >= start && d < end && s.date <= localDate; });
+    const weekMinutes = week.reduce((sum,s)=>sum+Number(s.duration || 0),0);
+    $("weekSessions").textContent = week.length;
+    $("weekMinutes").textContent = weekMinutes >= 60 ? Math.floor(weekMinutes/60)+'h '+weekMinutes%60+'m' : weekMinutes+'m';
+    const format = {month:'short',day:'numeric'};
+    const last = new Date(end); last.setDate(last.getDate()-1);
+    $("weekRange").textContent = start.toLocaleDateString('en-US',format)+' – '+last.toLocaleDateString('en-US',format)+' · From your session log';
     $("noSessions").classList.toggle("hidden",sessions.length > 0);
     $("exportSessions").disabled = sessions.length === 0;
     $("logList").innerHTML = sessions.map((s,i) => {

@@ -44,6 +44,8 @@ Live at **[bjjconnectionsbygabe.com](https://bjjconnectionsbygabe.com)**.
 - Competition terminology glossary
 
 ### Training Resources (training.html)
+- Work/rest round timer with pause, resume, and elapsed-time recovery
+- Weekly sessions, mat time, and open-goal summary
 - Solo drilling ideas
 - Partner drilling ideas
 - Warm-up routines
