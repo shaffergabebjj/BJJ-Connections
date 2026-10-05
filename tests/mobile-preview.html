@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BJJ Connections — phone layout preview</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#e9e9ed;color:#19191c;font:14px system-ui,sans-serif}header{padding:16px;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:12px}label{display:flex;align-items:center;gap:6px}select,button{font:inherit;min-height:44px;border:1px solid #aaa;border-radius:8px;padding:8px;background:white;color:#19191c}h1{font-size:16px;margin:0;width:100%;text-align:center}.device{width:max-content;margin:8px auto 24px;padding:8px;background:#171719;border-radius:32px;box-shadow:0 16px 40px #0003}iframe{display:block;border:0;border-radius:24px;background:white;width:390px;height:844px}.status{text-align:center;margin:8px 16px;font-size:13px}.device iframe:focus-visible{outline:3px solid #a32038}
+</style>
+</head>
+<body>
+<header>
+<h1>iPhone layout preview</h1>
+<label>Screen <select id="screen"><option value="390,844">iPhone 15 · 390 × 844</option><option value="375,667">iPhone SE · 375 × 667</option><option value="430,932">Large iPhone · 430 × 932</option></select></label>
+<label>Page <select id="page"><option value="index.html">Home</option><option value="puzzles.html">Daily puzzle</option><option value="puzzles.html?mode=training">Training puzzle</option><option value="puzzles.html?mode=stats">Stats</option><option value="techniques.html">Techniques</option><option value="competition.html">Competition</option><option value="training.html">Training tools</option><option value="resources.html">Resources</option><option value="about.html">About</option></select></label>
+<label>Theme <select id="theme"><option value="light">Light</option><option value="dark">Dark</option></select></label>
+</header>
+<p class="status" id="status" role="status">Loading real site…</p>
+<div class="device"><iframe id="phone" src="../index.html" title="Site at iPhone viewport dimensions"></iframe></div>
+<script>
+const phone=document.getElementById('phone'),screen=document.getElementById('screen'),page=document.getElementById('page'),theme=document.getElementById('theme'),status=document.getElementById('status');
+function inspect(){
+ try{
+  const doc=phone.contentDocument;
+  doc.documentElement.dataset.theme=theme.value;
+  const width=phone.contentWindow.innerWidth;
+  const overflow=doc.documentElement.scrollWidth-width;
+  status.textContent=overflow>1?`Horizontal overflow: ${overflow}px`:`${width}px wide · No horizontal overflow`;
+ }catch(_){status.textContent='Preview unavailable';}
+}
+phone.addEventListener('load',inspect);
+screen.onchange=()=>{const [w,h]=screen.value.split(',');phone.style.width=w+'px';phone.style.height=h+'px';requestAnimationFrame(inspect);};
+page.onchange=()=>{phone.src='../'+page.value;};
+theme.onchange=inspect;
+</script>
+</body>
+</html>
