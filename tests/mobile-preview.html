@@ -24,6 +24,7 @@ function inspect(){
   const doc=phone.contentDocument;
   doc.documentElement.dataset.theme=theme.value;
   doc.documentElement.style.scrollbarWidth='none';
+  phone.contentWindow.dispatchEvent(new Event('resize'));
   const width=doc.documentElement.clientWidth;
   const overflow=doc.documentElement.scrollWidth-width;
   status.textContent=overflow>1?`Horizontal overflow: ${overflow}px`:`${width}px wide · No horizontal overflow`;
