@@ -1477,7 +1477,8 @@ button, .btn { touch-action:manipulation; }
     position:relative; bottom:auto; z-index:auto; box-shadow:none;
     padding-right:74px;
   }
-  .word, .hero-mini-tile { overflow-wrap:normal; word-break:normal; }
+  .word, .hero-mini-tile { overflow-wrap:normal; word-break:normal; padding-inline:2px; }
+  .game-hero .hero-game-card { padding:16px 10px; }
   .puzzle-status { position:relative; top:auto; z-index:auto; }
   .puzzle-wrap { width:calc(100% - 24px); }
 }
