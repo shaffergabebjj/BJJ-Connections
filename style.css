@@ -1469,3 +1469,15 @@ button, .btn { touch-action:manipulation; }
 .practice-history-item { min-height:48px; text-align:left; padding:14px; border:1px solid var(--border-strong); border-radius:10px; background:var(--bg-alt); color:var(--ink); font:inherit; font-size:14px; line-height:1.5; cursor:pointer; }
 .practice-history-item:hover { border-color:var(--accent); }
 .practice-history-item:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+
+/* Phone visual review: keep the board unobscured and labels intact. */
+.site-footer .container { width:100%; max-width:var(--max-width); }
+@media (max-width:640px) {
+  .puzzle-buttons, .home-game-controls {
+    position:relative; bottom:auto; z-index:auto; box-shadow:none;
+    padding-right:74px;
+  }
+  .word, .hero-mini-tile { overflow-wrap:normal; word-break:normal; }
+  .puzzle-status { position:relative; top:auto; z-index:auto; }
+  .puzzle-wrap { width:calc(100% - 24px); }
+}

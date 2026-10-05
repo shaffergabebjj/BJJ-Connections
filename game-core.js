@@ -20,7 +20,26 @@ window.BJJGame = (() => {
     const row = selected.map(w => colors[puzzle.groups.findIndex(g => g.items.includes(w))]).join('');
     return {type: group ? 'correct' : 'wrong', key, group, near, row};
   }
-  return {shuffled, attempt};
+  let labelContext;
+  function fitLabel(button) {
+    if (!button.clientWidth || !button.style) return;
+    button.style.fontSize = '';
+    button.style.overflowWrap = '';
+    const style = getComputedStyle(button);
+    const available = button.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    labelContext ||= document.createElement('canvas').getContext('2d');
+    if (!labelContext || available <= 0) return;
+    const tokens = button.textContent.split(/[\s-]+/);
+    let size = parseFloat(style.fontSize);
+    function widest() {
+      labelContext.font = `${style.fontWeight} ${size}px ${style.fontFamily}`;
+      return Math.max(...tokens.map(token => labelContext.measureText(token).width));
+    }
+    while (size > 10 && widest() > available) size = Math.max(10, size - .25);
+    button.style.fontSize = `${size}px`;
+    if (widest() > available) button.style.overflowWrap = 'anywhere';
+  }
+  return {shuffled, attempt, fitLabel};
 })();
 
 window.BJJTraining = (() => {

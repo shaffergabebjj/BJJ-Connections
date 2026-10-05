@@ -23,7 +23,8 @@ function inspect(){
  try{
   const doc=phone.contentDocument;
   doc.documentElement.dataset.theme=theme.value;
-  const width=phone.contentWindow.innerWidth;
+  doc.documentElement.style.scrollbarWidth='none';
+  const width=doc.documentElement.clientWidth;
   const overflow=doc.documentElement.scrollWidth-width;
   status.textContent=overflow>1?`Horizontal overflow: ${overflow}px`:`${width}px wide · No horizontal overflow`;
  }catch(_){status.textContent='Preview unavailable';}

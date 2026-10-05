@@ -182,6 +182,7 @@ function render() {
     };
     grid.appendChild(b);
   });
+  [...grid.children].forEach(BJJGame.fitLabel);
   if (focusedWord) [...grid.children].find(b => b.textContent === focusedWord)?.focus();
 }
 function syncSelection() {
@@ -549,3 +550,5 @@ window.addEventListener("focus", refreshForLocalDate);
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") refreshForLocalDate();
 });
+
+window.addEventListener("resize", () => [...grid.children].forEach(BJJGame.fitLabel));
