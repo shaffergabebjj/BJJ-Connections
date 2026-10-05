@@ -253,6 +253,7 @@
       };
       grid.appendChild(button);
     });
+    [...grid.children].forEach(BJJGame.fitLabel);
     if (focusedWord) [...grid.children].find(button => button.textContent === focusedWord)?.focus();
   }
 
@@ -431,6 +432,7 @@
     if (BJJDaily.dateKey() !== dateKey || trackedProgress !== BJJDaily.progressSnapshot()) location.reload();
     else refreshStreak();
   }
+  window.addEventListener("resize", () => [...grid.children].forEach(BJJGame.fitLabel));
   window.addEventListener("focus", refreshForLocalDate);
   document.addEventListener("visibilitychange", function () {
     if (document.visibilityState === "visible") refreshForLocalDate();
