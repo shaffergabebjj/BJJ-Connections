@@ -100,6 +100,7 @@
           <option value="unplayed">Unplayed</option>
           <option value="mistakes">Practice mistakes</option>
         </select>
+        <button class="ctrl" id="newTraining" type="button">New puzzle</button>
         <p id="trainingSummary" role="status"></p>
       </div>
       <div class="puzzle-meta" id="puzzleMeta"></div>
@@ -141,7 +142,13 @@
       <div class="panel">
         <h2>Your Connections Stats</h2>
         <div class="stats" id="stats"></div>
-        <div class="puzzle-buttons" style="margin-top:12px">
+        <h3 class="practice-section-title">Training progress</h3>
+        <div id="beltProgress"></div>
+        <h3 class="practice-section-title">Recent practice</h3>
+        <p id="practiceEmpty">Complete a Training puzzle to start your history.</p>
+        <div id="recentPractice" class="practice-history"></div>
+        <p class="archiveNote">Progress stays in this browser. Each row shows your latest result for that puzzle.</p>
+        <div class="stats-actions" style="margin-top:12px">
           <button class="ctrl" id="resetStats">Reset stats</button>
         </div>
       </div>

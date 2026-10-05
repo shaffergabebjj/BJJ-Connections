@@ -28,3 +28,27 @@ const clone=JSON.parse(JSON.stringify(p));clone.id=999;
 vm.runInContext('globalThis.validate=validateAllPuzzles',c);
 assert(c.validate([p,clone,{...clone,id:998},{...clone,id:997}]).some(e=>e.includes('maximum 3')));
 console.log('Shared rules, seeded order, 100-round unseen rotation, practice queues, storage recovery, and repetition limits passed.');
+
+const progress={words:p.groups.flatMap(g=>g.items),selected:correct.slice(0,2),solved:[],mistakes:3,
+  startedAt:Date.now()-5000,guessLog:[],attemptedGuesses:[],finished:false,won:false};
+training.saveProgress(p,progress,'all','all');
+assert.equal(training.readProgress(puzzles,'all','all').puzzle.id,p.id);
+assert.equal(training.readProgress(puzzles,'white','all'),null,'different filters must not resume a saved round');
+training.saveProgress(p,{...progress,finished:true},'all','all');
+assert.equal(training.readProgress(puzzles,'all','all'),null,'finished rounds must not auto-resume');
+for(const bad of [{words:progress.words.slice(1)},{selected:[correct[0],correct[0]]},{solved:[9]},
+  {mistakes:0},{startedAt:'bad'},{guessLog:[{}]}]) {
+  training.saveProgress(p,{...progress,...bad},'all','all');
+  assert.equal(training.readProgress(puzzles,'all','all'),null,'reject inconsistent saved practice');
+}
+training.saveProgress(p,progress,'all','all');
+const revised=JSON.parse(JSON.stringify(puzzles));revised[0].groups[0].items[0]='CHANGED CONTENT';
+assert.equal(training.readProgress(revised,'all','all'),null,'changed puzzle content invalidates saved progress');
+for(const bad of ['null','[]','{bad','{"queue":"bogus","difficulty":"bogus"}']) {
+ values.set('bjjPracticeSettings',bad);assert.equal(training.settings().queue,'all');
+ assert.equal(training.settings().difficulty,'all');
+}
+training.saveSettings('purple','mistakes');assert.equal(training.settings().queue,'mistakes');
+assert.equal(training.settings().difficulty,'purple');
+assert.equal(game.attempt(p,['NOT AN ANSWER',...correct.slice(0,3)],[]).type,'invalid');
+console.log('Practice restore, changed-content recovery, invalid progress, preferences, and unknown-word rejection passed.');

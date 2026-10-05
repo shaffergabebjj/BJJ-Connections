@@ -129,7 +129,7 @@ function gameHarness(page, values = new Map(), search = "") {
     : fs.readFileSync(path.join(root, "app.js"), "utf8");
   vm.runInContext(script, context);
   const prefix = page === "index.html" ? "home" : "";
-  return {elements, values, setMode: mode => context.setMode(mode), focus: () => events.get("focus")?.(),
+  return {elements, values, context, setMode: mode => context.setMode(mode), focus: () => events.get("focus")?.(),
     reloadCount: () => reloads, grid: elements.get(prefix ? "homePuzzleGrid" : "grid"),
     submit: elements.get(prefix ? "homeSubmit" : "submit"),
     deselect: elements.get(prefix ? "homeDeselect" : "deselect"),
@@ -312,3 +312,49 @@ sortedTechniques.get("techSort").events.change();
 const sortedNames = [...sortedTechniques.get("techResults").innerHTML.matchAll(/<h3>(.*?)<\/h3>/g)].map(m => m[1]);
 assert.deepEqual(sortedNames, [...sortedNames].sort((a,b) => a.localeCompare(b)));
 console.log("Technique search links and alphabetical sorting passed.");
+
+
+// An unfinished practice puzzle survives refresh and switching through Daily.
+const practiceStorage = new Map();
+const initialPractice = gameHarness("puzzles.html", practiceStorage, "?mode=training");
+const practiceId = JSON.parse(practiceStorage.get("bjjPracticeProgress")).puzzle;
+const practicePuzzle = PUZZLES.find(p => p.id === practiceId);
+for (const word of practicePuzzle.groups[0].items) initialPractice.grid.children.find(b => b.textContent === word).onclick();
+initialPractice.submit.onclick();
+initialPractice.grid.children[0].onclick();
+const beforeRefresh = JSON.parse(practiceStorage.get("bjjPracticeProgress"));
+const restoredPractice = gameHarness("puzzles.html", practiceStorage, "?mode=training");
+const afterRefresh = JSON.parse(practiceStorage.get("bjjPracticeProgress"));
+assert.equal(afterRefresh.puzzle, practiceId);
+assert.deepEqual(afterRefresh.solved, beforeRefresh.solved);
+assert.deepEqual(afterRefresh.selected, beforeRefresh.selected);
+assert.match(restoredPractice.message.textContent, /restored/);
+restoredPractice.setMode("daily");restoredPractice.setMode("training");
+assert.equal(JSON.parse(practiceStorage.get("bjjPracticeProgress")).puzzle, practiceId);
+restoredPractice.deselect.onclick();
+for (const group of practicePuzzle.groups.slice(1)) {
+ for (const word of group.items) restoredPractice.grid.children.find(b => b.textContent === word).onclick();
+ restoredPractice.submit.onclick();
+}
+restoredPractice.setMode("stats");
+assert.equal(restoredPractice.elements.get("recentPractice").children.length,1);
+restoredPractice.elements.get("recentPractice").children[0].onclick();
+assert.equal(JSON.parse(practiceStorage.get("bjjPracticeProgress")).puzzle,practiceId);
+assert.equal(restoredPractice.grid.children.length,16,'history opens a fresh replay');
+restoredPractice.elements.get("newTraining").onclick();
+assert.notEqual(JSON.parse(practiceStorage.get("bjjPracticeProgress")).puzzle,practiceId);
+console.log("Real handlers restore unfinished Training, preserve Daily, render recent practice, replay, and start new puzzles.");
+
+(async () => {
+ const shareGame=gameHarness("puzzles.html",new Map(),"?mode=training");
+ let copied='';
+ shareGame.context.navigator.share=async()=>{throw new Error('Share unavailable');};
+ shareGame.context.navigator.clipboard={writeText:async text=>{copied=text;}};
+ await shareGame.elements.get("share").onclick();
+ await Promise.resolve();
+ assert.match(copied,/puzzles\.html\?p=\d+/,'failed native share must fall through to clipboard with a replay link');
+ copied='';shareGame.context.navigator.share=async()=>{const error=new Error();error.name='AbortError';throw error;};
+ await shareGame.elements.get("share").onclick();
+ assert.equal(copied,'','cancelling native share must not copy anything');
+ console.log('Share-sheet failure falls back to copy; cancellation is respected.');
+})().catch(error=>{console.error(error);process.exitCode=1;});

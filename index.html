@@ -304,8 +304,8 @@
   }
 
   document.getElementById("homeShare").onclick = async function () {
-    const text = "BJJ Connections #" + dayNumber + "\n\n" + guessLog.join("\n") +
-      "\n\n" + (won ? "Solved" : "Played") + " · " + mistakes + " mistakes left\nbjjconnectionsbygabe.com";
+    const text = "BJJ Connections #" + dayNumber + " · " + dateKey + "\n\n" + guessLog.join("\n") +
+      "\n\n" + (won ? "Solved" : "Played") + " · " + mistakes + " mistakes left\nhttps://bjjconnectionsbygabe.com/puzzles.html?p=" + puzzle.id;
     if (navigator.share) {
       try { await navigator.share({text}); messageEl.textContent = "Results shared."; return; }
       catch (error) { if (error.name === "AbortError") return; }

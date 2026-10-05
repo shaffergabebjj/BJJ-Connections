@@ -11,7 +11,8 @@ window.BJJGame = (() => {
     return result;
   }
   function attempt(puzzle, selected, attempted) {
-    if (selected.length !== 4 || new Set(selected).size !== 4) return {type: 'invalid'};
+    if (selected.length !== 4 || new Set(selected).size !== 4 ||
+        !selected.every(word => puzzle.groups.some(g => g.items.includes(word)))) return {type: 'invalid'};
     const key = window.BJJDaily.guessKey(selected);
     if (attempted.includes(key)) return {type: 'duplicate'};
     const group = puzzle.groups.find(g => g.items.every(w => selected.includes(w)));
@@ -33,7 +34,7 @@ window.BJJTraining = (() => {
         const r = data[p.id];
         if (!r || typeof r !== 'object') continue;
         if (!Number.isFinite(r.seen) || r.seen < 0) continue;
-        valid[p.id] = {seen:r.seen, completed:r.completed === true, win:r.win === true,
+        valid[p.id] = {seen:r.seen, completedAt:Number.isFinite(r.completedAt) && r.completedAt >= 0 ? r.completedAt : r.seen, completed:r.completed === true, win:r.win === true,
           mistakes:Number.isInteger(r.mistakes) && r.mistakes >= 0 && r.mistakes <= 4 ? r.mistakes : 0};
       }
       return valid;
@@ -54,5 +55,47 @@ window.BJJTraining = (() => {
       Number(!!history[a.id]?.completed) - Number(!!history[b.id]?.completed) ||
       (history[a.id]?.seen || 0) - (history[b.id]?.seen || 0) || a.id - b.id)[0] || null;
   }
-  return {read, save, pool, pick};
+  function settings() {
+    let value;
+    try { value = JSON.parse(localStorage.getItem('bjjPracticeSettings') || '{}'); } catch (_) {}
+    return {
+      difficulty: ['all','white','blue','purple','black'].includes(value?.difficulty) ? value.difficulty : 'all',
+      queue: ['all','unplayed','mistakes'].includes(value?.queue) ? value.queue : 'all'
+    };
+  }
+  function saveSettings(difficulty, queue) {
+    try { localStorage.setItem('bjjPracticeSettings', JSON.stringify({difficulty,queue})); } catch (_) {}
+  }
+  function signature(puzzle) { return JSON.stringify(puzzle.groups.map(g => g.items.slice().sort())); }
+  function saveProgress(puzzle, progress, difficulty, queue) {
+    try { localStorage.setItem('bjjPracticeProgress', JSON.stringify({
+      ...progress, puzzle:puzzle.id, signature:signature(puzzle), difficulty, queue
+    })); } catch (_) {}
+  }
+  function readProgress(puzzles, difficulty, queue) {
+    try {
+      const saved = JSON.parse(localStorage.getItem('bjjPracticeProgress') || 'null');
+      const puzzle = puzzles.find(p => p.id === saved?.puzzle);
+      if (!puzzle || saved.signature !== signature(puzzle) || saved.finished !== false ||
+          saved.difficulty !== difficulty || saved.queue !== queue ||
+          !Array.isArray(saved.words) || !Array.isArray(saved.selected) || !Array.isArray(saved.solved) ||
+          !Array.isArray(saved.guessLog) || !Array.isArray(saved.attemptedGuesses) ||
+          !Number.isFinite(saved.startedAt) || saved.startedAt < 0 || saved.startedAt > Date.now() ||
+          !Number.isInteger(saved.mistakes) || saved.mistakes < 1 || saved.mistakes > 4 ||
+          saved.solved.length >= 4 || new Set(saved.solved).size !== saved.solved.length ||
+          !saved.solved.every(i => Number.isInteger(i) && i >= 0 && i < 4)) return null;
+      const remaining = puzzle.groups.filter((_,i) => !saved.solved.includes(i)).flatMap(g => g.items);
+      if (saved.words.length !== remaining.length || new Set(saved.words).size !== remaining.length ||
+          !saved.words.every(w => remaining.includes(w)) || saved.selected.length > 4 ||
+          new Set(saved.selected).size !== saved.selected.length || !saved.selected.every(w => remaining.includes(w)) ||
+          saved.guessLog.length > 7 || !saved.guessLog.every(row => typeof row === 'string' && /^(?:🟩|🟨|🟦|🟪){4}$/u.test(row))) return null;
+      const all = puzzle.groups.flatMap(g => g.items);
+      saved.attemptedGuesses = saved.attemptedGuesses.filter(key => {
+        try { const words = JSON.parse(key); return Array.isArray(words) && words.length === 4 &&
+          new Set(words).size === 4 && words.every(w => all.includes(w)); } catch (_) { return false; }
+      });
+      return {puzzle, progress:saved};
+    } catch (_) { return null; }
+  }
+  return {read, save, pool, pick, settings, saveSettings, saveProgress, readProgress};
 })();
