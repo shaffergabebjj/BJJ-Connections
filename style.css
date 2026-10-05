@@ -1479,6 +1479,7 @@ button, .btn { touch-action:manipulation; }
   }
   .word, .hero-mini-tile { overflow-wrap:normal; word-break:normal; padding-inline:0; }
   .game-hero .hero-game-card { padding:16px 10px; }
+  .home-mini-grid { margin-inline:-8px; }
   .puzzle-status { position:relative; top:auto; z-index:auto; }
   .puzzle-wrap { width:calc(100% - 24px); }
 }
