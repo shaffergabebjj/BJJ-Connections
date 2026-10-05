@@ -46,7 +46,8 @@ function dailyIndexForDate(d) { return Math.abs(dayNumberForDate(d)) % PUZZLES.l
 function dailyIndex() { return dailyIndexForDate(new Date()); }
 
 let trainingHistory = BJJTraining.read(PUZZLES);
-let trainingQueue = "all";
+const practiceSettings = BJJTraining.settings();
+let trainingQueue = practiceSettings.queue;
 function pickTraining() {
   const candidates = BJJTraining.pool(PUZZLES, trainingHistory, difficulty, trainingQueue);
   return BJJTraining.pick(candidates, trainingHistory, puzzle);
@@ -65,7 +66,7 @@ function queryPuzzle() {
 
 // ---- Game state --------------------------------------------------------
 const RESULT_COLORS = ["🟩", "🟨", "🟦", "🟪"]; // fixed per puzzle group, order = data order
-let mode = "daily", difficulty = "all", puzzle = null, isDailyGame = false, isDailyReplay = false;
+let mode = "daily", difficulty = practiceSettings.difficulty, puzzle = null, isDailyGame = false, isDailyReplay = false;
 let words = [], selected = [], solved = [];
 let mistakes = 4, startedAt = 0, finished = false, won = false;
 let attemptedGuesses = [];
@@ -74,12 +75,17 @@ let loadedDateKey = dateKey();
 let trackedProgress = BJJDaily.progressSnapshot();
 
 function persistDaily() {
-  if (!isDailyGame) return;
-  BJJDaily.save(puzzle, {
+  if (!puzzle) return;
+  const progress = {
     words, selected, solved: solved.map(g => puzzle.groups.indexOf(g)),
     mistakes, startedAt, guessLog, attemptedGuesses, finished, won, replay: isDailyReplay
-  });
-  trackedProgress = BJJDaily.progressSnapshot();
+  };
+  if (isDailyGame) {
+    BJJDaily.save(puzzle, progress);
+    trackedProgress = BJJDaily.progressSnapshot();
+  } else if (mode === "training") {
+    BJJTraining.saveProgress(puzzle, progress, difficulty, trainingQueue);
+  }
 }
 
 // ---- Loading a puzzle ---------------------------------------------------
@@ -107,6 +113,7 @@ function loadPuzzle(override) {
     update(); updateTrainingSummary(); return;
   }
   if (mode === "training") {
+    trainingHistory = {...trainingHistory, ...BJJTraining.read(PUZZLES)};
     trainingHistory[puzzle.id] = {...trainingHistory[puzzle.id], seen: Date.now()};
     BJJTraining.save(trainingHistory);
     updateTrainingSummary();
@@ -122,7 +129,7 @@ function loadPuzzle(override) {
   const seed = mode === "daily" && !override ? dayNumber() + puzzle.id : Date.now();
   words = BJJGame.shuffled(words, seed);
 
-  const saved = isDailyGame ? BJJDaily.read(puzzle) : null;
+  const saved = isDailyGame ? BJJDaily.read(puzzle) : override?.progress || null;
   isDailyReplay = isDailyGame && (!!saved?.replay || (!saved && !!state.dailyHistory[dateKey()]));
   if (saved) {
     words = saved.words;
@@ -145,7 +152,7 @@ function loadPuzzle(override) {
   }
   msg.textContent = (isDailyGame && !saved && state.dailyHistory[dateKey()])
     ? "Already completed today — replaying for practice."
-    : "";
+    : override?.progress ? "Your unfinished practice puzzle is restored." : "";
 
   render();
   renderSolved();
@@ -232,6 +239,9 @@ function showCompletion(seconds, animateGroup) {
 
 function finish(win, animateGroup) {
   finished = true; won = win;
+  try {
+    if (localStorage.getItem("bjjConnectionsState") != null) Object.assign(state, readStoredState());
+  } catch (_) { /* Keep session stats when storage is disabled. */ }
   const seconds = Math.round((Date.now() - startedAt) / 1000);
   if (isDailyGame) {
     BJJDaily.recordResult(state, puzzle, win, mistakes, seconds);
@@ -243,7 +253,8 @@ function finish(win, animateGroup) {
     }
   }
   if (mode === "training") {
-    trainingHistory[puzzle.id] = {seen:Date.now(), completed:true, win, mistakes};
+    trainingHistory = {...trainingHistory, ...BJJTraining.read(PUZZLES)};
+    trainingHistory[puzzle.id] = {seen:Date.now(), completedAt:Date.now(), completed:true, win, mistakes};
     BJJTraining.save(trainingHistory); updateTrainingSummary();
   }
   save();
@@ -296,17 +307,18 @@ function shuffle() {
 
 // ---- Sharing -----------------------------------------------------------
 async function shareResult() {
-  const label = isDailyReplay ? "Practice replay" : mode === "daily" ? `#${dayNumber()} • ${dateKey()}` : mode === "archive" ? "Archive" : "Training";
+  const label = isDailyReplay ? "Practice replay" : mode === "daily" ? `#${dayNumber()} • ${dateKey()}` : meta.textContent;
   const grid4 = guessLog.join("\n");
-  const text = `BJJ Connections ${label}\n\n${grid4}\n\n${won ? "Solved" : "Played"} • ${mistakes} mistakes left\nbjjconnectionsbygabe.com`;
+  const text = `BJJ Connections ${label}\n\n${grid4}\n\n${won ? "Solved" : "Played"} • ${mistakes} mistakes left\nhttps://bjjconnectionsbygabe.com/puzzles.html?p=${puzzle.id}`;
   if (navigator.share) {
     try {
       await navigator.share({text});
       msg.textContent = "Results shared.";
+      return;
     } catch (e) {
-      if (e.name !== "AbortError") msg.textContent = "Couldn't open the share sheet. Try again or copy the result.";
+      if (e.name === "AbortError") return;
+      // A failed share sheet should still offer clipboard/manual copy.
     }
-    return;
   }
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).then(
@@ -346,8 +358,27 @@ function showStats() {
   $("stats").innerHTML = [
     ["Played", state.gamesPlayed], ["Won", state.gamesWon], ["Win %", winPct + "%"],
     ["Current streak", BJJDaily.displayStreak(state)], ["Best streak", state.longestStreak],
-    ["Best time", state.bestTime ? state.bestTime + "s" : "—"]
+    ["Best time", state.bestTime != null ? state.bestTime + "s" : "—"]
   ].map(([a, b]) => `<div class="stat"><b>${b}</b>${a}</div>`).join("");
+  trainingHistory = {...trainingHistory, ...BJJTraining.read(PUZZLES)};
+  const progress = $("beltProgress");
+  progress.innerHTML = ["white","blue","purple","black"].map(level => {
+    const pool = PUZZLES.filter(p => p.difficulty === level);
+    const done = pool.filter(p => trainingHistory[p.id]?.completed).length;
+    return `<div class="practice-progress-row"><span>${level[0].toUpperCase() + level.slice(1)}</span><progress max="${pool.length}" value="${done}" aria-label="${level} belt completion"></progress><span>${done}/${pool.length}</span></div>`;
+  }).join("");
+  const recent = $("recentPractice"); recent.replaceChildren();
+  const completed = PUZZLES.filter(p => trainingHistory[p.id]?.completed)
+    .sort((a,b) => trainingHistory[b.id].completedAt - trainingHistory[a.id].completedAt).slice(0,8);
+  $("practiceEmpty").hidden = completed.length > 0;
+  for (const p of completed) {
+    const result = trainingHistory[p.id];
+    const button = document.createElement("button");
+    button.className = "practice-history-item";
+    button.textContent = `Puzzle ${p.id} · ${p.difficulty.toUpperCase()} · ${result.win ? "Solved" : "Reviewed"} · ${4-result.mistakes} mistakes — Replay`;
+    button.onclick = () => setMode("training", {puzzle:p});
+    recent.appendChild(button);
+  }
 }
 
 // ---- Archive (browse & replay past daily puzzles) ------------------------
@@ -396,7 +427,10 @@ function setMode(m, override) {
 
   if (m === "stats") showStats();
   else if (m === "archive") renderArchiveList();
-  else loadPuzzle(override);
+  else {
+    const resume = m === "training" && !override ? BJJTraining.readProgress(PUZZLES, difficulty, trainingQueue) : null;
+    loadPuzzle(override || resume);
+  }
 }
 document.querySelectorAll(".tab").forEach(b => b.onclick = () => setMode(b.dataset.mode));
 document.querySelector(".puzzle-tabs").addEventListener("keydown", event => {
@@ -416,16 +450,20 @@ document.querySelector(".puzzle-tabs").addEventListener("keydown", event => {
   b.textContent = d === "all" ? "All" : d[0].toUpperCase() + d.slice(1);
   b.onclick = () => {
     difficulty = d;
+    BJJTraining.saveSettings(difficulty, trainingQueue);
     [...difficultyWrap.children].forEach(x => x.classList.remove("active"));
     b.classList.add("active");
     loadPuzzle();
   };
-  if (d === "all") b.classList.add("active");
+  if (d === difficulty) b.classList.add("active");
   difficultyWrap.appendChild(b);
 });
 
+$("trainingQueue").value = trainingQueue;
+$("newTraining").onclick = () => loadPuzzle();
 $("trainingQueue").onchange = () => {
   trainingQueue = $("trainingQueue").value;
+  BJJTraining.saveSettings(difficulty, trainingQueue);
   loadPuzzle();
 };
 
@@ -453,6 +491,8 @@ $("resetStats").onclick = () => {
       localStorage.removeItem("bjjConnectionsState");
       localStorage.removeItem("bjjDailyProgress");
       localStorage.removeItem("bjjTrainingHistory");
+      localStorage.removeItem("bjjPracticeProgress");
+      localStorage.removeItem("bjjPracticeSettings");
     } catch (e) { /* ignore */ }
     location.reload();
   }

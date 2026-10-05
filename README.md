@@ -21,6 +21,8 @@ Live at **[bjjconnectionsbygabe.com](https://bjjconnectionsbygabe.com)**.
 ### Daily Puzzle (puzzles.html)
 - Daily deterministic puzzle (everyone gets the same puzzle each day)
 - Training mode with belt difficulty, unseen-first rotation, Unplayed and Practice mistakes queues
+- Unfinished Training rounds and practice filters restore after reload
+- Training completion by belt and recent-practice replay in Stats
 - Exact four-word groups capped at three appearances across the bank
 - Archive — replay any of the last 30 days' puzzles
 - Streaks and local stats (persisted to `localStorage`)
