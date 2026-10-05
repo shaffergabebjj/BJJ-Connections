@@ -234,9 +234,8 @@
     activeChip.setAttribute("aria-pressed", "true");
   }
 
-  function render() {
-    updateSavedButton();
-    var filtered = TECHNIQUES.filter(function(t) {
+  function filteredTechniques() {
+    return TECHNIQUES.filter(function(t) {
       var catMatch = activeCat === "all" || t.cat === activeCat;
       var beltMatch = activeBelt === "all" || t.belt === activeBelt;
       var searchMatch = !searchTerm || t.name.toLowerCase().indexOf(searchTerm) > -1 ||
@@ -244,6 +243,12 @@
       return catMatch && beltMatch && searchMatch && (!savedOnly || isFavorite(t.name));
     });
 
+  }
+
+  function render() {
+    updateSavedButton();
+    var filtered = filteredTechniques();
+    randomBtn.disabled = filtered.length === 0;
     if (sortEl.value === "az") filtered.sort(function(a, b) { return a.name.localeCompare(b.name); });
 
     countEl.textContent = filtered.length + " technique" + (filtered.length === 1 ? "" : "s");
@@ -277,10 +282,9 @@
   }
 
   if (randomBtn) randomBtn.addEventListener("click", function() {
-    if (!TECHNIQUES.length) return;
-    var t = TECHNIQUES[Math.floor(Math.random() * TECHNIQUES.length)];
-    clearFilters();
-    render();
+    var pool = filteredTechniques();
+    if (!pool.length) return;
+    var t = pool[Math.floor(Math.random() * pool.length)];
     setTimeout(function() {
       var cards = Array.prototype.slice.call(results.querySelectorAll(".tech-card"));
       var card = cards.find(function(el) { return el.querySelector("h3") && el.querySelector("h3").textContent === t.name; });

@@ -1483,3 +1483,39 @@ button, .btn { touch-action:manipulation; }
   .puzzle-status { position:relative; top:auto; z-index:auto; }
   .puzzle-wrap { width:calc(100% - 24px); }
 }
+
+/* Training at a glance and a readable timer, including small phones. */
+.training-overview { padding-block:32px; }
+.training-summary-heading { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:18px; }
+.training-summary-heading .hero-eyebrow { font-size:10px; }
+.training-summary-heading h2 { font-size:24px; }
+.training-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.training-summary > div { padding:20px; border:1px solid var(--border); border-radius:var(--radius-lg); background:var(--surface); }
+.training-summary strong { display:block; font-size:clamp(22px,4vw,34px); line-height:1.2; font-variant-numeric:tabular-nums; letter-spacing:-1px; }
+.training-summary span { display:block; margin-top:8px; color:var(--muted); font-size:12px; }
+.training-overview .empty-hint { margin-top:12px; }
+.round-timer { max-width:760px; margin-inline:auto; }
+.timer-settings { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.timer-settings label { display:grid; gap:8px; font-size:12px; font-weight:700; min-width:0; }
+.timer-settings select { width:100%; min-width:0; padding:12px 8px; }
+.timer-settings select:disabled { opacity:.65; }
+.timer-face { padding:32px 0 24px; text-align:center; }
+.timer-phase { font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--accent); }
+.timer-display { font-size:clamp(72px,16vw,112px); font-weight:800; line-height:1.25; letter-spacing:-4px; font-variant-numeric:tabular-nums; }
+.timer-face progress { display:block; width:100%; height:8px; margin-top:14px; accent-color:var(--accent); }
+.round-timer[data-phase="rest"] .timer-phase { color:var(--muted); }
+.round-timer[data-phase="complete"] .timer-display { color:var(--accent); }
+.timer-actions { display:flex; justify-content:center; gap:12px; }
+.timer-actions button { min-height:48px; min-width:120px; }
+@media(max-width:640px) {
+  .training-summary-heading { align-items:flex-start; }
+  .training-summary-heading .text-button { font-size:12px; text-align:right; }
+  .training-summary { gap:8px; }
+  .training-summary > div { padding:16px 10px; }
+  .training-summary strong { font-size:23px; letter-spacing:-.5px; }
+  .timer-settings { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+  .timer-settings label:last-child { grid-column:1/-1; }
+  .timer-settings label:last-child select { max-width:50%; }
+  .timer-actions { padding-right:54px; }
+  .timer-actions button { flex:1; min-width:0; padding-inline:10px; }
+}
