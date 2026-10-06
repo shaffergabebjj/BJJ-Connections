@@ -1526,3 +1526,16 @@ button, .btn { touch-action:manipulation; }
 .resource-actions .resource-watch { background:var(--ink); color:var(--bg); border-color:var(--ink); }
 .resource-video-title { display:block; margin-top:10px; font-size:12px; line-height:1.5; color:var(--muted); }
 .glossary-item:target { outline:2px solid var(--accent); outline-offset:3px; }
+
+/* Compact video browsing and long-page navigation. */
+.resource-browse { display:flex; align-items:flex-end; flex-wrap:wrap; gap:12px; margin:18px 0 10px; }
+.resource-browse label { display:grid; gap:7px; flex:1 1 260px; font-size:12px; font-weight:700; }
+.resource-browse select { width:100%; min-width:0; min-height:46px; padding:10px 12px; border:1px solid var(--border-strong); border-radius:8px; background:var(--surface); color:var(--ink); font:inherit; font-size:14px; }
+.resource-browse .btn { min-height:46px; }
+.resource-browse-hint { margin:0 0 18px; font-size:12px; color:var(--muted); }
+.back-to-top { position:fixed; right:calc(22px + env(safe-area-inset-right, 0px)); bottom:calc(84px + env(safe-area-inset-bottom, 0px)); z-index:199; width:48px; height:48px; display:grid; place-items:center; padding:0; border:1px solid var(--border-strong); border-radius:50%; background:var(--surface); color:var(--ink); box-shadow:var(--shadow-lg); cursor:pointer; }
+.back-to-top[hidden] { display:none; }
+.back-to-top svg { width:22px; height:22px; }
+.back-to-top:hover { background:var(--bg-alt); }
+@media(max-width:640px) { .resource-browse label { flex-basis:100%; } }
+@media print { .back-to-top, .resource-browse, .resource-browse-hint { display:none !important; } }

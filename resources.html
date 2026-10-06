@@ -61,6 +61,7 @@
   <!-- Glossary -->
   <section class="section" id="glossary">
     <div class="container">
+      <nav class="section-nav" aria-label="Resources sections"><a href="#glossary">Video library</a><a href="#questions">Questions &amp; answers</a><a href="#useful-links">Useful links</a><a href="#belt-system">Belt guide</a></nav>
       <div class="callout callout-info glossary-link-notice" style="margin-bottom:24px">
         <strong>Every entry. Description + video.</strong>
         <span>All techniques, terms and drills include a video. Tap Watch video to learn, or Find more videos to explore.</span>
@@ -85,6 +86,14 @@
       <div class="search-bar">
         <input type="search" class="search-input" id="glossarySearch" placeholder="Search BJJ terms..." aria-label="Search glossary">
       </div>
+      <div class="resource-browse">
+        <label for="glossaryCategory">Browse by category
+          <select id="glossaryCategory"><option value="all">All categories</option></select>
+        </label>
+        <button type="button" class="btn btn-primary" id="pickLesson">Pick a lesson ↗</button>
+        <button type="button" class="text-button" id="clearGlossaryFilters" hidden>Clear filters</button>
+      </div>
+      <p class="resource-browse-hint">Pick a lesson opens a video from your current search and category.</p>
       <p id="glossaryCount" class="section-sub" role="status" aria-live="polite"></p>
       <div id="glossarySections"></div>
       <style>
@@ -123,7 +132,7 @@
   </section>
 
   <!-- Useful Links -->
-  <section class="section section-alt">
+  <section class="section section-alt" id="useful-links">
     <div class="container">
       <h2 class="section-title">Useful Links</h2>
       <p class="section-sub">Competition, rules, events, media, and learning resources for the BJJ community.</p>
@@ -202,7 +211,7 @@
   <!-- Belt System -->
   <section class="section">
     <div class="container">
-      <h2 class="section-title">The Belt System</h2>
+      <h2 class="section-title" id="belt-system">The Belt System</h2>
       <p class="section-sub">Belt progression in BJJ is based on time, knowledge, and competition performance. Requirements vary by association.</p>
       <table class="data-table">
         <thead>
@@ -425,6 +434,11 @@ var GLOSSARY = [
   var entries = BJJResources.build(TECHNIQUES, GLOSSARY, TECHNIQUE_VIDEOS, GLOSSARY_VIDEOS);
   var search = document.getElementById("glossarySearch");
   var noResults = document.getElementById("noGlossaryResults");
+  var categorySelect = document.getElementById("glossaryCategory");
+  var pickButton = document.getElementById("pickLesson");
+  var clearButton = document.getElementById("clearGlossaryFilters");
+  var lessonPool = [];
+  var lastLesson = "";
 
   var CATEGORY_ORDER = [
     "Fundamentals & General Terms",
@@ -468,8 +482,23 @@ var GLOSSARY = [
     return "Fundamentals & General Terms";
   }
 
+  CATEGORY_ORDER.forEach(function(category) {
+    var count = entries.filter(function(g) { return getCategory(g) === category; }).length;
+    if (!count) return;
+    var option = document.createElement("option");
+    option.value = category;
+    option.textContent = category + " (" + count + ")";
+    categorySelect.appendChild(option);
+  });
+
   function render(term) {
-    var filtered = entries.filter(function(g) { return BJJResources.matches(g, term || ""); });
+    var filtered = entries.filter(function(g) {
+      return BJJResources.matches(g, term || "") &&
+        (categorySelect.value === "all" || getCategory(g) === categorySelect.value);
+    });
+    lessonPool = filtered.filter(function(g) { return g.video; });
+    pickButton.disabled = !lessonPool.length;
+    clearButton.hidden = !search.value.trim() && categorySelect.value === "all";
     var videos = filtered.filter(function(g) { return g.video; }).length;
     document.getElementById("glossaryCount").textContent = filtered.length + (filtered.length === 1 ? " entry · " : " entries · ") + videos + (videos === 1 ? " video" : " videos");
 
@@ -501,6 +530,20 @@ var GLOSSARY = [
 
   if (search) search.addEventListener("input", function() {
     render(search.value.toLowerCase().trim());
+  });
+  categorySelect.addEventListener("change", function() { render(search.value.trim()); });
+  clearButton.addEventListener("click", function() {
+    search.value = "";
+    categorySelect.value = "all";
+    render("");
+    search.focus();
+  });
+  pickButton.addEventListener("click", function() {
+    var pool = lessonPool.filter(function(g) { return lessonPool.length === 1 || g.term !== lastLesson; });
+    if (!pool.length) return;
+    var lesson = pool[Math.floor(Math.random() * pool.length)];
+    lastLesson = lesson.term;
+    window.open(lesson.video.url, "_blank", "noopener,noreferrer");
   });
   var query = new URLSearchParams(location.search).get("q") || "";
   search.value = query;
