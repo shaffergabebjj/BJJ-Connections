@@ -122,3 +122,22 @@
   window.addEventListener("bjjthemechange", update);
   update();
 })();
+
+// Long pages keep a quiet return to the header beside the theme control.
+(function () {
+  var button = document.createElement("button");
+  button.type = "button";
+  button.className = "back-to-top";
+  button.setAttribute("aria-label", "Back to top");
+  button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 14 6-6 6 6"/></svg>';
+  button.hidden = true;
+  document.body.appendChild(button);
+  function update() { button.hidden = window.scrollY < 600; }
+  window.addEventListener("scroll", update, {passive:true});
+  button.addEventListener("click", function () {
+    window.scrollTo({top:0, behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+    var home = document.querySelector('.site-header a');
+    if (home) home.focus({preventScroll:true});
+  });
+  update();
+})();
