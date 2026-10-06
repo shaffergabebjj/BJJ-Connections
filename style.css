@@ -1552,3 +1552,10 @@ button, .btn { touch-action:manipulation; }
 .back-to-top:hover { background:var(--bg-alt); }
 @media(max-width:640px) { .resource-browse label { flex-basis:100%; } }
 @media print { .back-to-top, .resource-browse, .resource-browse-hint { display:none !important; } }
+
+
+.game-development-entry { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:18px 0 12px; }
+.game-development-entry span { color:#d63437; font-size:.82rem; letter-spacing:.04em; }
+.game-feature-card { border-color:rgba(214,52,55,.45); }
+.game-feature-card:hover { border-color:#d63437; }
+.card-status { display:inline-block; margin-left:6px; color:#d63437; font-size:.62em; letter-spacing:.08em; vertical-align:middle; }

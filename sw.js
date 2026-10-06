@@ -5,7 +5,7 @@ const APP_SHELL = [
   "/style.css", "/theme.js", "/nav.js", "/app.js", "/data.js", "/daily-progress.js", "/game-core.js", "/techniques.js", "/technique-videos.js", "/glossary-videos.js", "/resource-catalog.js", "/training.js", "/round-timer.js",
   "/favicon.svg?v=gi2", "/favicon-32.png?v=gi2", "/apple-touch-icon.png?v=gi2",
   "/logo.svg", "/favicon.svg", "/favicon-32.png", "/apple-touch-icon.png",
-  "/icon-192.png", "/icon-512.png", "/manifest.json"
+  "/icon-192.png", "/icon-512.png", "/manifest.json", "/game/", "/game/index.html", "/game/style.css", "/game/app.js", "/game/audio.js", "/game/data.js", "/game/engine.js", "/game/render.js", "/game/save.js"
 ];
 
 self.addEventListener("install", event => {
