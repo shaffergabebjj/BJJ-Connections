@@ -16,7 +16,7 @@
   function normalize(value) {
     return value.toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
   }
-  function build(techniques, glossary, videos) {
+  function build(techniques, glossary, videos, glossaryVideos = {}) {
     const consumed = new Set();
     const entries = techniques.map(t => {
       const names = [t.name,...(t.aliases || []),...(aliases[t.name] || [])];
@@ -28,7 +28,7 @@
     const seen = new Set(entries.map(g=>normalize(g.term)));
     glossary.forEach((g,i) => {
       const key = normalize(g.term);
-      if (!consumed.has(i) && !seen.has(key)) { entries.push({...g,aliases:[],technique:false}); seen.add(key); }
+      if (!consumed.has(i) && !seen.has(key)) { entries.push({...g,aliases:g.aliases || [],technique:false,video:glossaryVideos[g.term]}); seen.add(key); }
     });
     return entries.sort((a,b)=>a.term.localeCompare(b.term));
   }
