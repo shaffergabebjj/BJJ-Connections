@@ -182,7 +182,7 @@
   const now = new Date();
   const dayNumber = BJJDaily.dayNumber(now);
   const dateKey = BJJDaily.dateKey(now);
-  const puzzle = PUZZLES[Math.abs(dayNumber) % PUZZLES.length];
+  const puzzle = DAILY_PUZZLES[Math.abs(dayNumber) % DAILY_PUZZLES.length];
   let words = puzzle.groups.flatMap(g => g.items);
   let selected = [];
   let solved = [];

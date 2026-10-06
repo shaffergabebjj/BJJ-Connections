@@ -80,7 +80,7 @@ const TECHNIQUES = [
   { name: "Pendulum Sweep", cat: "sweep", belt: "blue", desc: "Closed guard sweep using a swinging leg motion (pendulum) to create momentum and reverse the opponent." },
   { name: "Spider Guard Sweep", cat: "sweep", belt: "blue", desc: "Sweep from spider guard using foot-on-biceps control to off-balance the opponent." },
   { name: "De La Riva Sweep", cat: "sweep", belt: "purple", desc: "Sweep from de la Riva guard using the outside hook to control and off-balance the opponent." },
-  { name: "Berimbolo", cat: "sweep", belt: "black", desc: "Inverted sweep from de la Riva or single leg X that takes the opponent's back. A signature technique of modern competition BJJ." },
+  { name: "Berimbolo", cat: "sweep", belt: "brown", desc: "Inverted sweep from de la Riva or single leg X that takes the opponent's back. A signature technique of modern competition BJJ." },
   { name: "Knee Shield Sweep", cat: "sweep", belt: "blue", desc: "Sweep from half guard using the knee shield to create space and off-balance the opponent." },
   { name: "Old School Sweep", cat: "sweep", belt: "purple", desc: "Half guard sweep using an underhook and deep hook on the far leg to take the opponent backward." },
   { name: "Electric Chair Sweep", cat: "sweep", belt: "purple", desc: "Lockdown half guard sweep that stretches the opponent's leg to create imbalance, often combined with a submission." },
@@ -107,10 +107,10 @@ const TECHNIQUES = [
   { name: "Reverse De La Riva", cat: "guard", belt: "purple", desc: "Mirror of de la Riva with the hook on the inside of the opponent's leg. Often used to counter passing." },
   { name: "X-Guard", cat: "guard", belt: "purple", desc: "Guard position where both legs control the opponent's legs in an X formation. Excellent for sweeping." },
   { name: "Single Leg X", cat: "guard", belt: "purple", desc: "Guard position with one leg inside and one leg outside the opponent's legs. Common entry point for leg locks and sweeps." },
-  { name: "50/50 Guard", cat: "guard", belt: "black", desc: "Position where both grapplers' legs are intertwined symmetrically. Can be used for control, sweeps, or leg locks." },
+  { name: "50/50 Guard", cat: "guard", belt: "brown", desc: "Position where both grapplers' legs are intertwined symmetrically. Can be used for control, sweeps, or leg locks." },
   { name: "Collar-Sleeve Guard", cat: "guard", belt: "blue", desc: "Gi guard using a collar grip and sleeve grip to control the opponent's posture and set up sweeps and submissions." },
   { name: "Lasso Guard", cat: "guard", belt: "purple", desc: "Gi guard threading your leg through the opponent's arm to create strong control. Often combined with spider guard." },
-  { name: "Worm Guard", cat: "guard", belt: "black", desc: "Lapel guard popularized by Keenan Cornelius, using the opponent's lapel to wrap and control their leg." },
+  { name: "Worm Guard", cat: "guard", belt: "brown", desc: "Lapel guard popularized by Keenan Cornelius, using the opponent's lapel to wrap and control their leg." },
   { name: "Z-Guard", cat: "guard", belt: "blue", desc: "Half guard variant with the top knee creating a frame (Z shape) against the opponent's torso." },
   { name: "Knee Shield", cat: "guard", belt: "blue", desc: "Half guard variant using the knee as a frame against the opponent's hip or chest to manage distance and prevent pressure." },
   { name: "Open Guard", cat: "guard", belt: "blue", desc: "General term for guard positions where the legs are not closed around the opponent. More mobile and dynamic than closed guard." },
@@ -154,7 +154,7 @@ const TECHNIQUES = [
 
   // ---- Additional Submissions ----
   { name: "Marceloplata", cat: "submission", belt: "black", desc: "Armbar variant from guard that uses the leg over the shoulder in a modified omoplata/armbar hybrid. Named after Marcelo Garcia." },
-  { name: "Baratoplata", cat: "submission", belt: "black", desc: "Shoulder lock from side control using a figure-four grip on the opponent's arm. Named after Rafael Barata." },
+  { name: "Baratoplata", cat: "submission", belt: "brown", desc: "Shoulder lock from side control using a figure-four grip on the opponent's arm. Named after Rafael Barata." },
   { name: "Crucifix Neck Crank", cat: "submission", belt: "black", desc: "Neck crank applied from the crucifix position using the arms to apply rotational pressure to the cervical spine." },
   { name: "Calf Crank", cat: "submission", belt: "black", desc: "Submission applying compression to the calf muscle by leveraging the shin against the knee. Distinct from a calf slicer." },
   { name: "Banana Split", cat: "submission", belt: "black", desc: "Groin stretch submission where both of the opponent's legs are pulled apart in opposite directions." },
@@ -164,7 +164,7 @@ const TECHNIQUES = [
   { name: "Kimura from Side Control", cat: "submission", belt: "white", desc: "Double-wrist lock applied from side control, isolating the shoulder by leveraging the arm behind the back." },
   { name: "Cross Collar Choke from Guard", cat: "submission", belt: "white", desc: "Gi choke from closed guard using deep collar grips to compress the neck. One of the first guard chokes taught." },
   { name: "Loop Choke from Half Guard", cat: "submission", belt: "purple", desc: "Gi choke from bottom half guard using the collar to create a loop around the opponent's neck when they apply pressure." },
-  { name: "Monoplata", cat: "submission", belt: "black", desc: "Shoulder lock using the leg over the opponent's arm similar to an omoplata but with a different finishing angle." },
+  { name: "Monoplata", cat: "submission", belt: "brown", desc: "Shoulder lock using the leg over the opponent's arm similar to an omoplata but with a different finishing angle." },
 
   // ---- Additional Escapes ----
   { name: "Elbow Push Escape (Side Control)", cat: "escape", belt: "white", desc: "Creating space from bottom side control by pushing the opponent's elbow and bridging to recover guard." },
@@ -182,7 +182,7 @@ const TECHNIQUES = [
   { name: "Collar-Sleeve Sweep", cat: "sweep", belt: "blue", desc: "Sweep from collar-sleeve guard using the sleeve grip to pull the opponent forward while sweeping with the legs." },
   { name: "Reverse De La Riva Sweep", cat: "sweep", belt: "purple", desc: "Sweep from reverse de la Riva guard using the inside hook to off-balance the opponent and come on top." },
   { name: "Lasso Sweep", cat: "sweep", belt: "purple", desc: "Sweep from lasso guard using the threaded leg to control the opponent's arm and create an off-balancing angle." },
-  { name: "Deep Half Sweep", cat: "sweep", belt: "black", desc: "Sweep from deep half guard using the underhook and leg positioning to off-balance and reverse the opponent." },
+  { name: "Deep Half Sweep", cat: "sweep", belt: "brown", desc: "Sweep from deep half guard using the underhook and leg positioning to off-balance and reverse the opponent." },
   { name: "Underhook Half Guard Sweep", cat: "sweep", belt: "blue", desc: "Sweep from half guard using the underhook to get to the opponent's back or come up into a dogfight position." },
 
   // ---- Additional Takedowns ----
@@ -198,9 +198,9 @@ const TECHNIQUES = [
   { name: "Closed Guard (High)", cat: "guard", belt: "blue", desc: "Closed guard variant with legs positioned high on the opponent's back, breaking posture and setting up chokes and armbars." },
   { name: "Full Guard", cat: "guard", belt: "white", desc: "Another term for closed guard — legs wrapped around the opponent's torso with ankles crossed." },
   { name: "Headquarters Position", cat: "guard", belt: "purple", desc: "Top position between the opponent's legs, often the starting point for guard passing. One leg inside, one outside." },
-  { name: "Octopus Guard", cat: "guard", belt: "black", desc: "Unorthodox guard where you invert and use the opponent's leg and torso for control. Rare but creative." },
+  { name: "Octopus Guard", cat: "guard", belt: "brown", desc: "Unorthodox guard where you invert and use the opponent's leg and torso for control. Rare but creative." },
   { name: "Lockdown", cat: "guard", belt: "purple", desc: "Half guard variant popularized by Eddie Bravo, using a figure-four leg lock on the opponent's leg for control." },
-  { name: "K-Guard", cat: "guard", belt: "black", desc: "Modern guard position where one of your feet is on the opponent's hip and the other hooks behind their knee, creating entries to leg locks." },
+  { name: "K-Guard", cat: "guard", belt: "brown", desc: "Modern guard position where one of your feet is on the opponent's hip and the other hooks behind their knee, creating entries to leg locks." },
   { name: "Reverse Half Guard", cat: "guard", belt: "purple", desc: "Half guard variant where you face the opponent's legs rather than their torso, often used for leg lock entries." },
 
   // ---- Additional Guard Passing ----
@@ -215,7 +215,7 @@ const TECHNIQUES = [
   { name: "Inside Heel Hook", cat: "leg", belt: "black", desc: "Heel hook where the foot is rotated inward. Often applied from the saddle or 50/50 position." },
   { name: "Straight Foot Lock", cat: "leg", belt: "blue", desc: "Another term for the straight ankle lock — extending the foot to attack the Achilles tendon and ankle joint." },
   { name: "Achilles Lock", cat: "leg", belt: "blue", desc: "Compression lock on the Achilles tendon and calf muscle, often applied from ashi garami or single leg X." },
-  { name: "Estima Lock", cat: "leg", belt: "black", desc: "Foot lock named after the Estima brothers, applying rotational pressure to the foot from a standing or top position." },
+  { name: "Estima Lock", cat: "leg", belt: "brown", desc: "Foot lock named after the Estima brothers, applying rotational pressure to the foot from a standing or top position." },
   { name: "Saddle Entry", cat: "leg", belt: "black", desc: "Transition from single leg X or ashi garami into the saddle (honeyhole) position for a stronger heel hook entry." },
 
   // ---- Additional Transitions ----
@@ -227,4 +227,13 @@ const TECHNIQUES = [
   { name: "Head Outside Single", cat: "transition", belt: "blue", desc: "Single leg takedown entry where your head is on the outside of the opponent's leg, setting up finishes or transitions." },
   { name: "Sprawl", cat: "transition", belt: "white", desc: "Defensive technique against takedowns — dropping your hips and legs back to prevent the opponent from completing the takedown." },
   { name: "Stand-up", cat: "transition", belt: "white", desc: "Returning to standing position from the ground, typically using a technical stand-up to protect the head and maintain base." }
+,
+  {"name": "Crab Ride", "cat": "position", "belt": "brown", "desc": "A rear control using hooks behind the legs to connect guard exchanges to back takes."},
+  {"name": "Kiss of the Dragon", "cat": "transition", "belt": "brown", "desc": "A rotational entry from reverse de la Riva that connects underneath the opponent toward the back."},
+  {"name": "Lapel Lasso", "cat": "guard", "belt": "brown", "desc": "A gi guard that combines a lapel connection with lasso-style leg control."},
+  {"name": "Lapel 50/50", "cat": "guard", "belt": "brown", "desc": "A 50/50 variation that adds lapel control to organize balance and transitions."},
+  {"name": "Leg Pummeling for Retention", "cat": "escape", "belt": "brown", "desc": "Reconnecting the feet and knees inside an opponent's passing controls to recover guard."},
+  {"name": "High Leg Retention", "cat": "escape", "belt": "brown", "desc": "A guard recovery movement that redirects a leg around the passer to restore a defensive connection."},
+  {"name": "Crab Ride Back Take", "cat": "transition", "belt": "brown", "desc": "A transition from crab ride control to securing the opponent's back."},
+  {"name": "Lapel Guard Sweep", "cat": "sweep", "belt": "brown", "desc": "A reversal using a lapel connection to control posture and shift the opponent's base."}
 ];

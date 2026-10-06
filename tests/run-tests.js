@@ -9,7 +9,7 @@ function loadData() {
   const context = {};
   vm.createContext(context);
   vm.runInContext(fs.readFileSync(path.join(root, "data.js"), "utf8") +
-    ";globalThis.result={PUZZLES,validateAllPuzzles};", context);
+    ";globalThis.result={PUZZLES,DAILY_PUZZLES,validateAllPuzzles};", context);
   return context.result;
 }
 
@@ -32,8 +32,8 @@ function loadDaily(now) {
   return {daily: context.window.BJJDaily, values};
 }
 
-const {PUZZLES, validateAllPuzzles} = loadData();
-assert.equal(PUZZLES.length, 100, "daily index history depends on the 100-puzzle bank");
+const {PUZZLES, DAILY_PUZZLES, validateAllPuzzles} = loadData();
+assert.equal(DAILY_PUZZLES.length, 100, "daily index history depends on the 100-puzzle bank");
 assert.deepEqual([...validateAllPuzzles(PUZZLES)], []);
 for (let i = 0; i < PUZZLES.length; i++) {
   const words = new Set(PUZZLES[i].groups.flatMap(group => group.items));
@@ -137,7 +137,7 @@ function gameHarness(page, values = new Map(), search = "") {
     progress: () => JSON.parse(values.get("bjjDailyProgress"))};
 }
 const homeGame = gameHarness("index.html");
-const today = PUZZLES[Math.abs(daily.dayNumber(new Date())) % PUZZLES.length];
+const today = DAILY_PUZZLES[Math.abs(daily.dayNumber(new Date())) % DAILY_PUZZLES.length];
 const wrongGuess = [today.groups[0].items[0], today.groups[1].items[0],
   today.groups[2].items[0], today.groups[3].items[0]];
 for (const word of wrongGuess) homeGame.grid.children.find(b => b.textContent === word).onclick();
@@ -363,3 +363,19 @@ console.log("Real handlers restore unfinished Training, preserve Daily, render r
  assert.equal(copied,'','cancelling native share must not copy anything');
  console.log('Share-sheet failure falls back to copy; cancellation is respected.');
 })().catch(error=>{console.error(error);process.exitCode=1;});
+
+const brownPractice = gameHarness('puzzles.html', new Map(), '?mode=training');
+brownPractice.elements.get('difficultyWrap').children.find(b=>b.textContent==='Brown').onclick();
+const brownSaved = JSON.parse(brownPractice.values.get('bjjPracticeProgress'));
+assert.equal(PUZZLES.find(p=>p.id===brownSaved.puzzle).difficulty,'brown');
+assert.match(brownPractice.elements.get('puzzleMeta').textContent,/BROWN BELT/);
+const restoredBrown = gameHarness('puzzles.html',brownPractice.values,'?mode=training');
+assert.equal(restoredBrown.progress === undefined, false);
+assert.equal(JSON.parse(brownPractice.values.get('bjjPracticeProgress')).puzzle,brownSaved.puzzle);
+const brownLibrary = techniqueHarness('[]');
+brownLibrary.get('beltFilters').children.find(b=>b.textContent==='Brown').onclick();
+assert.equal(brownLibrary.get('techCount').textContent,'17 techniques');
+assert.equal([...brownLibrary.get('techResults').innerHTML.matchAll(/belt-badge belt-([a-z]+)/g)].every(m=>m[1]==='brown'),true);
+brownLibrary.get('randomTechnique').events.click();
+assert.equal(brownLibrary.get('techCount').textContent,'17 techniques');
+console.log('Real Brown puzzle and technique filters, reload restoration, and filtered Random passed.');

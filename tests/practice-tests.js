@@ -20,14 +20,14 @@ assert.equal(training.pool(puzzles,history,'all','unplayed').length,0);
 assert.equal(training.pool(puzzles,history,'all','mistakes').length,0);
 history[p.id].mistakes=2;
 assert.equal(training.pool(puzzles,history,'all','mistakes')[0].id,p.id);
-training.save(history);assert.equal(Object.keys(training.read(puzzles)).length,100);
+training.save(history);assert.equal(Object.keys(training.read(puzzles)).length,puzzles.length);
 for(const bad of ['null','[]','7','{bad','{"1":{"seen":"yesterday"}}']){
  values.set('bjjTrainingHistory',bad);assert.equal(Object.keys(training.read(puzzles)).length,0);
 }
 const clone=JSON.parse(JSON.stringify(p));clone.id=999;
 vm.runInContext('globalThis.validate=validateAllPuzzles',c);
 assert(c.validate([p,clone,{...clone,id:998},{...clone,id:997}]).some(e=>e.includes('maximum 3')));
-console.log('Shared rules, seeded order, 100-round unseen rotation, practice queues, storage recovery, and repetition limits passed.');
+console.log('Shared rules, seeded order, Full-bank unseen rotation, practice queues, storage recovery, and repetition limits passed.');
 
 const progress={words:p.groups.flatMap(g=>g.items),selected:correct.slice(0,2),solved:[],mistakes:3,
   startedAt:Date.now()-5000,guessLog:[],attemptedGuesses:[],finished:false,won:false};
@@ -52,3 +52,23 @@ training.saveSettings('purple','mistakes');assert.equal(training.settings().queu
 assert.equal(training.settings().difficulty,'purple');
 assert.equal(game.attempt(p,['NOT AN ANSWER',...correct.slice(0,3)],[]).type,'invalid');
 console.log('Practice restore, changed-content recovery, invalid progress, preferences, and unknown-word rejection passed.');
+
+const brown = training.pool(puzzles, {}, 'brown', 'unplayed');
+assert.equal(brown.length, 12);
+assert(brown.every(p => p.difficulty === 'brown'));
+training.saveSettings('brown','unplayed');
+assert.equal(training.settings().difficulty,'brown');
+const brownProgress={...progress,words:brown[0].groups.flatMap(g=>g.items),selected:[]};
+training.saveProgress(brown[0],brownProgress,'brown','unplayed');
+assert.equal(training.readProgress(puzzles,'brown','unplayed').puzzle.id,brown[0].id);
+assert.equal(training.readProgress(puzzles,'purple','unplayed'),null);
+const brownHistory={}; let previous;
+for(let i=0;i<brown.length;i++) {
+ const next=training.pick(training.pool(puzzles,brownHistory,'brown','unplayed'),brownHistory,previous);
+ assert(!brownHistory[next.id]); brownHistory[next.id]={seen:i+1,completed:true,win:true,mistakes:4}; previous=next;
+}
+assert.equal(training.pool(puzzles,brownHistory,'brown','unplayed').length,0);
+vm.runInContext(fs.readFileSync('techniques.js','utf8')+';globalThis.brownTechniques=TECHNIQUES.filter(t=>t.belt==="brown")',c);
+assert.equal(c.brownTechniques.length,17);
+assert.equal(new Set(c.brownTechniques.map(t=>t.name)).size,17);
+console.log('Brown filter, saved settings, round restore, complete unseen rotation and 17 distinct techniques passed.');
