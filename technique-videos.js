@@ -212,8 +212,8 @@ const TECHNIQUE_VIDEOS = {
     "checked": "2026-10-06"
   },
   "Back Escape (Hook Removal)": {
-    "url": "https://www.youtube.com/watch?v=4nPS8v0mWW4",
-    "title": "Back Escape, hook removal",
+    "url": "https://www.youtube.com/watch?v=1OizJugW9HI",
+    "title": "High-Crotch Counter to Hooks (BJJ Back Defense)",
     "checked": "2026-10-06"
   },
   "Guard Retention": {
@@ -877,8 +877,8 @@ const TECHNIQUE_VIDEOS = {
     "checked": "2026-10-06"
   },
   "Stand-up": {
-    "url": "https://www.youtube.com/watch?v=YbF9QAp3ZgM",
-    "title": "BJJ Beginners Tutorial - How to Technical Stand-Up",
+    "url": "https://www.youtube.com/watch?v=Thp7ipnjyTI",
+    "title": "BJJ Self Defense Lesson 4: The Technical Standup",
     "checked": "2026-10-06"
   },
   "Crab Ride": {
@@ -927,4 +927,3 @@ const TECHNIQUE_VIDEOS = {
     "checked": "2026-10-06"
   }
 };
-

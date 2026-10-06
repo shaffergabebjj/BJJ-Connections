@@ -2,8 +2,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('nod
 const html=fs.readFileSync('resources.html','utf8');
 const glossary=html.match(/var GLOSSARY = \[[\s\S]*?\n\];/)[0];
 const c={};vm.createContext(c);
-for(const file of ['techniques.js','technique-videos.js','resource-catalog.js'])vm.runInContext(fs.readFileSync(file,'utf8'),c);
-vm.runInContext(glossary+';globalThis.techniques=TECHNIQUES;globalThis.videos=TECHNIQUE_VIDEOS;globalThis.entries=BJJResources.build(TECHNIQUES,GLOSSARY,TECHNIQUE_VIDEOS)',c);
+for(const file of ['techniques.js','technique-videos.js','glossary-videos.js','resource-catalog.js'])vm.runInContext(fs.readFileSync(file,'utf8'),c);
+vm.runInContext(glossary+';globalThis.techniques=TECHNIQUES;globalThis.videos=TECHNIQUE_VIDEOS;globalThis.entries=BJJResources.build(TECHNIQUES,GLOSSARY,TECHNIQUE_VIDEOS,GLOSSARY_VIDEOS)',c);
 assert(c.techniques.length>=185);
 assert.equal(c.entries.filter(e=>e.technique).length,c.techniques.length);
 assert.equal(new Set(c.entries.map(e=>e.term)).size,c.entries.length);
@@ -21,6 +21,14 @@ for(const t of c.techniques) {
  assert(card.includes(entry.video.url));
  assert(card.includes('rel="noopener noreferrer"'));
 }
+assert.equal(c.entries.length,284);
+assert.equal(new Set(c.entries.map(e=>e.video.url)).size,284,'Each entry has a distinct video');
+for(const entry of c.entries) {
+ assert(entry.def.length>20,entry.term+' needs a description');
+ assert.match(entry.video?.url||'',/^https:\/\/www.youtube.com\/watch\?v=[\w-]{11}$/,entry.term+' needs a direct video');
+ assert(entry.video.title.length>3,entry.term+' needs a video title');
+}
+assert(fs.readFileSync('sw.js','utf8').includes('"/glossary-videos.js"'));
 const baseball=c.entries.find(e=>e.term==='Baseball Bat Choke');
 assert(c.BJJResources.matches(baseball,'baseball choke'));
 assert(c.BJJResources.matches(baseball,'baseball bat choke'));
@@ -36,10 +44,11 @@ c.document={getElementById:id=>nodes.get(id)};c.location={search:'?q=Baseball%20
 const renderScript=html.match(/\(function\(\) \{\n  var entries = BJJResources[\s\S]*?\}\)\(\);/)[0];
 vm.runInContext(renderScript,c);
 assert.equal(nodes.get('glossarySearch').value,'Baseball Bat Choke');
-assert.match(nodes.get('glossaryCount').textContent,/1 entry · 1 technique with a video lesson/);
+assert.match(nodes.get('glossaryCount').textContent,/1 entry · 1 video/);
 assert(nodes.get('glossarySections').innerHTML.includes(baseball.video.url));
 nodes.get('glossarySearch').value='';nodes.get('glossarySearch').events.input();
-assert.equal((nodes.get('glossarySections').innerHTML.match(/class="resource-watch"/g)||[]).length,c.techniques.length);
+assert.equal((nodes.get('glossarySections').innerHTML.match(/class="resource-watch"/g)||[]).length,c.entries.length);
+assert.equal(nodes.get('glossaryCount').textContent,'284 entries · 284 videos');
 nodes.get('glossarySearch').value='crab ride';nodes.get('glossarySearch').events.input();
 assert(nodes.get('glossarySections').innerHTML.includes('Crab Ride Back Take'));
 assert(!nodes.get('glossarySections').innerHTML.includes('Baseball Bat Choke'));

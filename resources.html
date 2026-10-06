@@ -62,8 +62,8 @@
   <section class="section" id="glossary">
     <div class="container">
       <div class="callout callout-info glossary-link-notice" style="margin-bottom:24px">
-        <strong>Every technique. Description + video.</strong>
-        <span>Every entry from Techniques is included here. Tap Watch video for a lesson, or Find more videos to explore.</span>
+        <strong>Every entry. Description + video.</strong>
+        <span>All techniques, terms and drills include a video. Tap Watch video to learn, or Find more videos to explore.</span>
       </div>
 
       <style>
@@ -251,6 +251,7 @@
 <script src="nav.js"></script>
 <script src="techniques.js"></script>
 <script src="technique-videos.js"></script>
+<script src="glossary-videos.js"></script>
 <script src="resource-catalog.js"></script>
 <script>
 var GLOSSARY = [
@@ -274,7 +275,7 @@ var GLOSSARY = [
   { term: "Butterfly Half Guard", def: "Half-guard variation combining a trapped leg with an inside butterfly hook." },
   { term: "Calf Slicer", def: "Compression lock that places pressure around the lower leg using a controlled leg configuration." },
   { term: "Canto Choke", def: "Gi choke variation using the lapel and a specific angle of control around the opponent's neck." },
-  { term: "Cat-Dog", def: "Movement pattern used in grappling to develop spinal and hip mobility." },
+  { term: "Cat-Cow", def: "A warm-up movement alternating between rounded and extended spinal positions, commonly used before grappling practice." },
   { term: "Chest-to-Back", def: "Control relationship in which the attacker keeps the chest connected to the opponent's back." },
   { term: "Closed Guard", def: "Bottom position with the legs wrapped around the opponent's torso and usually locked together." },
   { term: "Collar Drag", def: "Pulling action using a collar grip to move the opponent forward or off balance." },
@@ -291,10 +292,10 @@ var GLOSSARY = [
   { term: "Double Underhooks", def: "Control with both arms underneath the opponent's arms, commonly used for body locks and passing." },
   { term: "Drilling", def: "Repetitive practice of techniques or movement sequences to improve timing and skill." },
   { term: "Ezekiel Choke", def: "Choke using the forearm and sleeve or hand configuration to create pressure around the neck." },
-  { term: "False Reap", def: "Leg-entanglement entry that resembles a reap but is structured to establish control without relying on the same outside-leg positioning." },
+  { term: "False Reap", def: "A leg-entanglement entry used to connect guard play to cross-leg control and subsequent transitions." },
   { term: "Frames", def: "Structural connections made with the forearms, hands, shins, or knees to manage distance and pressure." },
   { term: "Front Headlock", def: "Control position around the opponent's head and arm, often used for guillotines, anaconda chokes, and transitions." },
-  { term: "Garcia Grip", def: "A named grip configuration used in some modern no-gi and leg-control systems; terminology can vary by instructor." },
+  { term: "Gable Grip", def: "A palm-to-palm grip with the thumbs alongside the fingers, used to connect the hands during clinches and ground controls." },
   { term: "Gi", def: "Traditional BJJ uniform consisting of a jacket, pants, and belt." },
   { term: "Granby Roll", def: "Inversion roll used to escape, recover guard, or create movement from defensive positions." },
   { term: "Guard", def: "Bottom position in which the legs are used to control an opponent and create sweeps, submissions, or transitions." },
@@ -304,7 +305,7 @@ var GLOSSARY = [
   { term: "Half Butterfly", def: "Half-guard variation that adds a butterfly hook to create elevation and movement." },
   { term: "Headquarters", def: "Passing position in which the passer controls the opponent's legs from a balanced standing or crouched stance." },
   { term: "Heel Hook", def: "Leg lock that uses control of the heel and lower leg to attack the knee through rotational pressure." },
-  { term: "Helicopter Guard", def: "Dynamic open-guard movement using leg positioning and rotation to create sweeps or transitions." },
+  { term: "Helicopter Guard", def: "Open-guard elevation and rotation associated with helicopter sweep entries." },
   { term: "Hip Escape", def: "Shrimping movement that creates space by moving the hips away from an opponent." },
   { term: "Hip Heist", def: "Explosive hip-turning movement used to come up from the ground, reverse position, or enter a takedown." },
   { term: "Hip Switch", def: "Changing hip orientation to improve pressure, passing angles, or control." },
@@ -329,7 +330,7 @@ var GLOSSARY = [
   { term: "Lasso Guard", def: "Gi guard using a sleeve-fed arm wrapped around or over the opponent's arm with the leg assisting control." },
   { term: "Lockdown", def: "Half-guard variation that uses both legs to control and extend the opponent's trapped leg." },
   { term: "Loop Choke", def: "Gi choke that uses a circular or looping path with the collar around the opponent's neck." },
-  { term: "Marcelo Grip", def: "Common name for a strong wrist-and-sleeve control associated with Marcelo Garcia's style; terminology can vary." },
+  { term: "Marcelotine", def: "A high-elbow guillotine variation associated with Marcelo Garcia, using the raised elbow to help control the opponent’s shoulder." },
   { term: "Matrix", def: "Dynamic inversion sequence used to move underneath or around an opponent's legs, often connected to modern guard systems." },
   { term: "Mount", def: "Top position with the opponent underneath and the top player's knees or legs controlling the torso." },
   { term: "Mounted Triangle", def: "Triangle attack initiated from mount rather than directly from a traditional guard position." },
@@ -340,10 +341,10 @@ var GLOSSARY = [
   { term: "Overhook", def: "Arm positioned over the opponent's arm to control the shoulder and upper body." },
   { term: "Over-under Pass", def: "Passing system using one arm under an opponent's leg and the other over or around the other side." },
   { term: "Outside Position", def: "Positioning on the outside of an opponent's limbs, often contrasted with inside control." },
-  { term: "Pandeiro", def: "A modern BJJ movement term sometimes used for a specific hip or guard movement; terminology can vary by academy." },
+  { term: "Pendulum Movement", def: "A swinging leg and hip movement used to create momentum and change angles from guard." },
   { term: "Pass", def: "Short for guard pass: moving beyond the opponent's legs into a stable top position." },
   { term: "Pistol Grip", def: "Gi grip in which the hand clamps onto gathered sleeve fabric for strong sleeve control." },
-  { term: "Pocket Grip", def: "Gi grip in which the fingers enter the sleeve while the fabric is controlled around the hand." },
+  { term: "Pocket Grip", def: "A sleeve grip made by folding the cuff outward and holding the resulting pocket of fabric from the outside." },
   { term: "Posture", def: "Body alignment and positioning used to maintain balance, create pressure, and defend attacks." },
   { term: "Pummel", def: "Repeatedly moving the arms or legs to gain inside position and improve control." },
   { term: "Re-Guard", def: "Recovering a guard after the opponent begins to pass." },
@@ -387,10 +388,10 @@ var GLOSSARY = [
   { term: "Clock Choke", def: "Gi choke from turtle or similar positions using the collar and a circular movement around the opponent." },
   { term: "Darce", def: "Short name commonly used for the D'Arce choke." },
   { term: "Ebi", def: "Shrimping movement named from the Japanese word often used for a shrimp-like hip escape." },
-  { term: "Frog Splash", def: "Colloquial name sometimes used for a jumping or dynamic grappling movement; terminology is not standardized." },
+  { term: "Frog Jump Armbar", def: "A dynamic armbar entry from side control that changes the attacker’s angle around the opponent’s upper body." },
   { term: "Gift Wrap", def: "Control that traps one of the opponent's arms across their body, often from mount or back-control transitions." },
   { term: "Head-and-Arm Control", def: "Control of an opponent's head and arm together to limit movement and create attacks." },
-  { term: "Hip Clamp", def: "Using the legs and hips to tightly control an opponent's lower body or leg." },
+  { term: "Hip Clamp", def: "Guard control using the knees and legs around the opponent’s upper body to limit posture and connect attacks." },
   { term: "Kata Gatame", def: "Japanese term commonly associated with the arm-triangle family of controls." },
   { term: "Kosoto Gake", def: "Judo-style outside leg reap or hook used as a takedown entry." },
   { term: "Kosoto Gari", def: "Judo-style outside foot or leg reap used to disrupt the opponent's base." },
@@ -400,7 +401,7 @@ var GLOSSARY = [
   { term: "Tai Otoshi", def: "Judo-style body-drop throw using a blocking leg and upper-body control." },
   { term: "Uchi Mata", def: "Judo-style inner-thigh throw using the leg to lift and redirect the opponent." },
   { term: "Uchi Mata Gaeshi", def: "Counter to an uchi mata-style attack that redirects the opponent's momentum." },
-  { term: "Uchi Mata Sankaku", def: "Uchi-mata-related transition that connects the throw or entry to a triangle-style leg configuration." },
+  { term: "Sankaku-Jime", def: "The Japanese term for a triangle choke, using a triangular leg configuration around the neck and one arm." },
   { term: "Ude Garami", def: "Japanese term for a family of bent-arm shoulder locks, including common kimura and americana variations." },
   { term: "Ude Hishigi Juji Gatame", def: "Japanese name for the straight armbar." },
   { term: "Ura Nage", def: "Judo-style rear throw using body positioning and lifting mechanics." },
@@ -421,7 +422,7 @@ var GLOSSARY = [
 ];
 
 (function() {
-  var entries = BJJResources.build(TECHNIQUES, GLOSSARY, TECHNIQUE_VIDEOS);
+  var entries = BJJResources.build(TECHNIQUES, GLOSSARY, TECHNIQUE_VIDEOS, GLOSSARY_VIDEOS);
   var search = document.getElementById("glossarySearch");
   var noResults = document.getElementById("noGlossaryResults");
 
@@ -444,15 +445,15 @@ var GLOSSARY = [
 
   var CATEGORY_RULES = [
     ["Portuguese & BJJ Slang", ["Raspagem","Passagem de Guarda","Queda","Pegada","Montada","Guarda Fechada","Meia Guarda","Mata-Leão","Creonte","OSS"]],
-    ["Judo & Grappling Terminology", ["Kesa Gatame","Kosoto Gake","Kosoto Gari","Ouchi Gari","Osoto Gari","Sumi Gaeshi","Tai Otoshi","Uchi Mata","Uchi Mata Gaeshi","Uchi Mata Sankaku","Ude Garami","Ude Hishigi Juji Gatame","Ura Nage","Vale Tudo"]],
-    ["Gi & Grip Terminology", ["Gi","Lapel","Lapel Guard","Collar-Sleeve Guard","Cross Collar Choke","Canto Choke","Loop Choke","Pistol Grip","Pocket Grip","Garcia Grip","Marcelo Grip","Bow-and-Arrow Grip","Bow-and-Arrow Choke","Spider Guard"]],
+    ["Judo & Grappling Terminology", ["Kesa Gatame","Kosoto Gake","Kosoto Gari","Ouchi Gari","Osoto Gari","Sumi Gaeshi","Tai Otoshi","Uchi Mata","Uchi Mata Gaeshi","Sankaku-Jime","Ude Garami","Ude Hishigi Juji Gatame","Ura Nage","Vale Tudo"]],
+    ["Gi & Grip Terminology", ["Gi","Lapel","Lapel Guard","Collar-Sleeve Guard","Cross Collar Choke","Canto Choke","Loop Choke","Pistol Grip","Pocket Grip","Gable Grip","Marcelotine","Bow-and-Arrow Grip","Bow-and-Arrow Choke","Spider Guard"]],
     ["Leg Locks & Leg Entanglements", ["50/50 Guard","Ashi Garami","False Reap","Heel Hook","K-Guard","Kani Basami","Leg Entanglement","Single-Leg X (SLX)","Shin-to-Shin","Kneebar","Calf Slicer","Biceps Slicer","Hip Clamp"]],
     ["Guard Passing", ["Backstep","Body Lock","Combat Base","Guard Pass","Headquarters","Knee Cut","Leg Drag","Long Step","Over-under Pass","Pass","Smash Pass","Stack Pass","Standing Guard Pass","Toreando Pass","X-Pass"]],
     ["Back & Dominant Positions", ["Back Control","Body Triangle","Chest-to-Back","Crucifix","Kesa Gatame","Knee-on-Belly","Mount","Mounted Triangle","North-South","S-Mount","Seatbelt","Side Control","Turtle","Gift Wrap","Head-and-Arm Control"]],
     ["Takedowns & Wrestling", ["Ankle Pick","Deliberate Guard Pull","Double Underhooks","Front Headlock","Hip Heist","Russian Tie","Sit-Up Guard","Takedown","Underhook","Underhook Half Guard","Wrestle-Up","Wrestling-Up","Technical Stand-Up","Two-on-One","Stance"]],
     ["Submissions", ["Americana","Anaconda Choke","Arm-In Guillotine","Arm Triangle","Armbar","Baratoplata","Bow-and-Arrow Choke","Clock Choke","D'Arce Choke","Darce","Ezekiel Choke","Guillotine","Kimura","Kata Gatame","Loop Choke","Omoplata","Rear Naked Choke (RNC)","Reverse Triangle","Triangle Choke","Wristlock","Mounted Triangle"]],
     ["Escapes & Defense", ["Bridge","Frames","Granby Roll","Hip Escape","Re-Guard","Upa"]],
-    ["Movement & Drills", ["Cat-Dog","Drilling","Ebi","Frog Splash","Hip Switch","Inversion","Leg Pummel","Pummel","V-Ups","Leg Pummel"]],
+    ["Movement & Drills", ["Cat-Cow","Drilling","Ebi","Frog Jump Armbar","Hip Switch","Inversion","Leg Pummel","Pummel","V-Ups","Leg Pummel"]],
     ["Guard Positions", ["Berimbolo","Butterfly Guard","Butterfly Half Guard","Closed Guard","De La Riva (DLR)","Deep De La Riva","Deep Half Guard","Half Butterfly","Half Guard","Helicopter Guard","K-Guard","Lasso Guard","Lockdown","Octopus Guard","Reverse De La Riva","Reverse Half Guard","Sit-Up Guard","Spider Guard","Upside-Down Guard","X-Guard","Z-Guard","Collar-Sleeve Guard","Shin-to-Shin","Single-Leg X (SLX)","50/50 Guard","Lasso Guard"]],
     ["Fundamentals & General Terms", ["Base","Guard","Inside Position","Outside Position","Hooks","Overhook","Posture","Sweep","Wrestle-Up"]]
   ];
@@ -469,8 +470,8 @@ var GLOSSARY = [
 
   function render(term) {
     var filtered = entries.filter(function(g) { return BJJResources.matches(g, term || ""); });
-    var techniques = filtered.filter(function(g) { return g.technique; }).length;
-    document.getElementById("glossaryCount").textContent = filtered.length + (filtered.length === 1 ? " entry · " : " entries · ") + techniques + (techniques === 1 ? " technique with a video lesson" : " techniques with video lessons");
+    var videos = filtered.filter(function(g) { return g.video; }).length;
+    document.getElementById("glossaryCount").textContent = filtered.length + (filtered.length === 1 ? " entry · " : " entries · ") + videos + (videos === 1 ? " video" : " videos");
 
     if (filtered.length === 0) {
       document.getElementById("glossarySections").innerHTML = "";
