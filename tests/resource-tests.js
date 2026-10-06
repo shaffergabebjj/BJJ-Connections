@@ -36,7 +36,7 @@ c.document={getElementById:id=>nodes.get(id)};c.location={search:'?q=Baseball%20
 const renderScript=html.match(/\(function\(\) \{\n  var entries = BJJResources[\s\S]*?\}\)\(\);/)[0];
 vm.runInContext(renderScript,c);
 assert.equal(nodes.get('glossarySearch').value,'Baseball Bat Choke');
-assert.match(nodes.get('glossaryCount').textContent,/1 entries · 1 techniques/);
+assert.match(nodes.get('glossaryCount').textContent,/1 entry · 1 technique with a video lesson/);
 assert(nodes.get('glossarySections').innerHTML.includes(baseball.video.url));
 nodes.get('glossarySearch').value='';nodes.get('glossarySearch').events.input();
 assert.equal((nodes.get('glossarySections').innerHTML.match(/class="resource-watch"/g)||[]).length,c.techniques.length);
