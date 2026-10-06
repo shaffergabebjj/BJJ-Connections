@@ -42,7 +42,7 @@
   function card(g) {
     const more = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(g.term + ' BJJ technique');
     const video = g.video;
-    return '<div class="glossary-item"><dt><a href="'+escape(video ? video.url : more)+'" target="_blank" rel="noopener noreferrer">'+escape(g.term)+'</a></dt><dd>'+escape(g.def)+
+    return '<div class="glossary-item"><dt>'+escape(g.term)+'</dt><dd>'+escape(g.def)+
       (video ? '<span class="resource-video-title">Video: '+escape(video.title)+'</span>' : '')+
       '<div class="resource-actions">'+(video ? '<a class="resource-watch" href="'+escape(video.url)+'" target="_blank" rel="noopener noreferrer" aria-label="Watch '+escape(g.term)+' video (opens YouTube)">Watch video ↗</a>' : '')+
       '<a href="'+escape(more)+'" target="_blank" rel="noopener noreferrer">Find more videos ↗</a></div></dd></div>';
