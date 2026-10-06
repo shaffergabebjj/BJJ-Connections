@@ -87,3 +87,5 @@ Puzzles live in the `ROUNDS` array in `data.js`. Difficulty is inferred automati
 - Training plans restore saved choices; goals and session logs are stored in the current browser.
 - Export the session log as CSV for a portable backup. Browser data does not sync between devices.
 - Run `node tests/run-tests.js` and `node tests/tools-tests.js` and `node tests/practice-tests.js` for regression checks.
+
+Resources uses `resource-catalog.js` to include every entry from `techniques.js`, together with direct lessons in `technique-videos.js`. Add a matching video reference whenever adding a technique; `node tests/resource-tests.js` checks coverage, search, links and rendering. Existing general glossary terms remain available.

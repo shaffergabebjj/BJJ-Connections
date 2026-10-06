@@ -1,0 +1,50 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const html=fs.readFileSync('resources.html','utf8');
+const glossary=html.match(/var GLOSSARY = \[[\s\S]*?\n\];/)[0];
+const c={};vm.createContext(c);
+for(const file of ['techniques.js','technique-videos.js','resource-catalog.js'])vm.runInContext(fs.readFileSync(file,'utf8'),c);
+vm.runInContext(glossary+';globalThis.techniques=TECHNIQUES;globalThis.videos=TECHNIQUE_VIDEOS;globalThis.entries=BJJResources.build(TECHNIQUES,GLOSSARY,TECHNIQUE_VIDEOS)',c);
+assert(c.techniques.length>=185);
+assert.equal(c.entries.filter(e=>e.technique).length,c.techniques.length);
+assert.equal(new Set(c.entries.map(e=>e.term)).size,c.entries.length);
+for(const t of c.techniques) {
+ const entry=c.entries.find(e=>e.term===t.name);
+ assert(entry,`${t.name} must appear in Resources`);
+ assert.equal(entry.def,t.desc);
+ assert(entry.category && entry.def.length>20);
+ assert.match(entry.video?.url||'',/^https:\/\/www.youtube.com\/watch\?v=[\w-]{11}$/,
+  `${t.name} requires a direct video URL, not a search page`);
+ assert(entry.video.title.length>3);
+ assert(c.BJJResources.matches(entry,t.name));
+ const card=c.BJJResources.card(entry);
+ assert(card.includes('Watch video ↗'));
+ assert(card.includes(entry.video.url));
+ assert(card.includes('rel="noopener noreferrer"'));
+}
+const baseball=c.entries.find(e=>e.term==='Baseball Bat Choke');
+assert(c.BJJResources.matches(baseball,'baseball choke'));
+assert(c.BJJResources.matches(baseball,'baseball bat choke'));
+assert.equal(c.entries.filter(e=>e.term==='Side Control').length,1);
+assert(c.entries.some(e=>e.term==='OSS'),'preserve non-technique glossary content');
+assert(!c.BJJResources.matches(baseball,'no-such-technique'));
+const escaped=c.BJJResources.card({...baseball,term:'<script>',def:'a & b',video:{...baseball.video,title:'<iframe>'}});
+assert(!escaped.includes('<script>') && !escaped.includes('<iframe>'));
+const nodes=new Map();
+function node(){return {value:'',innerHTML:'',textContent:'',events:{},classList:{add(){},remove(){}},addEventListener(k,f){this.events[k]=f;}};}
+for(const id of ['glossarySearch','noGlossaryResults','glossaryCount','glossarySections'])nodes.set(id,node());
+c.document={getElementById:id=>nodes.get(id)};c.location={search:'?q=Baseball%20Bat%20Choke'};c.URLSearchParams=URLSearchParams;
+const renderScript=html.match(/\(function\(\) \{\n  var entries = BJJResources[\s\S]*?\}\)\(\);/)[0];
+vm.runInContext(renderScript,c);
+assert.equal(nodes.get('glossarySearch').value,'Baseball Bat Choke');
+assert.match(nodes.get('glossaryCount').textContent,/1 entries · 1 techniques/);
+assert(nodes.get('glossarySections').innerHTML.includes(baseball.video.url));
+nodes.get('glossarySearch').value='';nodes.get('glossarySearch').events.input();
+assert.equal((nodes.get('glossarySections').innerHTML.match(/class="resource-watch"/g)||[]).length,c.techniques.length);
+nodes.get('glossarySearch').value='crab ride';nodes.get('glossarySearch').events.input();
+assert(nodes.get('glossarySections').innerHTML.includes('Crab Ride Back Take'));
+assert(!nodes.get('glossarySections').innerHTML.includes('Baseball Bat Choke'));
+nodes.get('glossarySearch').value='no-such-technique';nodes.get('glossarySearch').events.input();
+assert.equal(nodes.get('glossarySections').innerHTML,'');
+assert(fs.readFileSync('sw.js','utf8').includes('"/technique-videos.js"'));
+assert(fs.readFileSync('sw.js','utf8').includes('"/resource-catalog.js"'));
+console.log(`Resources coverage passed: ${c.techniques.length} techniques, descriptions and direct video links; ${c.entries.length} total entries. Alias search, grouping, deep links and safe rendering passed.`);

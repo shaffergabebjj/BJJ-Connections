@@ -1519,3 +1519,10 @@ button, .btn { touch-action:manipulation; }
   .timer-actions { padding-right:54px; }
   .timer-actions button { flex:1; min-width:0; padding-inline:10px; }
 }
+
+.tech-resource-link { display:block; margin:12px 0; font-weight:700; color:var(--accent); }
+.glossary-item .resource-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+.resource-actions a { display:inline-flex; align-items:center; min-height:44px; padding:8px 12px; border:1px solid var(--border-strong); border-radius:8px; font-size:13px; font-weight:700; text-decoration:none; }
+.resource-actions .resource-watch { background:var(--ink); color:var(--bg); border-color:var(--ink); }
+.resource-video-title { display:block; margin-top:10px; font-size:12px; line-height:1.5; color:var(--muted); }
+.glossary-item:target { outline:2px solid var(--accent); outline-offset:3px; }
