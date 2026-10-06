@@ -470,7 +470,7 @@ var GLOSSARY = [
   function render(term) {
     var filtered = entries.filter(function(g) { return BJJResources.matches(g, term || ""); });
     var techniques = filtered.filter(function(g) { return g.technique; }).length;
-    document.getElementById("glossaryCount").textContent = filtered.length + " entries · " + techniques + " techniques with video lessons";
+    document.getElementById("glossaryCount").textContent = filtered.length + (filtered.length === 1 ? " entry · " : " entries · ") + techniques + (techniques === 1 ? " technique with a video lesson" : " techniques with video lessons");
 
     if (filtered.length === 0) {
       document.getElementById("glossarySections").innerHTML = "";
