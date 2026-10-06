@@ -42,7 +42,7 @@ const TECHNIQUES = [
   { name: "Clock Choke", cat: "submission", belt: "blue", desc: "Gi choke from top turtle position using a collar grip, walking toward the opponent's head to tighten the lapel across the neck." },
   { name: "Paper Cutter Choke", cat: "submission", belt: "blue", desc: "Gi choke from side control or knee-on-belly using a deep collar grip and driving the shoulder into the neck." },
   { name: "Loop Choke", cat: "submission", belt: "purple", desc: "Gi choke from guard using the collar to create a loop around the opponent's neck, often catching them when they posture up." },
-  { name: "Baseball Choke", cat: "submission", belt: "purple", desc: "Gi choke from side control using a baseball-style grip on the collar, rotating to tighten the lapel around the neck." },
+  { name: "Baseball Bat Choke", aliases: ["Baseball Choke"], cat: "submission", belt: "purple", desc: "Gi choke from side control using a baseball-style grip on the collar, rotating to tighten the lapel around the neck." },
   { name: "North-South Choke", cat: "submission", belt: "purple", desc: "Choke from the north-south position using the arms to compress the neck. Requires strong squeeze and correct angle." },
   { name: "Peruvian Necktie", cat: "submission", belt: "black", desc: "Front-headlock choke that threads the arm through the legs, combining a neck crank and choke. Named after Tony DeSouza." },
   { name: "Von Flue Choke", cat: "submission", belt: "black", desc: "Shoulder choke from side control when the opponent has an underhook, using your shoulder to compress their neck. Named after Jason Von Flue." },
@@ -207,7 +207,7 @@ const TECHNIQUES = [
   { name: "Floating Pass", cat: "pass", belt: "purple", desc: "Pass where you jump or float over the opponent's legs, landing directly in side control or mount." },
   { name: "Shin Pin Pass", cat: "pass", belt: "blue", desc: "Pass where you pin the opponent's shin to the mat with your hand or knee, then step around to side control." },
   { name: "Leg Pin Pass", cat: "pass", belt: "blue", desc: "Pass where you pin both of the opponent's legs to one side, then walk around to the other side for side control." },
-  { name: "Crash Pass", cat: "pass", belt: "purple", desc: "No-gi pass where you crash your weight forward through the opponent's guard, using momentum and pressure to pass." },
+  { name: "Crash Pass", cat: "pass", belt: "purple", desc: "Pressure-passing approach that closes distance and forces half guard before clearing the legs. Sometimes described as crashing into the guard." },
   { name: "Tripod Pass", cat: "pass", belt: "purple", desc: "Pass where you tripod on your head and feet to clear the opponent's legs, then settle into side control." },
 
   // ---- Additional Leg Entanglements ----

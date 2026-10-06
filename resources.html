@@ -62,8 +62,8 @@
   <section class="section" id="glossary">
     <div class="container">
       <div class="callout callout-info glossary-link-notice" style="margin-bottom:24px">
-        <strong>Every BJJ term below is a clickable link</strong>
-        <span>Click any term to find videos showing the technique.</span>
+        <strong>Every technique. Description + video.</strong>
+        <span>Every entry from Techniques is included here. Tap Watch video for a lesson, or Find more videos to explore.</span>
       </div>
 
       <style>
@@ -85,6 +85,7 @@
       <div class="search-bar">
         <input type="search" class="search-input" id="glossarySearch" placeholder="Search BJJ terms..." aria-label="Search glossary">
       </div>
+      <p id="glossaryCount" class="section-sub" role="status" aria-live="polite"></p>
       <div id="glossarySections"></div>
       <style>
         .glossary-section { margin-top: 36px; }
@@ -248,6 +249,9 @@
 </footer>
 
 <script src="nav.js"></script>
+<script src="techniques.js"></script>
+<script src="technique-videos.js"></script>
+<script src="resource-catalog.js"></script>
 <script>
 var GLOSSARY = [
   { term: "50/50 Guard", def: "Leg-entanglement guard where both players use similar leg positioning to control one another's legs." },
@@ -417,7 +421,7 @@ var GLOSSARY = [
 ];
 
 (function() {
-  var list = document.getElementById("glossaryList");
+  var entries = BJJResources.build(TECHNIQUES, GLOSSARY, TECHNIQUE_VIDEOS);
   var search = document.getElementById("glossarySearch");
   var noResults = document.getElementById("noGlossaryResults");
 
@@ -425,6 +429,8 @@ var GLOSSARY = [
     "Fundamentals & General Terms",
     "Guard Positions",
     "Guard Passing",
+    "Sweeps",
+    "Transitions",
     "Leg Locks & Leg Entanglements",
     "Submissions",
     "Escapes & Defense",
@@ -454,6 +460,7 @@ var GLOSSARY = [
   var CATEGORY_NAMES = CATEGORY_ORDER.concat(["Leg Locks & Leg Entanglements"]);
 
   function getCategory(g) {
+    if (g.category) return g.category;
     for (var i = 0; i < CATEGORY_RULES.length; i++) {
       if (CATEGORY_RULES[i][1].indexOf(g.term) > -1) return CATEGORY_RULES[i][0];
     }
@@ -461,9 +468,9 @@ var GLOSSARY = [
   }
 
   function render(term) {
-    var filtered = !term ? GLOSSARY : GLOSSARY.filter(function(g) {
-      return g.term.toLowerCase().indexOf(term) > -1 || g.def.toLowerCase().indexOf(term) > -1;
-    });
+    var filtered = entries.filter(function(g) { return BJJResources.matches(g, term || ""); });
+    var techniques = filtered.filter(function(g) { return g.technique; }).length;
+    document.getElementById("glossaryCount").textContent = filtered.length + " entries · " + techniques + " techniques with video lessons";
 
     if (filtered.length === 0) {
       document.getElementById("glossarySections").innerHTML = "";
@@ -485,7 +492,7 @@ var GLOSSARY = [
         '<h2 class="section-title glossary-category-title">' + category + '</h2>' +
         '<dl class="glossary">' +
         grouped[category].map(function(g) {
-          return '<div class="glossary-item"><dt><a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(g.term + ' BJJ technique') + '" target="_blank" rel="noopener noreferrer">' + g.term + '</a></dt><dd>' + g.def + '</dd></div>';
+          return BJJResources.card(g);
         }).join("") +
         '</dl></section>';
     }).join("");
@@ -494,7 +501,9 @@ var GLOSSARY = [
   if (search) search.addEventListener("input", function() {
     render(search.value.toLowerCase().trim());
   });
-  render();
+  var query = new URLSearchParams(location.search).get("q") || "";
+  search.value = query;
+  render(query);
 })();
 </script>
 <script>

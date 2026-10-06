@@ -142,7 +142,9 @@
   function getFavorites() {
     try {
       var items = JSON.parse(localStorage.getItem("bjjFavoriteTechniques") || "[]");
-      return Array.isArray(items) ? [...new Set(items.filter(function(name) {
+      return Array.isArray(items) ? [...new Set(items.map(function(name) {
+        return name === "Baseball Choke" ? "Baseball Bat Choke" : name;
+      }).filter(function(name) {
         return typeof name === "string" && TECHNIQUES.some(function(t) { return t.name === name; });
       }))] : [];
     }
@@ -240,7 +242,8 @@
       var catMatch = activeCat === "all" || t.cat === activeCat;
       var beltMatch = activeBelt === "all" || t.belt === activeBelt;
       var searchMatch = !searchTerm || t.name.toLowerCase().indexOf(searchTerm) > -1 ||
-        t.desc.toLowerCase().indexOf(searchTerm) > -1;
+        t.desc.toLowerCase().indexOf(searchTerm) > -1 ||
+        (t.aliases || []).some(function(alias) { return alias.toLowerCase().indexOf(searchTerm) > -1; });
       return catMatch && beltMatch && searchMatch && (!savedOnly || isFavorite(t.name));
     });
 
@@ -268,6 +271,7 @@
         '<h3>' + t.name + '</h3>' +
         '<div class="tech-category">' + (catLabel ? catLabel.label : t.cat) + '</div>' +
         '<p class="tech-desc">' + t.desc + '</p>' +
+        '<a class="tech-resource-link" href="resources.html?q=' + encodeURIComponent(t.name) + '#glossary">Watch &amp; learn →</a>' +
         '<span class="belt-badge belt-' + t.belt + '">' + t.belt + ' Belt</span>' +
         '<button class="tech-favorite ' + (isFavorite(t.name) ? 'is-favorite' : '') + '" data-favorite="' + t.name.replace(/"/g, '&quot;') + '" type="button" aria-pressed="' + isFavorite(t.name) + '" aria-label="' + (isFavorite(t.name) ? 'Remove ' : 'Save ') + t.name + ' ' + (isFavorite(t.name) ? 'from favorites' : 'to favorites') + '">' +
           (isFavorite(t.name) ? '★ Saved' : '☆ Save') +

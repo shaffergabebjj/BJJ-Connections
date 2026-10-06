@@ -379,3 +379,10 @@ assert.equal([...brownLibrary.get('techResults').innerHTML.matchAll(/belt-badge 
 brownLibrary.get('randomTechnique').events.click();
 assert.equal(brownLibrary.get('techCount').textContent,'17 techniques');
 console.log('Real Brown puzzle and technique filters, reload restoration, and filtered Random passed.');
+
+const oldBaseballFavorite=techniqueHarness('["Baseball Choke"]','?q=baseball%20bat%20choke');
+assert.equal(oldBaseballFavorite.get('techCount').textContent,'1 technique');
+oldBaseballFavorite.get('savedTechniques').onclick();
+assert.equal(oldBaseballFavorite.get('techCount').textContent,'1 technique','renaming preserves saved Baseball Choke');
+assert(oldBaseballFavorite.get('techResults').innerHTML.includes('resources.html?q=Baseball%20Bat%20Choke#glossary'));
+console.log('Baseball name alias, preserved favorites, and technique-to-resource links passed.');
