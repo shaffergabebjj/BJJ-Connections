@@ -1,4 +1,5 @@
-// 100 stable puzzle IDs; repeated groups are capped at three appearances.
+// 100 stable daily IDs plus 12 curated Brown training puzzles.
+// Repeated groups are capped at three appearances.
 const ROUNDS = [
 
 /* 1 */
@@ -955,7 +956,7 @@ function classifyDifficulty(groups) {
   return "purple";
 }
 
-const PUZZLES = ROUNDS.map((groups, index) => {
+const DAILY_PUZZLES = ROUNDS.map((groups, index) => {
   const builtGroups = groups.map(g => ({
     items: g.slice(0, 4),
     category: g[4],
@@ -967,6 +968,423 @@ const PUZZLES = ROUNDS.map((groups, index) => {
     difficulty: classifyDifficulty(builtGroups.map(g => g.items))
   };
 });
+
+// Brown emphasizes connected systems and positional detail. These curated
+// rounds extend practice without changing historical daily/archive assignments.
+const BROWN_ROUNDS = [
+  [
+    [
+      "WORM GUARD",
+      "SQUID GUARD",
+      "LAPEL LASSO",
+      "RINGWORM GUARD",
+      "LAPEL GUARD SYSTEMS",
+      "These gi guards use the lapel as an additional control around the legs or body."
+    ],
+    [
+      "CRAB RIDE",
+      "CHAIR SIT",
+      "ROLLING BACK TAKE",
+      "KISS OF THE DRAGON",
+      "ROUTES TO THE BACK",
+      "These entries connect a transitional control or rotation to back control."
+    ],
+    [
+      "KNEE LINE",
+      "HEEL EXPOSURE",
+      "SECONDARY LEG",
+      "HIP ALIGNMENT",
+      "LEG ENTANGLEMENT CHECKPOINTS",
+      "These details describe control and alignment during a leg-entanglement exchange."
+    ],
+    [
+      "CROSSFACE",
+      "HIP BLOCK",
+      "UNDERHOOK",
+      "SHOULDER PRESSURE",
+      "UPPER-BODY PASSING CONTROLS",
+      "These controls help a passer limit turning and movement before settling a pass."
+    ]
+  ],
+  [
+    [
+      "LEG PUMMEL",
+      "HIGH LEG",
+      "HIP SCOOT",
+      "SHOULDER ROLL",
+      "GUARD RETENTION MOVEMENTS",
+      "These movements help recover inside position or redirect the hips during a passing exchange."
+    ],
+    [
+      "LONG STEP",
+      "LEG DRAG",
+      "TORIANDO",
+      "X-PASS",
+      "MOBILE PASSING OPTIONS",
+      "These passes change the angle around the legs rather than staying in one straight path."
+    ],
+    [
+      "LAPEL FEED",
+      "CROSS-COLLAR GRIP",
+      "SLEEVE CUFF",
+      "PANTS GRIP",
+      "GI GRIP CONNECTIONS",
+      "Each is a way to establish or transfer control using the gi."
+    ],
+    [
+      "ARM TRIANGLE",
+      "D'ARCE",
+      "ANACONDA",
+      "NORTH-SOUTH CHOKE",
+      "ARM-BASED CHOKES",
+      "These chokes use upper-body positioning without requiring a collar grip."
+    ]
+  ],
+  [
+    [
+      "REVERSE DE LA RIVA",
+      "K-GUARD",
+      "DEEP HALF",
+      "BUTTERFLY HALF",
+      "GUARDS WITH LOWER-BODY ENTRIES",
+      "These guards can connect underneath the opponent to sweeps or lower-body control."
+    ],
+    [
+      "DOUBLE UNDER",
+      "OVER-UNDER",
+      "STACK PASS",
+      "BODY LOCK PASS",
+      "CLOSE-DISTANCE PASSING",
+      "These passes rely on closing distance and controlling the hips or legs."
+    ],
+    [
+      "WRIST RIDE",
+      "ANKLE RIDE",
+      "SPIRAL RIDE",
+      "CLAW RIDE",
+      "WRESTLING RIDES",
+      "These riding controls can help maintain top position during turtle and scrambling exchanges."
+    ],
+    [
+      "BARATOPLATA",
+      "MONOPLATA",
+      "OMOPLATA",
+      "KIMURA",
+      "SHOULDER-LOCK FAMILIES",
+      "Each name describes a submission centered on controlling and rotating the shoulder."
+    ]
+  ],
+  [
+    [
+      "SINGLE LEG X",
+      "X-GUARD",
+      "REVERSE X",
+      "50/50",
+      "LOWER-BODY GUARD CONFIGURATIONS",
+      "These guards organize leg connections around the opponent's lower body."
+    ],
+    [
+      "CROSS-WRIST GRIP",
+      "TWO-ON-ONE",
+      "ARM DRAG",
+      "RUSSIAN TIE",
+      "ARM ISOLATION CONTROLS",
+      "These grips and movements focus control on one arm to create an angle."
+    ],
+    [
+      "S-MOUNT",
+      "TECHNICAL MOUNT",
+      "HIGH MOUNT",
+      "LOW MOUNT",
+      "MOUNT CONFIGURATIONS",
+      "These variations change hip and leg placement while remaining in the mount family."
+    ],
+    [
+      "TOMOE NAGE",
+      "SUMI GAESHI",
+      "YOKO TOMOE",
+      "LATERAL DROP",
+      "SACRIFICE THROW OPTIONS",
+      "These throws involve committing the attacker's own body toward the mat to complete the throw."
+    ]
+  ],
+  [
+    [
+      "SEATBELT",
+      "BODY TRIANGLE",
+      "STRAIGHTJACKET",
+      "DOUBLE HOOKS",
+      "BACK CONTROL CONFIGURATIONS",
+      "These are recognizable ways to organize control once behind an opponent."
+    ],
+    [
+      "BOLO",
+      "CRAB HOOKS",
+      "LEG WEAVE",
+      "HIP LIFT",
+      "BERIMBOLO EXCHANGE VOCABULARY",
+      "These terms describe inversion, hooking, leg control and elevation in berimbolo exchanges."
+    ],
+    [
+      "BASEBALL CHOKE",
+      "LOOP CHOKE",
+      "CLOCK CHOKE",
+      "BOW-AND-ARROW",
+      "SPECIALIZED GI CHOKES",
+      "These named finishes depend on collar or lapel control."
+    ],
+    [
+      "KNEE SHIELD",
+      "Z-GUARD",
+      "LOCKDOWN",
+      "DEEP HALF",
+      "HALF GUARD VARIATIONS",
+      "Each is a configuration of half guard rather than a separate top pin."
+    ]
+  ],
+  [
+    [
+      "KNEE CUT",
+      "SMASH PASS",
+      "HEADQUARTERS",
+      "HIP SWITCH",
+      "HEADQUARTERS PASSING VOCABULARY",
+      "These terms connect a central passing position to pressure, angle changes and passing options."
+    ],
+    [
+      "BUTTERFLY SWEEP",
+      "X-GUARD SWEEP",
+      "DEEP HALF SWEEP",
+      "LASSO SWEEP",
+      "SWEEPS NAMED FOR THEIR GUARD",
+      "Each sweep name identifies the guard configuration used to begin the reversal."
+    ],
+    [
+      "INSIDE SANKAKU",
+      "OUTSIDE ASHI",
+      "CROSS ASHI",
+      "ASHI GARAMI",
+      "LEG ENTANGLEMENT FAMILIES",
+      "These names describe specialized arrangements for controlling an opponent's leg."
+    ],
+    [
+      "ELBOW ESCAPE",
+      "BRIDGE AND ROLL",
+      "KIPPING ESCAPE",
+      "HEEL DRAG ESCAPE",
+      "MOUNT ESCAPE OPTIONS",
+      "These are different ways to recover space or reverse position from beneath mount."
+    ]
+  ],
+  [
+    [
+      "LEG LASSO",
+      "SPIDER GUARD",
+      "COLLAR-SLEEVE",
+      "DE LA RIVA",
+      "GI OPEN GUARD CONTROLS",
+      "These open guards commonly use sleeve, collar or pants grips to manage distance."
+    ],
+    [
+      "SNAP DOWN",
+      "GO BEHIND",
+      "FRONT HEADLOCK",
+      "SPIN BEHIND",
+      "FRONT HEADLOCK TRANSITIONS",
+      "These controls and movements connect a standing or turtle exchange to the front headlock and back."
+    ],
+    [
+      "TOEHOLD",
+      "KNEEBAR",
+      "STRAIGHT ANKLE LOCK",
+      "ESTIMA LOCK",
+      "NAMED LOWER-BODY SUBMISSIONS",
+      "These are named submissions directed at the leg or foot."
+    ],
+    [
+      "BICEPS FRAME",
+      "HIP FRAME",
+      "NECK FRAME",
+      "SHOULDER FRAME",
+      "FRAME CONTACT POINTS",
+      "Each names a body area where a frame can help manage pressure and space."
+    ]
+  ],
+  [
+    [
+      "SLEEVE DRAG",
+      "COLLAR DRAG",
+      "LAPEL DRAG",
+      "ARM DRAG",
+      "DRAG ENTRIES",
+      "These entries draw the opponent past a control point to expose an angle."
+    ],
+    [
+      "LEG STAPLE",
+      "SHIN PIN",
+      "KNEE PIN",
+      "ANKLE PIN",
+      "LOWER-BODY PASSING PINS",
+      "These controls restrict a leg or part of the leg during guard passing."
+    ],
+    [
+      "CRUCIFIX",
+      "TRUCK",
+      "TURTLE",
+      "BACK MOUNT",
+      "REAR CONTROL POSITIONS",
+      "These are distinct positions encountered while controlling an opponent from behind or beside the back."
+    ],
+    [
+      "WAITER SWEEP",
+      "MERMAID SWEEP",
+      "BALLOON SWEEP",
+      "SICKLE SWEEP",
+      "OPEN GUARD SWEEP VARIATIONS",
+      "These named sweeps use different lower-body connections and directions to reverse position."
+    ]
+  ],
+  [
+    [
+      "WHIZZER",
+      "UNDERHOOK CLINCH",
+      "DOUBLE UNDERHOOKS",
+      "OVER-UNDER CLINCH",
+      "CLINCH ARM CONFIGURATIONS",
+      "These names describe how the arms connect around an opponent in a clinch."
+    ],
+    [
+      "GRANBY ROLL",
+      "SIT OUT",
+      "SWITCH",
+      "PEEK OUT",
+      "TURTLE ESCAPE MOVEMENTS",
+      "These movements create angles to leave turtle or reverse a riding exchange."
+    ],
+    [
+      "LAPEL WRAP",
+      "SLEEVE TENSION",
+      "COLLAR ANCHOR",
+      "PANTS ANCHOR",
+      "GI CONTROL CONCEPTS",
+      "These describe how fabric grips maintain a connection and limit movement."
+    ],
+    [
+      "FAR HIP",
+      "NEAR HIP",
+      "BELT LINE",
+      "BACK OF KNEE",
+      "CRAB RIDE CONTROL LANDMARKS",
+      "These landmarks help describe the grip and hook connections in a crab ride."
+    ]
+  ],
+  [
+    [
+      "ARM-IN GUILLOTINE",
+      "HIGH-ELBOW GUILLOTINE",
+      "MARCELOTINE",
+      "TEN-FINGER GUILLOTINE",
+      "GUILLOTINE VARIATIONS",
+      "These names refer to distinct grip or arm configurations within the guillotine family."
+    ],
+    [
+      "SCOOP GRIP",
+      "HEEL CUP",
+      "TOE LINE",
+      "ACHILLES GRIP",
+      "FOOT AND LEG GRIP VOCABULARY",
+      "These terms identify grips and landmarks used to describe lower-body control."
+    ],
+    [
+      "REVERSE HALF",
+      "DOGFIGHT",
+      "OCTOPUS GUARD",
+      "COYOTE HALF",
+      "HALF GUARD TRANSITION SYSTEMS",
+      "These positions connect half guard to angled upper-body control and coming up."
+    ],
+    [
+      "KNEE SLICE RECOVERY",
+      "LEG DRAG RECOVERY",
+      "STACK RECOVERY",
+      "BODY LOCK RECOVERY",
+      "RETENTION BY PASSING THREAT",
+      "Each names a guard recovery problem according to the pass being addressed."
+    ]
+  ],
+  [
+    [
+      "SINGLE LEG FINISH",
+      "DOUBLE LEG FINISH",
+      "ANKLE PICK FINISH",
+      "KNEE TAP FINISH",
+      "STANDING FINISH FAMILIES",
+      "Each names a takedown finish according to its primary lower-body target."
+    ],
+    [
+      "INSIDE POSITION",
+      "KNEE-ELBOW CONNECTION",
+      "HIP MOBILITY",
+      "DISTANCE MANAGEMENT",
+      "GUARD RETENTION PRINCIPLES",
+      "These principles organize defensive movement before a guard pass is completed."
+    ],
+    [
+      "WRIST TRAP",
+      "ELBOW CONTROL",
+      "ARM PIN",
+      "HAND FIGHT",
+      "BACK ATTACK ARM MANAGEMENT",
+      "These controls address the defending arms during a back-control exchange."
+    ],
+    [
+      "LAPEL GUARD",
+      "WORM LAPEL",
+      "SQUID LAPEL",
+      "LASSO LAPEL",
+      "LAPEL CONTROL VOCABULARY",
+      "These terms identify lapel-based guard and wrapping connections."
+    ]
+  ],
+  [
+    [
+      "CHAIR SIT ENTRY",
+      "ROLLING ENTRY",
+      "ARM DRAG ENTRY",
+      "CRAB RIDE ENTRY",
+      "BACK TAKE ENTRY FAMILIES",
+      "Each names a route into a back take according to its starting movement or control."
+    ],
+    [
+      "LONG STEP COUNTER",
+      "KNEE CUT COUNTER",
+      "TORIANDO COUNTER",
+      "LEG DRAG COUNTER",
+      "PASS-SPECIFIC COUNTERS",
+      "Each is a defensive problem named for the passing action being countered."
+    ],
+    [
+      "SADDLE",
+      "80/20",
+      "OUTSIDE ASHI GARAMI",
+      "50/50 ENTANGLEMENT",
+      "ADVANCED LEG POSITION VOCABULARY",
+      "These terms identify specialized leg-control configurations."
+    ],
+    [
+      "OMOPLATA SWEEP",
+      "TRIANGLE TO ARMBAR",
+      "KIMURA TO BACK",
+      "GUILLOTINE TO SWEEP",
+      "ATTACK-TO-TRANSITION CONNECTIONS",
+      "These pair an initial submission threat with another attack or a positional transition."
+    ]
+  ]
+];
+const PUZZLES = [...DAILY_PUZZLES, ...BROWN_ROUNDS.map((groups, index) => ({
+  id: 101 + index, difficulty: "brown",
+  groups: groups.map(g => ({items:g.slice(0,4), category:g[4], explanation:g[5]}))
+}))];
 
 function validatePuzzle(puzzle) {
   const items = puzzle.groups.flatMap(g => g.items);

@@ -78,7 +78,7 @@ window.BJJTraining = (() => {
     let value;
     try { value = JSON.parse(localStorage.getItem('bjjPracticeSettings') || '{}'); } catch (_) {}
     return {
-      difficulty: ['all','white','blue','purple','black'].includes(value?.difficulty) ? value.difficulty : 'all',
+      difficulty: ['all','white','blue','purple','brown','black'].includes(value?.difficulty) ? value.difficulty : 'all',
       queue: ['all','unplayed','mistakes'].includes(value?.queue) ? value.queue : 'all'
     };
   }

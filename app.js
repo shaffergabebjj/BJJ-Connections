@@ -42,7 +42,7 @@ function dayNumberForDate(d) { return BJJDaily.dayNumber(d); }
 function dateKeyForDate(d) { return BJJDaily.dateKey(d); }
 function dateKey() { return BJJDaily.dateKey(); }
 function dayNumber() { return BJJDaily.dayNumber(); }
-function dailyIndexForDate(d) { return Math.abs(dayNumberForDate(d)) % PUZZLES.length; }
+function dailyIndexForDate(d) { return Math.abs(dayNumberForDate(d)) % DAILY_PUZZLES.length; }
 function dailyIndex() { return dailyIndexForDate(new Date()); }
 
 let trainingHistory = BJJTraining.read(PUZZLES);
@@ -102,7 +102,7 @@ function loadPuzzle(override) {
   if (override) {
     puzzle = override.puzzle;
   } else {
-    puzzle = mode === "daily" ? PUZZLES[dailyIndex()] : pickTraining();
+    puzzle = mode === "daily" ? DAILY_PUZZLES[dailyIndex()] : pickTraining();
   }
   isDailyGame = mode === "daily" && !override;
   if (!puzzle) {
@@ -363,7 +363,7 @@ function showStats() {
   ].map(([a, b]) => `<div class="stat"><b>${b}</b>${a}</div>`).join("");
   trainingHistory = {...trainingHistory, ...BJJTraining.read(PUZZLES)};
   const progress = $("beltProgress");
-  progress.innerHTML = ["white","blue","purple","black"].map(level => {
+  progress.innerHTML = ["white","blue","purple","brown","black"].map(level => {
     const pool = PUZZLES.filter(p => p.difficulty === level);
     const done = pool.filter(p => trainingHistory[p.id]?.completed).length;
     return `<div class="practice-progress-row"><span>${level[0].toUpperCase() + level.slice(1)}</span><progress max="${pool.length}" value="${done}" aria-label="${level} belt completion"></progress><span>${done}/${pool.length}</span></div>`;
@@ -389,7 +389,7 @@ function renderArchiveList() {
   for (let i = 1; i <= ARCHIVE_DAYS; i++) {
     const d = new Date();
     d.setDate(d.getDate() - i);
-    const p = PUZZLES[dailyIndexForDate(d)];
+    const p = DAILY_PUZZLES[dailyIndexForDate(d)];
     const dn = dayNumberForDate(d);
     const dateStr = dateKeyForDate(d);
     const btn = document.createElement("button");
@@ -446,7 +446,7 @@ document.querySelector(".puzzle-tabs").addEventListener("keydown", event => {
 });
 
 // Difficulty filter buttons (Training mode only)
-["all", "white", "blue", "purple", "black"].forEach(d => {
+["all", "white", "blue", "purple", "brown", "black"].forEach(d => {
   const b = document.createElement("button");
   b.textContent = d === "all" ? "All" : d[0].toUpperCase() + d.slice(1);
   b.onclick = () => {
