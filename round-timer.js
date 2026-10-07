@@ -31,30 +31,48 @@ window.BJJRoundClock = function (config, now = () => Date.now()) {
   const $ = id => document.getElementById(id);
   if (!$('roundTimer')) return;
   const settings = ['timerWork','timerRest','timerRounds'].map($);
+  const presets = [...document.querySelectorAll('[data-timer-preset]')];
   let clock, interval, started = false;
-  document.querySelectorAll('[data-timer-preset]').forEach(button => {
+  try {
+    const stored = JSON.parse(localStorage.getItem('bjjTimerSettings') || 'null');
+    if (Array.isArray(stored) && stored.length === settings.length && stored.every((v,i) => [...settings[i].options].some(option => option.value === v))) {
+      settings.forEach((el,i) => el.value = stored[i]);
+    }
+  } catch (_) {}
+  function saveSettings() {
+    try { localStorage.setItem('bjjTimerSettings', JSON.stringify(settings.map(el => el.value))); } catch (_) {}
+  }
+  presets.forEach(button => {
     button.addEventListener('click', () => {
-      if (started) return;
+      if (started && !clock.snapshot().finished) return;
       const values = button.getAttribute('data-timer-preset').split(',');
       settings.forEach((el, index) => { if (values[index] && [...el.options].some(option => option.value === values[index])) el.value = values[index]; });
-      reset();
+      saveSettings(); reset();
     });
   });
   function reset() {
     clearInterval(interval);
     started = false;
     clock = window.BJJRoundClock({workSeconds:Number(settings[0].value)*60, restSeconds:Number(settings[1].value), rounds:Number(settings[2].value)});
+    const rounds = Number(settings[2].value);
+    const total = Number(settings[0].value)*60*rounds + Number(settings[1].value)*(rounds-1);
+    $('timerTotal').textContent = Math.floor(total/60) + ' min' + (total%60 ? ' ' + total%60 + ' sec' : '') + ' total · ' + rounds + ' work round' + (rounds === 1 ? '' : 's') + (rounds > 1 && Number(settings[1].value) ? ' + breaks' : '');
     render();
   }
   function render() {
     const state = clock.snapshot();
     $('timerDisplay').textContent = String(Math.floor(state.seconds/60)).padStart(2,'0') + ':' + String(state.seconds%60).padStart(2,'0');
-    const status = state.finished ? 'Session complete' : state.label + ' · Round ' + state.round + ' of ' + state.rounds;
+    const status = state.finished ? 'Session complete' : (started && !state.running ? 'Paused · ' : '') + state.label + ' · Round ' + state.round + ' of ' + state.rounds;
     if ($('timerPhase').textContent !== status) $('timerPhase').textContent = status;
     $('roundTimer').dataset.phase = state.label.toLowerCase();
     $('timerProgress').value = state.progress;
     $('timerStart').textContent = state.finished ? 'Start again' : state.running ? 'Pause' : started ? 'Resume' : 'Start timer';
-    settings.forEach(el => el.disabled = started);
+    settings.forEach(el => el.disabled = started && !state.finished);
+    presets.forEach(button => {
+      button.disabled = started && !state.finished;
+      const selected = button.getAttribute('data-timer-preset') === settings.map(el => el.value).join(',');
+      button.setAttribute('aria-pressed', String(selected)); button.classList.toggle('active', selected);
+    });
     if (!state.running) clearInterval(interval);
   }
   $('timerStart').addEventListener('click', () => {
@@ -64,7 +82,7 @@ window.BJJRoundClock = function (config, now = () => Date.now()) {
     render();
   });
   $('timerReset').addEventListener('click', reset);
-  settings.forEach(el => el.addEventListener('change', reset));
+  settings.forEach(el => el.addEventListener('change', () => { saveSettings(); reset(); }));
   document.addEventListener('visibilitychange', render);
   reset();
 })();

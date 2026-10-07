@@ -81,9 +81,9 @@
       <p class="section-sub">Set your work rounds and rest breaks for drilling or positional practice.</p>
       <div class="round-timer panel" id="roundTimer">
         <div class="timer-settings">
-          <label>Work round<select class="search-input" id="timerWork"><option value="2">2 minutes</option><option value="3">3 minutes</option><option value="5" selected>5 minutes</option><option value="6">6 minutes</option><option value="8">8 minutes</option><option value="10">10 minutes</option></select></label>
+          <label>Work round<select class="search-input" id="timerWork"><option value="1">1 minute</option><option value="2">2 minutes</option><option value="3">3 minutes</option><option value="5" selected>5 minutes</option><option value="6">6 minutes</option><option value="8">8 minutes</option><option value="10">10 minutes</option></select></label>
           <label>Rest between rounds<select class="search-input" id="timerRest"><option value="0">No rest</option><option value="30">30 seconds</option><option value="60" selected>1 minute</option><option value="90">90 seconds</option></select></label>
-          <label>Rounds<select class="search-input" id="timerRounds"><option value="1">1 round</option><option value="3" selected>3 rounds</option><option value="5">5 rounds</option><option value="6">6 rounds</option></select></label>
+          <label>Rounds<select class="search-input" id="timerRounds"><option value="1">1 round</option><option value="3" selected>3 rounds</option><option value="5">5 rounds</option><option value="6">6 rounds</option><option value="10">10 rounds</option></select></label>
         </div>
         <div class="timer-presets" aria-label="Quick timer presets">
           <span>Quick start</span>
@@ -91,6 +91,7 @@
           <button type="button" class="chip" data-timer-preset="1,30,10">10 × 1 min</button>
           <button type="button" class="chip" data-timer-preset="5,60,3">3 × 5 min</button>
         </div>
+        <p class="timer-total" id="timerTotal"></p>
         <div class="timer-face">
           <p id="timerPhase" class="timer-phase" role="status">Work · Round 1 of 3</p>
           <div id="timerDisplay" class="timer-display" role="timer" aria-live="off" aria-label="Time remaining">05:00</div>
@@ -173,7 +174,8 @@
         </div>
         <div class="checklist" id="goalsList"></div><p id="goalsEmpty" class="empty-hint">Start with one specific goal you can work on in your next class.</p>
         <div class="checklist-progress mt-2">
-          <span id="goalCount">0 goals</span>
+          <span id="goalCount" role="status">0 goals</span>
+          <button type="button" class="text-button" id="undoGoal" hidden>Undo last deletion</button>
         </div>
       </div>
     </div>
@@ -197,7 +199,8 @@
         </div>
         <label class="field-label" for="logTechniques">Techniques practiced</label><input type="text" class="search-input" id="logTechniques" placeholder="Techniques practiced (comma-separated)" style="width:100%;margin-bottom:10px" aria-label="Techniques practiced">
         <label class="field-label" for="logNotes">Session notes</label><input type="text" class="search-input" id="logNotes" placeholder="Notes about this session" style="width:100%;margin-bottom:10px" aria-label="Session notes">
-        <div class="dashboard-actions"><button class="btn btn-dark btn-sm" id="addSession">Add Session</button><button class="btn btn-outline btn-sm" id="exportSessions" type="button">Export log (CSV)</button></div><p id="logStatus" class="save-status" role="status"></p>
+        <div class="dashboard-actions"><button class="btn btn-dark btn-sm" id="addSession">Add Session</button><button class="btn btn-outline btn-sm" id="exportSessions" type="button">Export log (CSV)</button></div><button type="button" class="text-button" id="undoSession" hidden>Undo last deletion</button>
+      <p id="logStatus" class="save-status" role="status"></p>
       </div>
 
       <div class="checklist-progress mt-2">

@@ -38,21 +38,27 @@ assert(!c.BJJResources.matches(baseball,'no-such-technique'));
 const escaped=c.BJJResources.card({...baseball,term:'<script>',def:'a & b',video:{...baseball.video,title:'<iframe>'}});
 assert(!escaped.includes('<script>') && !escaped.includes('<iframe>'));
 const nodes=new Map();
-function node(){return {value:'',innerHTML:'',textContent:'',events:{},children:[],appendChild(el){this.children.push(el);},focus(){},classList:{add(){},remove(){}},addEventListener(k,f){this.events[k]=f;}};}
-for(const id of ['glossarySearch','noGlossaryResults','glossaryCount','glossarySections','glossaryCategory','pickLesson','clearGlossaryFilters'])nodes.set(id,node());
+function node(){return {value:'',innerHTML:'',textContent:'',events:{},children:[],querySelectorAll(){return [];},appendChild(el){this.children.push(el);},focus(){},classList:{add(){},remove(){}},addEventListener(k,f){this.events[k]=f;}};}
+for(const id of ['glossarySearch','noGlossaryResults','glossaryCount','glossarySections','glossaryCategory','pickLesson','clearGlossaryFilters','glossaryPagination','glossaryVisible','moreGlossary'])nodes.set(id,node());
 nodes.get('glossaryCategory').value='all';
 c.document={getElementById:id=>nodes.get(id),createElement:()=>node()};
-c.window={open:(...args)=>{c.opened=args;}};c.location={search:'?q=Baseball%20Bat%20Choke'};c.URLSearchParams=URLSearchParams;
-const renderScript=html.match(/\(function\(\) \{\n  var entries = BJJResources[\s\S]*?\}\)\(\);/)[0];
+c.window={addEventListener(){},open:(...args)=>{c.opened=args;}};c.location={search:'?q=Baseball%20Bat%20Choke',pathname:'/resources.html',hash:''};c.history={replaceState(_a,_b,url){c.location.search=new URL(url,'https://example.test').search;}};c.URLSearchParams=URLSearchParams;
+const renderScript=fs.readFileSync('resources-page.js','utf8');
 vm.runInContext(renderScript,c);
 assert.equal(nodes.get('glossarySearch').value,'Baseball Bat Choke');
 assert.match(nodes.get('glossaryCount').textContent,/1 entry · 1 video/);
 assert(nodes.get('glossarySections').innerHTML.includes(baseball.video.url));
 nodes.get('glossarySearch').value='';nodes.get('glossarySearch').events.input();
-assert.equal((nodes.get('glossarySections').innerHTML.match(/class="resource-watch"/g)||[]).length,c.entries.length);
+assert.equal((nodes.get('glossarySections').innerHTML.match(/class="resource-watch"/g)||[]).length,24,'initial rendering stays small');
+for(let i=0;i<20 && !nodes.get('moreGlossary').hidden;i++)nodes.get('moreGlossary').events.click();
+assert.equal((nodes.get('glossarySections').innerHTML.match(/class="resource-watch"/g)||[]).length,284,'every entry remains reachable');
+assert.equal(new Set([...nodes.get('glossarySections').innerHTML.matchAll(/<dt>(.*?)<\/dt>/g)].map(m=>m[1])).size,284,'pagination cannot duplicate or omit entries');
+assert.equal(nodes.get('moreGlossary').hidden,true);
+
 assert.equal(nodes.get('glossaryCount').textContent,'284 entries · 284 videos');
 assert.equal(nodes.get('glossaryCategory').children.length,14);
 nodes.get('glossaryCategory').value='Submissions';nodes.get('glossaryCategory').events.change();
+assert.match(c.location.search,/category=Submissions/);
 assert(nodes.get('glossarySections').innerHTML.includes('Baseball Bat Choke'));
 assert(!nodes.get('glossarySections').innerHTML.includes('<dt>Base</dt>'));
 assert.equal(nodes.get('pickLesson').disabled,false);

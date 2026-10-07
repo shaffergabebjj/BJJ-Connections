@@ -23,6 +23,7 @@
 
   // Goals
   let goals = read("bjjTrainingGoals").filter(g => g && typeof g.text === "string" && g.text.trim()).map(g => ({text:g.text, done:g.done === true}));
+  let removedGoal = null;
   function goalCount() {
     const done = goals.filter(g => g.done).length;
     $("goalCount").textContent = done + " of " + goals.length + " goals complete";
@@ -37,7 +38,12 @@
       const label = document.createElement("label"); label.htmlFor = cb.id; label.textContent = goal.text;
       const remove = document.createElement("button"); remove.type = "button"; remove.className = "btn btn-ghost btn-sm"; remove.textContent = "×"; remove.setAttribute("aria-label", "Delete goal: " + goal.text);
       cb.addEventListener("change", () => { goal.done = cb.checked; row.classList.toggle("checked", cb.checked); save("bjjTrainingGoals", goals); goalCount(); });
-      remove.addEventListener("click", () => { goals.splice(i,1); save("bjjTrainingGoals", goals); renderGoals(); });
+      remove.addEventListener("click", () => {
+        removedGoal = {goal:goals.splice(i,1)[0], index:i};
+        const ok = save("bjjTrainingGoals", goals); renderGoals();
+        $("goalCount").textContent += ok ? " · Goal deleted." : " · Deleted for this visit only.";
+        $("undoGoal").hidden = false; $("undoGoal").focus();
+      });
       row.append(cb,label,remove); $("goalsList").appendChild(row);
     });
     goalCount();
@@ -49,6 +55,13 @@
   }
   $("addGoal").addEventListener("click",addGoal);
   $("goalInput").addEventListener("keydown",e => { if(e.key === "Enter") addGoal(); });
+  $("undoGoal").addEventListener("click", () => {
+    if (!removedGoal) return;
+    goals.splice(removedGoal.index,0,removedGoal.goal); removedGoal = null;
+    const ok = save("bjjTrainingGoals", goals); renderGoals();
+    $("goalCount").textContent += ok ? " · Goal restored." : " · Restored for this visit only.";
+    $("undoGoal").hidden = true; $("goalInput").focus();
+  });
   renderGoals();
 
   // Session log
@@ -57,6 +70,7 @@
     date:s.date, duration:Number.isFinite(Number(s.duration)) && Number(s.duration)>0 ? Math.min(1440,Math.round(Number(s.duration))) : "",
     type:typeof s.type === "string" ? s.type : "", techniques:typeof s.techniques === "string" ? s.techniques : "", notes:typeof s.notes === "string" ? s.notes : "", timestamp:s.timestamp
   }));
+  let removedSession = null;
   function renderSessions() {
     sessions.sort((a,b) => b.date.localeCompare(a.date));
     const minutes = sessions.reduce((sum,s) => sum + Number(s.duration || 0),0);
@@ -81,10 +95,22 @@
         (s.notes ? '<p class="session-notes">'+escape(s.notes)+'</p>' : '')+
         '</div><button type="button" class="btn btn-ghost btn-sm" data-del="'+i+'" aria-label="Delete session from '+escape(date)+'">×</button></article>';
     }).join("");
-    $("logList").querySelectorAll("[data-del]").forEach(button => button.addEventListener("click",() => {
-      sessions.splice(Number(button.getAttribute("data-del")),1); $("logStatus").textContent = savedMessage(save("bjjTrainingLog",sessions)); renderSessions();
-    }));
   }
+  $("logList").addEventListener("click", event => {
+    const button = event.target.closest('[data-del]');
+    if (!button) return;
+    const index = Number(button.getAttribute('data-del'));
+    if (!Number.isInteger(index) || !sessions[index]) return;
+    removedSession = sessions.splice(index,1)[0];
+    $("logStatus").textContent = 'Session deleted. ' + savedMessage(save("bjjTrainingLog",sessions));
+    renderSessions(); $("undoSession").hidden = false; $("undoSession").focus();
+  });
+  $("undoSession").addEventListener("click", () => {
+    if (!removedSession) return;
+    sessions.push(removedSession); removedSession = null;
+    $("logStatus").textContent = 'Session restored. ' + savedMessage(save("bjjTrainingLog",sessions));
+    renderSessions(); $("undoSession").hidden = true; $("logDate").focus();
+  });
   function addSession() {
     const date = $("logDate").value || localDate;
     const duration = $("logDuration").value;
