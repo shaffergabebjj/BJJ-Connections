@@ -746,8 +746,8 @@ a:focus-visible, button:focus-visible, input:focus-visible,
     --muted-light: #6a6a6a;
     --border: #2e2e2c;
     --border-strong: #444;
-    --accent: #e53e3e;
-    --accent-hover: #ff5757;
+    --accent: #ff6b6b;
+    --accent-hover: #ff9292;
     --accent-soft: #2a1518;
     --shadow-sm: 0 1px 3px rgba(0,0,0,.3);
     --shadow: 0 2px 8px rgba(0,0,0,.4);
@@ -1762,4 +1762,24 @@ body { padding-inline:env(safe-area-inset-left, 0px) env(safe-area-inset-right, 
 }
 @media print {
   .library-toolbar, .library-pagination, .faq-filters, .offline-notice, .reading-progress, .event-actions, #eventStatus { display:none !important; }
+}
+
+/* Final phone review: keep the first useful control closer to the page title. */
+.tech-card h3 { color:var(--accent); }
+:root[data-theme="dark"] .btn-primary,
+:root[data-theme="dark"] #share,
+:root[data-theme="dark"] .hero-mini-tile.selected { background:#c8102e; border-color:#c8102e; color:#fff; }
+:root[data-theme="dark"] .btn-primary:hover { background:#a50d26; border-color:#a50d26; color:#fff; }
+.resources-page #glossary { padding-top:0; }
+@media (max-width:640px) {
+  .page-header { padding:28px 0 24px; }
+  .page-header p { font-size:16px; }
+  .section-nav { flex-wrap:nowrap; overflow-x:auto; padding-block:16px; scrollbar-width:thin; }
+  .section-nav a { flex-shrink:0; white-space:nowrap; }
+  .library-stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:18px; }
+  .library-stats span { line-height:1.4; }
+  .library-stats strong { display:block; font-size:20px; margin-bottom:3px; }
+  .library-heading { margin:8px 0 14px; }
+  .library-heading > a { margin-top:4px; }
+  .library-toolbar { margin-bottom:22px; }
 }
