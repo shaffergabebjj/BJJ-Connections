@@ -32,6 +32,14 @@ window.BJJRoundClock = function (config, now = () => Date.now()) {
   if (!$('roundTimer')) return;
   const settings = ['timerWork','timerRest','timerRounds'].map($);
   let clock, interval, started = false;
+  document.querySelectorAll('[data-timer-preset]').forEach(button => {
+    button.addEventListener('click', () => {
+      if (started) return;
+      const values = button.getAttribute('data-timer-preset').split(',');
+      settings.forEach((el, index) => { if (values[index] && [...el.options].some(option => option.value === values[index])) el.value = values[index]; });
+      reset();
+    });
+  });
   function reset() {
     clearInterval(interval);
     started = false;

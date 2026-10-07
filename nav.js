@@ -1,41 +1,89 @@
-// BJJ Connections — shared navigation (mobile menu toggle + active link)
+// BJJ Connections — shared navigation, progress, and small global affordances.
 (function () {
   var toggle = document.querySelector('.nav-toggle');
   var links = document.querySelector('.nav-links');
-  if (toggle && links) {
-    toggle.addEventListener('click', function () {
-      links.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', links.classList.contains('open'));
-    });
-    // Close menu when clicking a link
-    links.querySelectorAll('a').forEach(function (a) {
-      a.addEventListener('click', function () {
-        links.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-      });
-    });
-    document.addEventListener('click', function (event) {
-      if (!links.contains(event.target) && !toggle.contains(event.target)) {
-        links.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-      }
-    });
-    // Moving focus out closes the mobile menu without trapping keyboard users.
-    document.addEventListener('focusin', function (event) {
-      if (!links.contains(event.target) && !toggle.contains(event.target)) {
-        links.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-      }
-    });
-    // Close on Escape
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && links.classList.contains('open')) {
-        links.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.focus();
-      }
-    });
+  if (!toggle || !links) return;
+
+  var backdrop = document.createElement('button');
+  backdrop.type = 'button';
+  backdrop.className = 'nav-backdrop';
+  backdrop.tabIndex = -1;
+  backdrop.setAttribute('aria-label', 'Close navigation');
+  document.body.appendChild(backdrop);
+
+  function closeMenu(returnFocus) {
+    links.classList.remove('open');
+    backdrop.classList.remove('open');
+    document.body.classList.remove('menu-open');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Open navigation');
+    toggle.textContent = '☰';
+    if (returnFocus) toggle.focus();
   }
+
+  function openMenu() {
+    links.classList.add('open');
+    backdrop.classList.add('open');
+    document.body.classList.add('menu-open');
+    toggle.setAttribute('aria-expanded', 'true');
+    toggle.setAttribute('aria-label', 'Close navigation');
+    toggle.textContent = '×';
+  }
+
+  toggle.addEventListener('click', function () {
+    if (links.classList.contains('open')) closeMenu(false);
+    else openMenu();
+  });
+  backdrop.addEventListener('click', function () { closeMenu(false); });
+  links.querySelectorAll('a, button').forEach(function (item) {
+    item.addEventListener('click', function () { closeMenu(false); });
+  });
+  document.addEventListener('focusin', function (event) {
+    if (!links.contains(event.target) && !toggle.contains(event.target)) closeMenu(false);
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && links.classList.contains('open')) closeMenu(true);
+  });
+  window.addEventListener('resize', function () {
+    if (window.innerWidth > 1000 && links.classList.contains('open')) closeMenu(false);
+  }, {passive:true});
+
+  // Keep the active state accurate for pages that are opened from query links.
+  var current = location.pathname.split('/').pop() || 'index.html';
+  links.querySelectorAll('a').forEach(function (link) {
+    var href = (link.getAttribute('href') || '').split('?')[0].split('#')[0];
+    var normalized = href === '/' || href === '' ? 'index.html' : href.split('/').pop();
+    if (normalized === current || (current === 'index.html' && normalized === 'index.html')) {
+      links.querySelectorAll('a.active').forEach(function (active) {
+        if (active !== link) { active.classList.remove('active'); active.removeAttribute('aria-current'); }
+      });
+      link.classList.add('active');
+      link.setAttribute('aria-current', 'page');
+    }
+  });
+})();
+
+// A thin reading indicator gives long resource and training pages a clear sense of place.
+(function () {
+  var main = document.querySelector('main');
+  if (!main || document.documentElement.scrollHeight < window.innerHeight * 1.4) return;
+  var progress = document.createElement('div');
+  progress.className = 'reading-progress';
+  progress.setAttribute('aria-hidden', 'true');
+  progress.innerHTML = '<span></span>';
+  document.body.appendChild(progress);
+  var fill = progress.firstElementChild;
+  var ticking = false;
+  function update() {
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    fill.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0) + ')';
+    ticking = false;
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { window.requestAnimationFrame(update); ticking = true; }
+  }, {passive:true});
+  window.addEventListener('resize', update, {passive:true});
+  update();
 })();
 
 

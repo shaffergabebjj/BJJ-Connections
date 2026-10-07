@@ -6,9 +6,17 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "launch_handler": {"client_mode": "navigate-existing"},
   "background_color": "#0a0a0a",
   "theme_color": "#0a0a0a",
   "orientation": "portrait-primary",
+  "shortcuts": [
+    {"name": "Play today’s puzzle", "short_name": "Daily puzzle", "url": "/puzzles.html"},
+    {"name": "Practice training puzzles", "short_name": "Practice", "url": "/puzzles.html?mode=training"},
+    {"name": "Start a training session", "short_name": "Training", "url": "/training.html#round-timer"},
+    {"name": "Play Medal Run", "short_name": "Medal Run", "url": "/game/"}
+  ],
   "icons": [
     {
       "src": "/icon-192.png",

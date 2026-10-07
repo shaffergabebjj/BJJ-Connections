@@ -45,6 +45,7 @@ Live at **[bjjconnectionsbygabe.com](https://bjjconnectionsbygabe.com)**.
 
 ### Training Resources (training.html)
 - Work/rest round timer with pause, resume, and elapsed-time recovery
+- Quick-start timer presets for common drilling and positional-round formats
 - Weekly sessions, mat time, and open-goal summary
 - Solo drilling ideas
 - Partner drilling ideas
@@ -81,9 +82,11 @@ Puzzles live in the `ROUNDS` array in `data.js`. Difficulty is inferred automati
 - Shared navigation included in each page with `nav.js` for mobile menu toggle
 - All interactive features use `localStorage` for persistence with safe fallbacks
 - Mobile-first responsive design with dark mode support
+- Shared navigation includes an accessible mobile overlay, reading progress on long pages, and iPhone install guidance
 
 ### Personal tools
 - Competition checklists include overall progress, remaining-only filtering, and print styles.
+- Competition prep can save an event name/date locally and show a days-to-go marker.
 - Training plans restore saved choices; goals and session logs are stored in the current browser.
 - Export the session log as CSV for a portable backup. Browser data does not sync between devices.
 - Run `node tests/run-tests.js` and `node tests/tools-tests.js` and `node tests/practice-tests.js` for regression checks.
