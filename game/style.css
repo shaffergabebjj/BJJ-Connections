@@ -24,3 +24,19 @@ body{margin:0;background:var(--bg);color:var(--ink);min-height:100svh;padding:0 
 @media(max-width:720px){#run-controls{grid-template-columns:repeat(3,1fr)}#run-location{grid-column:1/-1;grid-row:2}.control{padding:10px 7px}.control strong{font-size:15px}.control small{font-size:9px}}
 
 html.playing,html.playing body{overscroll-behavior:none}html.playing body{touch-action:none}.home-controls-guide{display:grid;grid-template-columns:auto 1fr 1fr 1fr;align-items:center;gap:8px;margin:2px 0 5px;color:#b6cbd0;font:10px/1.35 monospace;letter-spacing:.03em}.home-controls-guide strong{color:var(--gold);font-size:10px;letter-spacing:.09em}.home-controls-guide span{padding-left:8px;border-left:1px solid #45606a}.home-controls-guide span:first-of-type{border-left:0}@media(max-width:720px){.home-controls-guide{grid-template-columns:1fr 1fr;gap:5px 8px;max-width:230px;font-size:9px}.home-controls-guide strong{grid-column:1/-1}.home-controls-guide span{padding-left:0;border-left:0}}
+
+/* Arcade cabinet polish; retain the canvas and movement controls. */
+#game-shell{border-color:#4c6b72;border-radius:8px;overflow:hidden;box-shadow:0 16px 55px #0005}
+#menu-nav button{position:relative;text-align:left;padding:16px;border-radius:6px;border-bottom:3px solid #42606e}
+#menu-nav button:hover{border-bottom-color:var(--mint)}
+#menu-nav span{color:var(--mint)}
+#home-progress{background:#142b33;border-top:1px solid #48606a}
+.meter{border-radius:4px;overflow:hidden}
+.feedback-section{border-radius:8px;border-top:3px solid var(--mint)}
+.feedback-form textarea,.feedback-form input{border-radius:6px;background:#0b1c26}
+#panel{border-radius:10px;border-top:3px solid var(--gold)}
+#panel .card,.stats-grid .stat{border-radius:6px}
+#panel header h2{letter-spacing:-.03em}
+.dev-banner{border-radius:0 0 6px 6px}
+.home-overlay .eyebrow{color:var(--gold)}
+@media(max-width:720px){#menu-nav button{padding:12px 9px}.feedback-section{margin-top:18px}.back-site{font-size:11px;padding:11px 12px;letter-spacing:.02em;max-width:100%}.home-overlay{width:76%}#home-progress{font-size:12px}}
