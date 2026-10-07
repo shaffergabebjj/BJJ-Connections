@@ -2,10 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Competition Prep — Checklists & Resources for BJJ Tournaments | BJJ Connections</title>
 <meta name="description" content="Interactive competition preparation checklists for gi and no-gi BJJ tournaments. What to bring, weigh-in prep, match-day organization, and rules resources.">
 <meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="canonical" href="https://bjjconnectionsbygabe.com/competition.html">
 
 <link rel="icon" type="image/svg+xml" href="favicon.svg?v=gi2">
@@ -64,6 +67,14 @@
       <div class="tool-dashboard">
         <div><span class="hero-eyebrow">Your preparation</span><h2 id="prepSummary" role="status">Loading your checklist…</h2><p>Check off what applies to your event. Your progress stays in this browser.</p></div>
         <div class="dashboard-actions"><button class="btn btn-outline btn-sm" id="remainingOnly" type="button" aria-pressed="false">Show remaining</button><button class="btn btn-outline btn-sm" id="printChecklist" type="button">Print checklist</button></div>
+      </div>
+      <div class="event-bar" aria-labelledby="eventBarTitle">
+        <div><span class="hero-eyebrow">Optional event marker</span><h2 id="eventBarTitle">Keep the date in view.</h2><p id="eventCountdown">Save your tournament name and date on this device.</p></div>
+        <div class="event-fields">
+          <label for="eventName">Event name<input id="eventName" class="search-input" type="text" maxlength="80" placeholder="e.g., Chicago Spring Games"></label>
+          <label for="eventDate">Event date<input id="eventDate" class="search-input" type="date"></label>
+          <button class="btn btn-dark btn-sm" id="saveEvent" type="button">Save event</button>
+        </div>
       </div>
 <nav class="section-nav" aria-label="Competition sections"><a href="#prep-weekBefore">The week before</a><a href="#prep-giPrep">Gi</a><a href="#prep-nogiPrep">No-gi</a><a href="#prep-bring">Packing list</a><a href="#prep-matchDay">Match day</a><a href="#prep-weighIn">Weigh-in</a><a href="#rules">Rules</a></nav>
       <div class="prep-grid">
@@ -312,6 +323,42 @@ var CHECKLISTS = {
     try { localStorage.setItem("bjjChecklist_" + key, JSON.stringify(data)); }
     catch(e) {}
   }
+
+  // Keep a lightweight event marker beside the checklist without requiring an account.
+  (function setupEventMarker() {
+    var name = document.getElementById("eventName");
+    var date = document.getElementById("eventDate");
+    var save = document.getElementById("saveEvent");
+    var countdown = document.getElementById("eventCountdown");
+    if (!name || !date || !save || !countdown) return;
+    var stored = {};
+    try { stored = JSON.parse(localStorage.getItem("bjjCompetitionEvent") || "{}"); } catch (e) {}
+    name.value = typeof stored.name === "string" ? stored.name : "";
+    date.value = typeof stored.date === "string" ? stored.date : "";
+    function renderEvent() {
+      if (!date.value) {
+        countdown.textContent = "Save your tournament name and date on this device.";
+        return;
+      }
+      var eventDay = new Date(date.value + "T12:00:00");
+      var today = new Date(); today.setHours(12, 0, 0, 0);
+      var days = Math.round((eventDay - today) / 86400000);
+      var label = name.value.trim() || "Your event";
+      if (!Number.isFinite(days)) { countdown.textContent = "Choose a valid event date."; return; }
+      if (days > 0) countdown.textContent = label + " · " + days + " day" + (days === 1 ? "" : "s") + " to go.";
+      else if (days === 0) countdown.textContent = label + " · Today. Check your packing list before you leave.";
+      else countdown.textContent = label + " · This date has passed. Update it for your next event.";
+    }
+    save.addEventListener("click", function () {
+      var payload = {name: name.value.trim(), date: date.value};
+      try { localStorage.setItem("bjjCompetitionEvent", JSON.stringify(payload)); countdown.textContent = "Event saved on this device."; }
+      catch (e) { countdown.textContent = "Event saved for this visit only."; }
+      renderEvent();
+    });
+    name.addEventListener("input", renderEvent);
+    date.addEventListener("change", renderEvent);
+    renderEvent();
+  })();
 
   var remainingOnly = false;
   var progress = {};

@@ -2,10 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Training Resources — Drills, Conditioning & Goals | BJJ Connections</title>
 <meta name="description" content="BJJ training resources: drilling ideas, solo drills, strength and conditioning concepts, grip training, warm-ups, and goal-setting tools for grapplers.">
 <meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="canonical" href="https://bjjconnectionsbygabe.com/training.html">
 
 <link rel="icon" type="image/svg+xml" href="favicon.svg?v=gi2">
@@ -81,6 +84,12 @@
           <label>Work round<select class="search-input" id="timerWork"><option value="2">2 minutes</option><option value="3">3 minutes</option><option value="5" selected>5 minutes</option><option value="6">6 minutes</option><option value="8">8 minutes</option><option value="10">10 minutes</option></select></label>
           <label>Rest between rounds<select class="search-input" id="timerRest"><option value="0">No rest</option><option value="30">30 seconds</option><option value="60" selected>1 minute</option><option value="90">90 seconds</option></select></label>
           <label>Rounds<select class="search-input" id="timerRounds"><option value="1">1 round</option><option value="3" selected>3 rounds</option><option value="5">5 rounds</option><option value="6">6 rounds</option></select></label>
+        </div>
+        <div class="timer-presets" aria-label="Quick timer presets">
+          <span>Quick start</span>
+          <button type="button" class="chip" data-timer-preset="3,30,5">5 × 3 min</button>
+          <button type="button" class="chip" data-timer-preset="1,30,10">10 × 1 min</button>
+          <button type="button" class="chip" data-timer-preset="5,60,3">3 × 5 min</button>
         </div>
         <div class="timer-face">
           <p id="timerPhase" class="timer-phase" role="status">Work · Round 1 of 3</p>

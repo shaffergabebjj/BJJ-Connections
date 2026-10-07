@@ -2,10 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>BJJ Connections — Techniques, Puzzles & Training for Grapplers</title>
 <meta name="description" content="A growing collection of Brazilian Jiu-Jitsu techniques, training tools, competition resources, and daily puzzles for grapplers. Built by Gabe Shaffer.">
 <meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="canonical" href="https://bjjconnectionsbygabe.com/">
 
 <link rel="icon" type="image/svg+xml" href="favicon.svg?v=gi2">
@@ -117,6 +120,32 @@
           <span id="homeStreak">Streak: 0</span>
           <a id="homeFullGame" href="puzzles.html">Open full game →</a>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section home-desk-section" aria-labelledby="homeDeskTitle">
+    <div class="container">
+      <div class="section-heading home-desk-heading">
+        <div><div class="hero-eyebrow">Your training desk</div><h2 id="homeDeskTitle" class="section-title">Keep your next step close.</h2></div>
+        <p id="homeDeskMessage">Your saved work stays on this device and updates as you train.</p>
+      </div>
+      <div class="home-desk-grid">
+        <a class="home-desk-card" href="techniques.html#techResults">
+          <span class="home-desk-icon" aria-hidden="true">★</span>
+          <span><strong id="homeSavedCount">0 saved</strong><small>techniques to revisit</small></span>
+          <b aria-hidden="true">↗</b>
+        </a>
+        <a class="home-desk-card" href="training.html#goals">
+          <span class="home-desk-icon" aria-hidden="true">◎</span>
+          <span><strong id="homeGoalCount">0 open goals</strong><small>in your training plan</small></span>
+          <b aria-hidden="true">↗</b>
+        </a>
+        <a class="home-desk-card" href="training.html#training-log">
+          <span class="home-desk-icon" aria-hidden="true">＋</span>
+          <span><strong id="homeSessionCount">Log your next session</strong><small id="homeSessionDetail">Keep a record of your mat time</small></span>
+          <b aria-hidden="true">↗</b>
+        </a>
       </div>
     </div>
   </section>
@@ -440,6 +469,39 @@
   document.addEventListener("visibilitychange", function () {
     if (document.visibilityState === "visible") refreshForLocalDate();
   });
+})();
+</script>
+<script>
+(function () {
+  function read(key) {
+    try { var value = JSON.parse(localStorage.getItem(key) || "[]"); return Array.isArray(value) ? value : []; }
+    catch (_) { return []; }
+  }
+  function update() {
+    var favorites = read("bjjFavoriteTechniques").filter(Boolean);
+    var goals = read("bjjTrainingGoals").filter(function (goal) { return goal && goal.done !== true; });
+    var sessions = read("bjjTrainingLog").filter(Boolean);
+    var saved = document.getElementById("homeSavedCount");
+    var open = document.getElementById("homeGoalCount");
+    var session = document.getElementById("homeSessionCount");
+    var detail = document.getElementById("homeSessionDetail");
+    var message = document.getElementById("homeDeskMessage");
+    if (!saved || !open || !session || !detail) return;
+    saved.textContent = favorites.length + " saved";
+    open.textContent = goals.length + " open goal" + (goals.length === 1 ? "" : "s");
+    if (sessions.length) {
+      var latest = sessions.slice().sort(function (a, b) { return String(b.date || "").localeCompare(String(a.date || "")); })[0];
+      session.textContent = "" + sessions.length + " session" + (sessions.length === 1 ? "" : "s") + " logged";
+      detail.textContent = latest.date ? "Last logged " + new Date(latest.date + "T12:00:00").toLocaleDateString(undefined, {month:"short", day:"numeric"}) : "Open your training log";
+      message.textContent = "Pick up your saved work, goals, or training log whenever you return.";
+    } else {
+      session.textContent = "Log your next session";
+      detail.textContent = "Keep a record of your mat time";
+    }
+  }
+  update();
+  window.addEventListener("focus", update);
+  window.addEventListener("storage", update);
 })();
 </script>
 <script src="nav.js"></script>
