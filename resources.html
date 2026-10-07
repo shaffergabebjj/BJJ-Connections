@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>BJJ Resources — Glossary & Links | BJJ Connections</title>
-<meta name="description" content="A BJJ glossary of common terms, links to rules organizations, and curated resources for Brazilian Jiu-Jitsu practitioners.">
+<meta name="description" content="284 BJJ video lessons with descriptions, a searchable technique glossary, and answers to common training questions.">
 <meta name="theme-color" content="#0a0a0a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -57,8 +57,9 @@
 <main id="main">
   <section class="page-header">
     <div class="container">
-      <h1>BJJ Resources</h1>
-      <p>A glossary of common BJJ terms and curated links to help you navigate the world of Brazilian Jiu-Jitsu.</p>
+      <div class="hero-eyebrow">04 / Discover</div><h1>Find the detail that clicks.</h1>
+      <p>One place for every technique, a video for every entry, and clear answers to your training questions.</p>
+      <div class="library-stats"><span><strong>284</strong> entries with videos</span><span><strong>36</strong> quick answers</span><span><strong>5</strong> learning levels</span></div>
     </div>
   </section>
 
@@ -66,45 +67,21 @@
   <section class="section" id="glossary">
     <div class="container">
       <nav class="section-nav" aria-label="Resources sections"><a href="#glossary">Video library</a><a href="#questions">Questions &amp; answers</a><a href="#useful-links">Useful links</a><a href="#belt-system">Belt guide</a></nav>
-      <div class="callout callout-info glossary-link-notice" style="margin-bottom:24px">
-        <strong>Every entry. Description + video.</strong>
-        <span>All techniques, terms and drills include a video. Tap Watch video to learn, or Find more videos to explore.</span>
+      <div class="library-heading"><div><h2 class="section-title">The video library</h2><p>Choose one thing to take to your next session.</p></div><a class="text-button" href="techniques.html?saved=1">Your saved techniques →</a></div>
+      <div class="library-toolbar">
+        <label class="field-label" for="glossarySearch">Search all 284 entries</label>
+        <input type="search" class="search-input" id="glossarySearch" placeholder="Try baseball choke, guard, or frames" autocomplete="off" aria-controls="glossarySections">
+        <div class="resource-browse">
+          <label for="glossaryCategory">Category
+            <select id="glossaryCategory"><option value="all">All categories</option></select>
+          </label>
+          <button type="button" class="btn btn-dark btn-sm" id="pickLesson" aria-describedby="lessonHint">Pick a lesson ↗</button>
+        </div>
+        <p class="resource-browse-hint" id="lessonHint">Opens a YouTube lesson from your search and category.</p>
+        <div class="library-results-bar"><p id="glossaryCount" role="status" aria-live="polite"></p><button type="button" class="text-button" id="clearGlossaryFilters" hidden>Clear filters</button></div>
       </div>
-
-      <style>
-        .glossary-link-notice {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-          padding: 20px 22px;
-          font-size: 16px;
-        }
-        .glossary-link-notice strong {
-          font-size: 21px;
-        }
-        .glossary-link-notice span {
-          font-size: 15px;
-        }
-      </style>
-
-      <div class="search-bar">
-        <input type="search" class="search-input" id="glossarySearch" placeholder="Search BJJ terms..." aria-label="Search glossary">
-      </div>
-      <div class="resource-browse">
-        <label for="glossaryCategory">Browse by category
-          <select id="glossaryCategory"><option value="all">All categories</option></select>
-        </label>
-        <button type="button" class="btn btn-primary" id="pickLesson">Pick a lesson ↗</button>
-        <button type="button" class="text-button" id="clearGlossaryFilters" hidden>Clear filters</button>
-      </div>
-      <p class="resource-browse-hint">Pick a lesson opens a video from your current search and category.</p>
-      <p id="glossaryCount" class="section-sub" role="status" aria-live="polite"></p>
       <div id="glossarySections"></div>
-      <style>
-        .glossary-section { margin-top: 36px; }
-        .glossary-section:first-child { margin-top: 0; }
-        .glossary-category-title { font-size: 24px; margin-bottom: 18px; }
-      </style>
+      <div class="library-pagination" id="glossaryPagination"><p id="glossaryVisible" role="status"></p><button type="button" class="btn btn-outline" id="moreGlossary" aria-controls="glossarySections">Show more entries</button></div>
       <div class="no-results hidden" id="noGlossaryResults">No terms match your search.</div>
     </div>
   </section>
@@ -117,6 +94,7 @@
       <label for="questionSearch" class="faq-label">Search questions and answers</label>
       <input type="search" class="search-input faq-search" id="questionSearch" placeholder="Try guard, sweep, or competition" autocomplete="off">
       <p id="questionCount" class="faq-count" role="status" aria-live="polite"></p>
+      <div class="faq-filters"><label for="questionTopic">Topic <select id="questionTopic"><option value="all">All topics</option><option value="faq-topic-0">Basics</option><option value="faq-topic-1">Positions &amp; escapes</option><option value="faq-topic-2">Training &amp; learning</option><option value="faq-topic-3">Competition &amp; this site</option></select></label><button type="button" class="text-button" id="clearQuestions" hidden>Clear filters</button></div>
       <div class="faq-list" id="questionList">
         <section class="faq-group" aria-labelledby="faq-topic-0">
           <h3 class="faq-topic" id="faq-topic-0">Basics</h3>
@@ -162,7 +140,7 @@
         <section class="faq-group" aria-labelledby="faq-topic-3">
           <h3 class="faq-topic" id="faq-topic-3">Competition &amp; this site</h3>
           <details class="faq-item"><summary>How do I prepare for my first BJJ competition?</summary><div class="faq-answer"><p>Check your event’s current rules and weigh-in details, pack your required gear, and plan how you will warm up and get to the venue. <a href="competition.html">Use the competition checklist</a>.</p></div></details>
-          <details class="faq-item"><summary>How do I find a specific technique video on this site?</summary><div class="faq-answer"><p>Search the video library by technique name or a related term, then select Watch video. Category filters narrow the results, and Pick a lesson chooses a video from the entries currently showing. <a href="resources.html#glossary">Open the video library</a>.</p></div></details>
+          <details class="faq-item"><summary>How do I find a specific technique video on this site?</summary><div class="faq-answer"><p>Search the video library by technique name or a related term, then select Watch video. Category filters narrow the results, and Pick a lesson chooses a video from all matching entries, including those you have not loaded yet. <a href="resources.html#glossary">Open the video library</a>.</p></div></details>
           <details class="faq-item"><summary>What is the difference between the daily puzzle and training puzzles?</summary><div class="faq-answer"><p>The daily game gives visitors the same day’s challenge. Training puzzles let you practice additional BJJ Connections rounds by belt level, including brown belt, without waiting for tomorrow’s puzzle. <a href="puzzles.html">Try training puzzles</a>.</p></div></details>
           <details class="faq-item"><summary>Do the technique belt levels mean other belts cannot practice them?</summary><div class="faq-answer"><p>The site’s belt levels organize learning difficulty; they are not a universal syllabus or a competition permission list. Use your coach’s guidance to choose suitable techniques and check your event’s rules separately. <a href="techniques.html">Browse belt-level techniques</a>.</p></div></details>
         </section>
@@ -472,151 +450,9 @@ var GLOSSARY = [
   { term: "Mata-Leão", def: "Portuguese term commonly used for the rear naked choke." }
 ];
 
-(function() {
-  var entries = BJJResources.build(TECHNIQUES, GLOSSARY, TECHNIQUE_VIDEOS, GLOSSARY_VIDEOS);
-  var search = document.getElementById("glossarySearch");
-  var noResults = document.getElementById("noGlossaryResults");
-  var categorySelect = document.getElementById("glossaryCategory");
-  var pickButton = document.getElementById("pickLesson");
-  var clearButton = document.getElementById("clearGlossaryFilters");
-  var lessonPool = [];
-  var lastLesson = "";
 
-  var CATEGORY_ORDER = [
-    "Fundamentals & General Terms",
-    "Guard Positions",
-    "Guard Passing",
-    "Sweeps",
-    "Transitions",
-    "Leg Locks & Leg Entanglements",
-    "Submissions",
-    "Escapes & Defense",
-    "Back & Dominant Positions",
-    "Takedowns & Wrestling",
-    "Gi & Grip Terminology",
-    "Movement & Drills",
-    "Portuguese & BJJ Slang",
-    "Judo & Grappling Terminology"
-  ];
-
-  var CATEGORY_RULES = [
-    ["Portuguese & BJJ Slang", ["Raspagem","Passagem de Guarda","Queda","Pegada","Montada","Guarda Fechada","Meia Guarda","Mata-Leão","Creonte","OSS"]],
-    ["Judo & Grappling Terminology", ["Kesa Gatame","Kosoto Gake","Kosoto Gari","Ouchi Gari","Osoto Gari","Sumi Gaeshi","Tai Otoshi","Uchi Mata","Uchi Mata Gaeshi","Sankaku-Jime","Ude Garami","Ude Hishigi Juji Gatame","Ura Nage","Vale Tudo"]],
-    ["Gi & Grip Terminology", ["Gi","Lapel","Lapel Guard","Collar-Sleeve Guard","Cross Collar Choke","Canto Choke","Loop Choke","Pistol Grip","Pocket Grip","Gable Grip","Marcelotine","Bow-and-Arrow Grip","Bow-and-Arrow Choke","Spider Guard"]],
-    ["Leg Locks & Leg Entanglements", ["50/50 Guard","Ashi Garami","False Reap","Heel Hook","K-Guard","Kani Basami","Leg Entanglement","Single-Leg X (SLX)","Shin-to-Shin","Kneebar","Calf Slicer","Biceps Slicer","Hip Clamp"]],
-    ["Guard Passing", ["Backstep","Body Lock","Combat Base","Guard Pass","Headquarters","Knee Cut","Leg Drag","Long Step","Over-under Pass","Pass","Smash Pass","Stack Pass","Standing Guard Pass","Toreando Pass","X-Pass"]],
-    ["Back & Dominant Positions", ["Back Control","Body Triangle","Chest-to-Back","Crucifix","Kesa Gatame","Knee-on-Belly","Mount","Mounted Triangle","North-South","S-Mount","Seatbelt","Side Control","Turtle","Gift Wrap","Head-and-Arm Control"]],
-    ["Takedowns & Wrestling", ["Ankle Pick","Deliberate Guard Pull","Double Underhooks","Front Headlock","Hip Heist","Russian Tie","Sit-Up Guard","Takedown","Underhook","Underhook Half Guard","Wrestle-Up","Wrestling-Up","Technical Stand-Up","Two-on-One","Stance"]],
-    ["Submissions", ["Americana","Anaconda Choke","Arm-In Guillotine","Arm Triangle","Armbar","Baratoplata","Bow-and-Arrow Choke","Clock Choke","D'Arce Choke","Darce","Ezekiel Choke","Guillotine","Kimura","Kata Gatame","Loop Choke","Omoplata","Rear Naked Choke (RNC)","Reverse Triangle","Triangle Choke","Wristlock","Mounted Triangle"]],
-    ["Escapes & Defense", ["Bridge","Frames","Granby Roll","Hip Escape","Re-Guard","Upa"]],
-    ["Movement & Drills", ["Cat-Cow","Drilling","Ebi","Frog Jump Armbar","Hip Switch","Inversion","Leg Pummel","Pummel","V-Ups","Leg Pummel"]],
-    ["Guard Positions", ["Berimbolo","Butterfly Guard","Butterfly Half Guard","Closed Guard","De La Riva (DLR)","Deep De La Riva","Deep Half Guard","Half Butterfly","Half Guard","Helicopter Guard","K-Guard","Lasso Guard","Lockdown","Octopus Guard","Reverse De La Riva","Reverse Half Guard","Sit-Up Guard","Spider Guard","Upside-Down Guard","X-Guard","Z-Guard","Collar-Sleeve Guard","Shin-to-Shin","Single-Leg X (SLX)","50/50 Guard","Lasso Guard"]],
-    ["Fundamentals & General Terms", ["Base","Guard","Inside Position","Outside Position","Hooks","Overhook","Posture","Sweep","Wrestle-Up"]]
-  ];
-
-  var CATEGORY_NAMES = CATEGORY_ORDER.concat(["Leg Locks & Leg Entanglements"]);
-
-  function getCategory(g) {
-    if (g.category) return g.category;
-    for (var i = 0; i < CATEGORY_RULES.length; i++) {
-      if (CATEGORY_RULES[i][1].indexOf(g.term) > -1) return CATEGORY_RULES[i][0];
-    }
-    return "Fundamentals & General Terms";
-  }
-
-  CATEGORY_ORDER.forEach(function(category) {
-    var count = entries.filter(function(g) { return getCategory(g) === category; }).length;
-    if (!count) return;
-    var option = document.createElement("option");
-    option.value = category;
-    option.textContent = category + " (" + count + ")";
-    categorySelect.appendChild(option);
-  });
-
-  function render(term) {
-    var filtered = entries.filter(function(g) {
-      return BJJResources.matches(g, term || "") &&
-        (categorySelect.value === "all" || getCategory(g) === categorySelect.value);
-    });
-    lessonPool = filtered.filter(function(g) { return g.video; });
-    pickButton.disabled = !lessonPool.length;
-    clearButton.hidden = !search.value.trim() && categorySelect.value === "all";
-    var videos = filtered.filter(function(g) { return g.video; }).length;
-    document.getElementById("glossaryCount").textContent = filtered.length + (filtered.length === 1 ? " entry · " : " entries · ") + videos + (videos === 1 ? " video" : " videos");
-
-    if (filtered.length === 0) {
-      document.getElementById("glossarySections").innerHTML = "";
-      noResults.classList.remove("hidden");
-      return;
-    }
-    noResults.classList.add("hidden");
-
-    var grouped = {};
-    filtered.forEach(function(g) {
-      var category = getCategory(g);
-      if (!grouped[category]) grouped[category] = [];
-      grouped[category].push(g);
-    });
-
-    document.getElementById("glossarySections").innerHTML = CATEGORY_ORDER.map(function(category) {
-      if (!grouped[category] || grouped[category].length === 0) return "";
-      return '<section class="glossary-section">' +
-        '<h2 class="section-title glossary-category-title">' + category + '</h2>' +
-        '<dl class="glossary">' +
-        grouped[category].map(function(g) {
-          return BJJResources.card(g);
-        }).join("") +
-        '</dl></section>';
-    }).join("");
-  }
-
-  if (search) search.addEventListener("input", function() {
-    render(search.value.toLowerCase().trim());
-  });
-  categorySelect.addEventListener("change", function() { render(search.value.trim()); });
-  clearButton.addEventListener("click", function() {
-    search.value = "";
-    categorySelect.value = "all";
-    render("");
-    search.focus();
-  });
-  pickButton.addEventListener("click", function() {
-    var pool = lessonPool.filter(function(g) { return lessonPool.length === 1 || g.term !== lastLesson; });
-    if (!pool.length) return;
-    var lesson = pool[Math.floor(Math.random() * pool.length)];
-    lastLesson = lesson.term;
-    window.open(lesson.video.url, "_blank", "noopener,noreferrer");
-  });
-  var query = new URLSearchParams(location.search).get("q") || "";
-  search.value = query;
-  render(query);
-})();
 </script>
-<script>
-(function () {
-  var search = document.getElementById("questionSearch");
-  var entries = Array.from(document.querySelectorAll("#questionList .faq-item"));
-  var groups = Array.from(document.querySelectorAll("#questionList .faq-group"));
-  var count = document.getElementById("questionCount");
-  var empty = document.getElementById("noQuestionResults");
-  function filter() {
-    var query = search.value.trim().toLocaleLowerCase();
-    var visible = 0;
-    entries.forEach(function (entry) {
-      var match = entry.textContent.toLocaleLowerCase().includes(query);
-      entry.hidden = !match;
-      entry.open = Boolean(query && match);
-      if (match) visible++;
-    });
-    groups.forEach(function (group) {
-      group.hidden = !Array.from(group.querySelectorAll(".faq-item")).some(function (entry) { return !entry.hidden; });
-    });
-    count.textContent = query ? visible + " of " + entries.length + " answers" : entries.length + " answers · 4 topics";
-    empty.hidden = visible !== 0;
-  }
-  search.addEventListener("input", filter);
-  filter();
-})();
-</script>
+<script src="resources-page.js"></script>
+<script src="questions.js"></script>
 </body>
 </html>

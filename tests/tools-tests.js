@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const root = path.join(__dirname,'..');
-function harness(page, initial = {}) {
+function harness(page, initial = {}, failWrites = false) {
   const nodes = new Map(), created = [], storage = new Map(Object.entries(initial));
   function element() {
     const classes = new Set();
@@ -24,12 +24,13 @@ function harness(page, initial = {}) {
   }
   const downloads=[];
   const context={console,Date,URLSearchParams,Blob,setTimeout:fn=>fn(),URL:{createObjectURL:blob=>{downloads.push(blob);return 'blob:test';},revokeObjectURL(){}},
-    localStorage:{getItem:key=>storage.get(key)??null,setItem:(key,value)=>storage.set(key,value),removeItem:key=>storage.delete(key)},
+    localStorage:{getItem:key=>storage.get(key)??null,setItem:(key,value)=>{if(failWrites)throw new Error("storage unavailable");storage.set(key,value);},removeItem:key=>storage.delete(key)},
     window:{print(){}},location:{reload(){}},confirm:()=>false,
     document:{getElementById:id=>nodes.get(id),createElement:element,body:element(),querySelectorAll:selector=>selector==='.checklist-item'?created.filter(n=>n.classList.contains('checklist-item')):[]}};
   vm.createContext(context);
   const source=page==='training.html'?fs.readFileSync(path.join(root,'training.js'),'utf8'):html.match(/<script>\s*\/\/ Checklist data([\s\S]*?)<\/script>/)[0].replace(/<\/?script>/g,'');
   vm.runInContext(source,context);
+  if(page === "competition.html")vm.runInContext(fs.readFileSync(path.join(root,"competition-event.js"),"utf8"),context);
   return {nodes,storage,downloads};
 }
 async function run() {
@@ -54,10 +55,27 @@ async function run() {
   for(const bad of ['null','{}','7','{broken','[null,7,{}]']) {
     const test=harness('training.html',{bjjGamePlan:bad,bjjTrainingGoals:bad,bjjTrainingLog:bad});
     assert.match(test.nodes.get('logSummary').textContent,/0 sessions/);assert.equal(test.nodes.get('gpTakedown').value,'Single Leg');
-    const prep=harness('competition.html',{'bjjChecklist_weekBefore':bad});assert.match(prep.nodes.get('prepSummary').textContent,/0 of \d+ tasks/);
+    const prep=harness('competition.html',{'bjjChecklist_weekBefore':bad,bjjCompetitionEvent:bad});assert.match(prep.nodes.get('prepSummary').textContent,/0 of \d+ tasks/);
   }
   const prep=harness('competition.html');const row=prep.nodes.get('weekBefore').children[0];const checkbox=row.children[0];checkbox.checked=true;checkbox.events.change();
   assert.match(prep.nodes.get('prepSummary').textContent,/1 of/);prep.nodes.get('remainingOnly').click();assert.equal(row.hidden,true);prep.nodes.get('remainingOnly').click();assert.equal(row.hidden,false);
+  const event=harness('competition.html');
+  event.nodes.get('eventDate').value='2026-02-30';event.nodes.get('saveEvent').click();
+  assert.match(event.nodes.get('eventStatus').textContent,/valid event date/);
+  assert.equal(event.storage.has('bjjCompetitionEvent'),false);
+  event.nodes.get('eventDate').value='2026-12-01';event.nodes.get('eventName').value='Winter Open';event.nodes.get('saveEvent').click();
+  assert.match(event.nodes.get('eventStatus').textContent,/Event saved/);
+  assert.match(event.nodes.get('eventCountdown').textContent,/Winter Open/);
+  event.nodes.get('clearEvent').click();assert.equal(event.storage.has('bjjCompetitionEvent'),false);
+  const unavailable=harness('competition.html',{},true);
+  unavailable.nodes.get('eventDate').value='2026-12-01';unavailable.nodes.get('saveEvent').click();
+  assert.match(unavailable.nodes.get('eventStatus').textContent,/visit only/);
+  const removeGoal=n.get('goalsList').children[0].children[2];removeGoal.click();
+  assert.equal(JSON.parse(game.storage.get('bjjTrainingGoals')).length,0);
+  n.get('undoGoal').click();assert.equal(JSON.parse(game.storage.get('bjjTrainingGoals'))[0].text,'Practice guard retention');
+  n.get('logList').events.click({target:{closest:()=>({getAttribute:()=> '0'})}});
+  assert.equal(JSON.parse(game.storage.get('bjjTrainingLog')).length,0);
+  n.get('undoSession').click();assert.equal(JSON.parse(game.storage.get('bjjTrainingLog')).length,1);
   console.log('Training restoration, goals, validation, safe notes/CSV, malformed storage, and checklist filtering passed.');
 }
 run().catch(error=>{console.error(error);process.exitCode=1;});

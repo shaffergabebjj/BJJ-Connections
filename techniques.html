@@ -70,11 +70,13 @@
         <button class="btn btn-dark btn-sm" id="randomTechnique" type="button">Random Technique</button>
       </div>
 
+      <details class="tech-filter-panel" id="techFilterPanel"><summary>Filter by category or belt <span id="techFilterSummary">All techniques</span></summary>
       <div class="filter-caption">Category</div>
       <div class="filter-chips" id="techFilters" role="group" aria-label="Filter by category"></div>
 
       <div class="filter-caption">Learning level</div>
       <div class="filter-chips" id="beltFilters" role="group" aria-label="Filter by belt level"></div>
+      </details>
 
       <div class="tech-results-bar" id="techProgress">
         <span id="techCount" role="status" aria-live="polite">Loading...</span>
@@ -82,7 +84,9 @@
       </div>
       </div>
 
+      <p id="favoriteStatus" class="save-status" role="status"></p>
       <div class="tech-results" id="techResults"></div>
+      <div class="library-pagination" id="techPagination"><p id="techVisible" role="status"></p><button type="button" class="btn btn-outline" id="moreTechniques" aria-controls="techResults">Show more techniques</button></div>
       <div class="no-results hidden" id="noResults">No techniques match your search. Try a different filter or search term.</div>
     </div>
   </section>
@@ -125,201 +129,6 @@
 
 <script src="techniques.js"></script>
 <script src="nav.js"></script>
-<script>
-(function() {
-  if (typeof TECHNIQUES === "undefined" || typeof TECHNIQUE_CATEGORIES === "undefined") return;
-
-  var activeCat = "all";
-  var activeBelt = "all";
-  var searchTerm = "";
-  var savedOnly = false;
-  var sortEl = document.getElementById("techSort");
-  var favorites = getFavorites();
-  var savedButton = document.getElementById("savedTechniques");
-
-  var catFilters = document.getElementById("techFilters");
-  var beltFilters = document.getElementById("beltFilters");
-  var results = document.getElementById("techResults");
-  var noResults = document.getElementById("noResults");
-  var countEl = document.getElementById("techCount");
-  var searchEl = document.getElementById("techSearch");
-  var randomBtn = document.getElementById("randomTechnique");
-
-  function getFavorites() {
-    try {
-      var items = JSON.parse(localStorage.getItem("bjjFavoriteTechniques") || "[]");
-      return Array.isArray(items) ? [...new Set(items.map(function(name) {
-        return name === "Baseball Choke" ? "Baseball Bat Choke" : name;
-      }).filter(function(name) {
-        return typeof name === "string" && TECHNIQUES.some(function(t) { return t.name === name; });
-      }))] : [];
-    }
-    catch(e) { return []; }
-  }
-  function saveFavorites(items) {
-    try { localStorage.setItem("bjjFavoriteTechniques", JSON.stringify(items)); }
-    catch(e) {}
-  }
-  function isFavorite(name) {
-    return favorites.indexOf(name) !== -1;
-  }
-  function toggleFavorite(name, button) {
-    var index = favorites.indexOf(name);
-    if (index === -1) favorites.push(name);
-    else favorites.splice(index, 1);
-    saveFavorites(favorites);
-    if (savedOnly) render();
-    else {
-      var active = isFavorite(name);
-      button.classList.toggle("is-favorite", active);
-      button.setAttribute("aria-pressed", String(active));
-      button.setAttribute("aria-label", (active ? "Remove " : "Save ") + name + (active ? " from favorites" : " to favorites"));
-      button.textContent = active ? "★ Saved" : "☆ Save";
-      updateSavedButton();
-    }
-  }
-  function updateSavedButton() {
-    savedButton.textContent = "☆ Saved only (" + favorites.length + ")";
-    savedButton.classList.toggle("active", savedOnly);
-    savedButton.setAttribute("aria-pressed", String(savedOnly));
-  }
-  savedButton.onclick = function() { savedOnly = !savedOnly; render(); };
-  function clearFilters() {
-    searchEl.value = "";
-    searchTerm = "";
-    activeCat = "all";
-    activeBelt = "all";
-    savedOnly = false;
-    updateFilters(catFilters, allChip);
-    updateFilters(beltFilters, beltAll);
-  }
-  document.getElementById("clearTechFilters").onclick = function() { clearFilters(); render(); searchEl.focus(); };
-  window.addEventListener("storage", function(event) {
-    if (event.key === "bjjFavoriteTechniques" || event.key === null) { favorites = getFavorites(); render(); }
-  });
-
-  // Category filter chips
-  var allChip = document.createElement("button");
-  allChip.className = "chip active";
-  allChip.textContent = "All";
-  allChip.onclick = function() { activeCat = "all"; updateFilters(catFilters, allChip); render(); };
-  catFilters.appendChild(allChip);
-
-  TECHNIQUE_CATEGORIES.forEach(function(cat) {
-    var chip = document.createElement("button");
-    chip.className = "chip";
-    chip.textContent = cat.label;
-    chip.onclick = function() { activeCat = cat.id; updateFilters(catFilters, chip); render(); };
-    catFilters.appendChild(chip);
-  });
-
-  // Belt filter chips
-  var beltAll = document.createElement("button");
-  beltAll.className = "chip active";
-  beltAll.textContent = "All Belts";
-  beltAll.onclick = function() { activeBelt = "all"; updateFilters(beltFilters, beltAll); render(); };
-  beltFilters.appendChild(beltAll);
-
-  var belts = [
-    { id: "white", label: "White" },
-    { id: "blue", label: "Blue" },
-    { id: "purple", label: "Purple" },
-    { id: "brown", label: "Brown" },
-    { id: "black", label: "Black" }
-  ];
-  belts.forEach(function(belt) {
-    var chip = document.createElement("button");
-    chip.className = "chip";
-    chip.textContent = belt.label;
-    chip.onclick = function() { activeBelt = belt.id; updateFilters(beltFilters, chip); render(); };
-    beltFilters.appendChild(chip);
-  });
-
-  function updateFilters(container, activeChip) {
-    container.querySelectorAll(".chip").forEach(function(c) {
-      c.classList.remove("active"); c.setAttribute("aria-pressed", "false");
-    });
-    activeChip.classList.add("active");
-    activeChip.setAttribute("aria-pressed", "true");
-  }
-
-  function filteredTechniques() {
-    return TECHNIQUES.filter(function(t) {
-      var catMatch = activeCat === "all" || t.cat === activeCat;
-      var beltMatch = activeBelt === "all" || t.belt === activeBelt;
-      var searchMatch = !searchTerm || t.name.toLowerCase().indexOf(searchTerm) > -1 ||
-        t.desc.toLowerCase().indexOf(searchTerm) > -1 ||
-        (t.aliases || []).some(function(alias) { return alias.toLowerCase().indexOf(searchTerm) > -1; });
-      return catMatch && beltMatch && searchMatch && (!savedOnly || isFavorite(t.name));
-    });
-
-  }
-
-  function render() {
-    updateSavedButton();
-    var filtered = filteredTechniques();
-    randomBtn.disabled = filtered.length === 0;
-    if (sortEl.value === "az") filtered.sort(function(a, b) { return a.name.localeCompare(b.name); });
-
-    countEl.textContent = filtered.length + " technique" + (filtered.length === 1 ? "" : "s");
-
-    noResults.textContent = savedOnly ? "No saved techniques match. Save techniques with the ☆ Save button, or clear your filters." : "No techniques match. Try another search or clear your filters.";
-    if (filtered.length === 0) {
-      results.innerHTML = "";
-      noResults.classList.remove("hidden");
-      return;
-    }
-    noResults.classList.add("hidden");
-
-    results.innerHTML = filtered.map(function(t) {
-      var catLabel = TECHNIQUE_CATEGORIES.find(function(c) { return c.id === t.cat; });
-      return '<div class="tech-card">' +
-        '<h3>' + t.name + '</h3>' +
-        '<div class="tech-category">' + (catLabel ? catLabel.label : t.cat) + '</div>' +
-        '<p class="tech-desc">' + t.desc + '</p>' +
-        '<a class="tech-resource-link" href="resources.html?q=' + encodeURIComponent(t.name) + '#glossary">Watch &amp; learn →</a>' +
-        '<span class="belt-badge belt-' + t.belt + '">' + t.belt + ' Belt</span>' +
-        '<button class="tech-favorite ' + (isFavorite(t.name) ? 'is-favorite' : '') + '" data-favorite="' + t.name.replace(/"/g, '&quot;') + '" type="button" aria-pressed="' + isFavorite(t.name) + '" aria-label="' + (isFavorite(t.name) ? 'Remove ' : 'Save ') + t.name + ' ' + (isFavorite(t.name) ? 'from favorites' : 'to favorites') + '">' +
-          (isFavorite(t.name) ? '★ Saved' : '☆ Save') +
-        '</button>' +
-      '</div>';
-    }).join("");
-
-    results.querySelectorAll("[data-favorite]").forEach(function(btn) {
-      btn.addEventListener("click", function() {
-        toggleFavorite(btn.getAttribute("data-favorite"), btn);
-      });
-    });
-  }
-
-  if (randomBtn) randomBtn.addEventListener("click", function() {
-    var pool = filteredTechniques();
-    if (!pool.length) return;
-    var t = pool[Math.floor(Math.random() * pool.length)];
-    setTimeout(function() {
-      var cards = Array.prototype.slice.call(results.querySelectorAll(".tech-card"));
-      var card = cards.find(function(el) { return el.querySelector("h3") && el.querySelector("h3").textContent === t.name; });
-      if (card) {
-        card.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
-        card.classList.add("random-highlight");
-        setTimeout(function() { card.classList.remove("random-highlight"); }, 1400);
-      }
-    }, 0);
-  });
-
-  updateFilters(catFilters, allChip);
-  updateFilters(beltFilters, beltAll);
-
-  searchEl.addEventListener("input", function() {
-    searchTerm = searchEl.value.toLowerCase().trim();
-    render();
-  });
-
-  sortEl.addEventListener("change", render);
-  var query = new URLSearchParams(location.search).get("q");
-  if (query) { searchEl.value = query; searchTerm = query.toLowerCase().trim(); }
-  render();
-})();
-</script>
+<script src="techniques-page.js"></script>
 </body>
 </html>

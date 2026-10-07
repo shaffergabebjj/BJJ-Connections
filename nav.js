@@ -35,8 +35,8 @@
     else openMenu();
   });
   backdrop.addEventListener('click', function () { closeMenu(false); });
-  links.querySelectorAll('a, button').forEach(function (item) {
-    item.addEventListener('click', function () { closeMenu(false); });
+  links.addEventListener('click', function (event) {
+    if (event.target.closest('a, button')) closeMenu(false);
   });
   document.addEventListener('focusin', function (event) {
     if (!links.contains(event.target) && !toggle.contains(event.target)) closeMenu(false);
@@ -195,4 +195,16 @@
     if (home) home.focus({preventScroll:true});
   });
   update();
+})();
+
+// Online state describes local tools without blocking access to them.
+(function () {
+  var main = document.querySelector('main');
+  if (!main) return;
+  var notice = document.createElement('p');
+  notice.className = 'offline-notice'; notice.setAttribute('role', 'status');
+  notice.textContent = 'You’re offline. Saved pages and training tools are available; videos need a connection.';
+  main.prepend(notice);
+  function update() { notice.hidden = navigator.onLine !== false; }
+  window.addEventListener('online', update); window.addEventListener('offline', update); update();
 })();

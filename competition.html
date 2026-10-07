@@ -69,11 +69,12 @@
         <div class="dashboard-actions"><button class="btn btn-outline btn-sm" id="remainingOnly" type="button" aria-pressed="false">Show remaining</button><button class="btn btn-outline btn-sm" id="printChecklist" type="button">Print checklist</button></div>
       </div>
       <div class="event-bar" aria-labelledby="eventBarTitle">
-        <div><span class="hero-eyebrow">Optional event marker</span><h2 id="eventBarTitle">Keep the date in view.</h2><p id="eventCountdown">Save your tournament name and date on this device.</p></div>
+        <div><span class="hero-eyebrow">Your next event</span><h2 id="eventBarTitle">Keep the date in view.</h2><p id="eventCountdown">Save your tournament name and date on this device.</p></div>
         <div class="event-fields">
           <label for="eventName">Event name<input id="eventName" class="search-input" type="text" maxlength="80" placeholder="e.g., Chicago Spring Games"></label>
           <label for="eventDate">Event date<input id="eventDate" class="search-input" type="date"></label>
-          <button class="btn btn-dark btn-sm" id="saveEvent" type="button">Save event</button>
+          <div class="event-actions"><button class="btn btn-dark btn-sm" id="saveEvent" type="button">Save event</button><button class="text-button" id="clearEvent" type="button" hidden>Clear event</button></div>
+          <p class="save-status" id="eventStatus" role="status"></p>
         </div>
       </div>
 <nav class="section-nav" aria-label="Competition sections"><a href="#prep-weekBefore">The week before</a><a href="#prep-giPrep">Gi</a><a href="#prep-nogiPrep">No-gi</a><a href="#prep-bring">Packing list</a><a href="#prep-matchDay">Match day</a><a href="#prep-weighIn">Weigh-in</a><a href="#rules">Rules</a></nav>
@@ -233,6 +234,7 @@
 </footer>
 
 <script src="nav.js"></script>
+<script src="competition-event.js"></script>
 <script>
 // Checklist data
 var CHECKLISTS = {
@@ -323,42 +325,6 @@ var CHECKLISTS = {
     try { localStorage.setItem("bjjChecklist_" + key, JSON.stringify(data)); }
     catch(e) {}
   }
-
-  // Keep a lightweight event marker beside the checklist without requiring an account.
-  (function setupEventMarker() {
-    var name = document.getElementById("eventName");
-    var date = document.getElementById("eventDate");
-    var save = document.getElementById("saveEvent");
-    var countdown = document.getElementById("eventCountdown");
-    if (!name || !date || !save || !countdown) return;
-    var stored = {};
-    try { stored = JSON.parse(localStorage.getItem("bjjCompetitionEvent") || "{}"); } catch (e) {}
-    name.value = typeof stored.name === "string" ? stored.name : "";
-    date.value = typeof stored.date === "string" ? stored.date : "";
-    function renderEvent() {
-      if (!date.value) {
-        countdown.textContent = "Save your tournament name and date on this device.";
-        return;
-      }
-      var eventDay = new Date(date.value + "T12:00:00");
-      var today = new Date(); today.setHours(12, 0, 0, 0);
-      var days = Math.round((eventDay - today) / 86400000);
-      var label = name.value.trim() || "Your event";
-      if (!Number.isFinite(days)) { countdown.textContent = "Choose a valid event date."; return; }
-      if (days > 0) countdown.textContent = label + " · " + days + " day" + (days === 1 ? "" : "s") + " to go.";
-      else if (days === 0) countdown.textContent = label + " · Today. Check your packing list before you leave.";
-      else countdown.textContent = label + " · This date has passed. Update it for your next event.";
-    }
-    save.addEventListener("click", function () {
-      var payload = {name: name.value.trim(), date: date.value};
-      try { localStorage.setItem("bjjCompetitionEvent", JSON.stringify(payload)); countdown.textContent = "Event saved on this device."; }
-      catch (e) { countdown.textContent = "Event saved for this visit only."; }
-      renderEvent();
-    });
-    name.addEventListener("input", renderEvent);
-    date.addEventListener("change", renderEvent);
-    renderEvent();
-  })();
 
   var remainingOnly = false;
   var progress = {};

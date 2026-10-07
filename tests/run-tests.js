@@ -224,14 +224,14 @@ async function testOfflineLinks() {
   const context = {
     self: {location: {origin: "https://bjjconnectionsbygabe.com"},
       addEventListener: (name, handler) => { handlers[name] = handler; }},
-    URL, Response, fetch: async () => { throw new Error("offline"); },
-    caches: {match: async target => target === "/puzzles.html" ? cachedPage : undefined}
+    URL, Response, setTimeout, clearTimeout, fetch: async () => { throw new Error("offline"); },
+    caches: {open: async () => ({match: async target => target === "/puzzles.html" ? cachedPage : undefined})}
   };
   vm.createContext(context);
   vm.runInContext(fs.readFileSync(path.join(root, "sw.js"), "utf8"), context);
   handlers.fetch({request: {method: "GET", mode: "navigate",
     url: "https://bjjconnectionsbygabe.com/puzzles.html?p=27"},
-    respondWith: promise => { response = promise; }});
+    waitUntil() {}, respondWith: promise => { response = promise; }});
   assert.equal(await response, cachedPage, "offline puzzle links must open the cached puzzle page");
   console.log("Offline puzzle-link navigation passed.");
 }
@@ -274,19 +274,23 @@ function techniqueHarness(saved, search = "") {
     return {children: [], value: "", textContent: "", innerHTML: "", events: {}, attrs: {},
       classList: {add: c => classes.add(c), remove: c => classes.delete(c),
         toggle: (c, on) => on ? classes.add(c) : classes.delete(c)},
-      setAttribute(k, v) { this.attrs[k] = v; },
+      getAttribute(k) { return this.attrs[k]; }, setAttribute(k, v) { this.attrs[k] = v; },
       addEventListener(k, fn) { this.events[k] = fn; },
       appendChild(n) { this.children.push(n); },
-      querySelectorAll(selector) { return selector === ".chip" ? this.children : []; }, focus() {}};
+      querySelectorAll(selector) {
+        if(selector === '.chip' || selector === 'button') return this.children;
+        if(selector === '.tech-card') return [...this.innerHTML.matchAll(/<article class="tech-card"/g)].map(()=>({classList:{add(){}},focus(){},scrollIntoView(){}}));
+        return [];
+      }, focus() {}};
   }
   const html = fs.readFileSync(path.join(root, "techniques.html"), "utf8");
   for (const [,id] of html.matchAll(/id="([^"]+)"/g)) nodes.set(id, node());
-  const context = {console, URLSearchParams, location: {search}, setTimeout: () => {}, window: {addEventListener() {}},
+  const context = {console, URLSearchParams, location: {search,pathname:"/techniques.html",hash:""}, history:{replaceState(){}}, setTimeout: () => {}, window: {addEventListener() {},matchMedia:()=>({matches:true})},
     localStorage: {getItem: k => values.get(k), setItem: (k,v) => values.set(k,v)},
     document: {getElementById: id => nodes.get(id), createElement: node}};
   vm.createContext(context);
   vm.runInContext(fs.readFileSync(path.join(root, "techniques.js"), "utf8"), context);
-  vm.runInContext(html.match(/<script>\s*\(function[\s\S]*?<\/script>/)[0].replace(/<\/?script>/g, ""), context);
+  vm.runInContext(fs.readFileSync(path.join(root, "techniques-page.js"), "utf8"), context);
   return nodes;
 }
 for (const saved of ["null", "{}", "7", "{broken", '["Armbar (from Mount)","Armbar (from Mount)",null,"unknown"]']) {
@@ -298,10 +302,10 @@ for (const saved of ["null", "{}", "7", "{broken", '["Armbar (from Mount)","Armb
   nodes.get("randomTechnique").events.click();
   assert.equal(nodes.get("techCount").textContent, "0 techniques", "Random must preserve an empty filtered result");
   assert.equal(nodes.get("randomTechnique").disabled, true);
-  nodes.get("clearTechFilters").onclick();
-  nodes.get("savedTechniques").onclick();
+  nodes.get("clearTechFilters").events.click();
+  nodes.get("savedTechniques").events.click();
   assert.equal(nodes.get("techCount").textContent, saved.startsWith("[") ? "1 technique" : "0 techniques");
-  nodes.get("clearTechFilters").onclick();
+  nodes.get("clearTechFilters").events.click();
   assert.equal(nodes.get("techCount").textContent, count);
 }
 console.log("Technique storage recovery, saved filtering, and search reset passed.");
@@ -373,7 +377,7 @@ const restoredBrown = gameHarness('puzzles.html',brownPractice.values,'?mode=tra
 assert.equal(restoredBrown.progress === undefined, false);
 assert.equal(JSON.parse(brownPractice.values.get('bjjPracticeProgress')).puzzle,brownSaved.puzzle);
 const brownLibrary = techniqueHarness('[]');
-brownLibrary.get('beltFilters').children.find(b=>b.textContent==='Brown').onclick();
+brownLibrary.get('beltFilters').children.find(b=>b.textContent==='Brown').events.click();
 assert.equal(brownLibrary.get('techCount').textContent,'17 techniques');
 assert.equal([...brownLibrary.get('techResults').innerHTML.matchAll(/belt-badge belt-([a-z]+)/g)].every(m=>m[1]==='brown'),true);
 brownLibrary.get('randomTechnique').events.click();
@@ -382,7 +386,18 @@ console.log('Real Brown puzzle and technique filters, reload restoration, and fi
 
 const oldBaseballFavorite=techniqueHarness('["Baseball Choke"]','?q=baseball%20bat%20choke');
 assert.equal(oldBaseballFavorite.get('techCount').textContent,'1 technique');
-oldBaseballFavorite.get('savedTechniques').onclick();
+oldBaseballFavorite.get('savedTechniques').events.click();
 assert.equal(oldBaseballFavorite.get('techCount').textContent,'1 technique','renaming preserves saved Baseball Choke');
 assert(oldBaseballFavorite.get('techResults').innerHTML.includes('resources.html?q=Baseball%20Bat%20Choke#glossary'));
 console.log('Baseball name alias, preserved favorites, and technique-to-resource links passed.');
+
+const savedLink = techniqueHarness('["Baseball Bat Choke"]','?saved=1');
+assert.equal(savedLink.get('techCount').textContent,'1 technique');
+const brownLink = techniqueHarness('[]','?belt=brown');
+assert.equal(brownLink.get('techCount').textContent,'17 techniques');
+const pages = techniqueHarness('[]');
+assert.equal([...pages.get('techResults').innerHTML.matchAll(/<h3>/g)].length,24);
+for(let i=0;i<10 && !pages.get('moreTechniques').hidden;i++) pages.get('moreTechniques').events.click();
+assert.equal(new Set([...pages.get('techResults').innerHTML.matchAll(/<h3>(.*?)<\/h3>/g)].map(m=>m[1])).size,185);
+assert.equal(pages.get('moreTechniques').hidden,true);
+console.log('Saved and brown-belt deep links, 24-card batches, and complete pagination passed.');

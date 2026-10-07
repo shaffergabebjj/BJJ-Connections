@@ -18,3 +18,5 @@ jobs:
       - run: node tests/practice-tests.js
       - run: node tests/timer-tests.js
       - run: node tests/resource-tests.js
+      - run: node tests/offline-tests.js
+      - run: node tests/experience-tests.js

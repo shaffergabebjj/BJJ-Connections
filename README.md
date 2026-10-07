@@ -33,7 +33,9 @@ Live at **[bjjconnectionsbygabe.com](https://bjjconnectionsbygabe.com)**.
 
 ### Technique Explorer (techniques.html)
 - Technique library with category, belt, search, and saved-only filters
-- Search by name or description
+- Search names, descriptions, and aliases, including punctuation and accent variations
+- Render 24 cards at a time; Show more keeps the full library reachable
+- Share search, category, belt, and saved-only states through the URL
 - Filter by category and approximate belt difficulty
 - Belt-level badges for difficulty indication
 
@@ -45,7 +47,8 @@ Live at **[bjjconnectionsbygabe.com](https://bjjconnectionsbygabe.com)**.
 
 ### Training Resources (training.html)
 - Work/rest round timer with pause, resume, and elapsed-time recovery
-- Quick-start timer presets for common drilling and positional-round formats
+- Quick-start timer presets with saved settings, total duration, and locked controls during active rounds
+- Undo the most recent goal or session deletion during the current visit
 - Weekly sessions, mat time, and open-goal summary
 - Solo drilling ideas
 - Partner drilling ideas
@@ -89,6 +92,14 @@ Puzzles live in the `ROUNDS` array in `data.js`. Difficulty is inferred automati
 - Competition prep can save an event name/date locally and show a days-to-go marker.
 - Training plans restore saved choices; goals and session logs are stored in the current browser.
 - Export the session log as CSV for a portable backup. Browser data does not sync between devices.
-- Run `node tests/run-tests.js` and `node tests/tools-tests.js` and `node tests/practice-tests.js` for regression checks.
+- Run the seven Node regression suites listed in `.github/workflows/validate.yml`. They cover puzzle state, personal tools, practice rotation, timers, resource coverage, offline behavior, and page integration.
 
 Resources uses `resource-catalog.js` to include every entry from `techniques.js`, together with direct lessons in `technique-videos.js`. Add a matching video reference whenever adding a technique; `node tests/resource-tests.js` checks coverage, search, links and rendering. All 284 Resources entries have descriptions and direct videos. Additional terms and drills use `glossary-videos.js`; add a matching reference when adding a glossary entry. Coverage tests check every entry and the visible video count.
+
+### Library and loading behavior
+- `techniques-page.js` and `resources-page.js` keep browsing behavior separate from page markup.
+- All 284 Resources entries remain searchable, each with a description and a direct video link; only the first 24 matching cards render initially.
+- Questions can be filtered by topic and searched; answers remain collapsed until selected, with one open at a time.
+- `home-desk.js` and `competition-event.js` validate optional saved data so malformed storage cannot interrupt the page.
+- The service worker caches only app-shell paths, shares cached pages across search URLs, and preserves unrelated caches. Static assets return from cache while revalidating; navigations fall back to a saved page after 2.5 seconds on slow connections.
+- Offline mode applies to cached site pages. External videos still require a connection.
