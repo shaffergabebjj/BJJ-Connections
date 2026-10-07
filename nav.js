@@ -20,6 +20,13 @@
         toggle.setAttribute('aria-expanded', 'false');
       }
     });
+    // Moving focus out closes the mobile menu without trapping keyboard users.
+    document.addEventListener('focusin', function (event) {
+      if (!links.contains(event.target) && !toggle.contains(event.target)) {
+        links.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
     // Close on Escape
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && links.classList.contains('open')) {
