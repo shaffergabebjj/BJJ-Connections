@@ -1562,3 +1562,33 @@ button, .btn { touch-action:manipulation; }
 
 /* Keep the Medal Run entry prominent without letting it overpower the daily puzzle. */
 .game-development-entry{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:18px 0 12px;padding:10px 12px;border-left:3px solid #d63437;background:rgba(214,52,55,.07);max-width:max-content}.game-development-entry .btn{width:auto!important;min-width:0;padding:10px 18px;font-size:14px}.game-development-entry span{font-size:.78rem}.game-development-entry::before{content:'8-BIT SIDE QUEST';color:#d63437;font-size:10px;font-weight:800;letter-spacing:.12em}@media(max-width:600px){.game-development-entry{max-width:100%;gap:8px;padding:10px}.game-development-entry::before{flex-basis:100%}.game-development-entry .btn{width:auto!important}}
+
+/* Shared polish: shorter navigation, readable callouts and useful next steps. */
+:root[data-theme="dark"] .callout-info strong { color: #93c5fd; }
+:root[data-theme="dark"] .callout-warn strong { color: #fcd34d; }
+.section-nav a { font-size: 14px; min-height: 44px; display: inline-flex; align-items: center; }
+.footer-links a { min-height: 44px; display: inline-flex; align-items: center; }
+.site-footer { padding-bottom: calc(105px + env(safe-area-inset-bottom, 0px)); }
+.next-steps { border-top: 1px solid var(--border); }
+.next-steps h2 { font-size: clamp(22px, 3vw, 28px); margin-bottom: 20px; }
+.next-steps-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.next-step { position: relative; padding: 24px 56px 24px 24px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); color: var(--ink); }
+.next-step h3 { font-size: 18px; margin-bottom: 8px; }
+.next-step p { font-size: 15px; color: var(--muted); margin: 0; }
+.next-step > span { position: absolute; right: 22px; top: 24px; color: var(--accent); font-size: 22px; }
+.next-step:hover { border-color: var(--accent); color: var(--ink); background: var(--bg-alt); }
+@media (max-width: 1000px) {
+  .nav-toggle { min-width: 44px; min-height: 44px; }
+  .nav-links { padding: 12px; gap: 6px; max-height: calc(100dvh - 72px); overflow-y: auto; box-shadow: var(--shadow-lg); }
+  .nav-links.open { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nav-links a { min-height: 48px; padding: 14px; border-radius: 8px; font-size: 14px; }
+  .nav-links a.active { background: var(--accent-soft); color: var(--accent); box-shadow: inset 3px 0 var(--accent); }
+  .nav-install-btn { min-height: 44px; grid-column: 1 / -1; }
+}
+@media (max-width: 600px) {
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea { font-size: 16px; }
+  .next-steps-grid { grid-template-columns: 1fr; }
+  .next-step { padding: 20px 52px 20px 20px; }
+  .data-table { font-size: 14px; }
+}
+@media print { .next-steps { display: none; } }
