@@ -88,6 +88,7 @@
         '<div class="tech-category">' + escape(categories.get(t.cat) || t.cat) + '</div><p class="tech-desc">' + escape(t.desc) + '</p>' +
         '<span class="belt-badge belt-' + t.belt + '">' + t.belt + ' belt</span>' +
         '<div class="tech-card-actions"><a class="tech-resource-link" href="resources.html?q=' + encodeURIComponent(t.name) + '#glossary">Watch &amp; learn →</a>' +
+        '<a class="tech-practice-link" href="training.html?technique=' + encodeURIComponent(t.name) + '#training-log">Practice this ↗</a>' +
         '<button class="tech-favorite ' + (saved ? 'is-favorite' : '') + '" data-favorite="' + escape(t.name) + '" type="button" aria-pressed="' + saved + '" aria-label="' + (saved ? 'Remove ' : 'Save ') + escape(t.name) + (saved ? ' from favorites' : ' to favorites') + '">' + (saved ? '★ Saved' : '☆ Save') + '</button></div></article>';
     }).join('');
   }

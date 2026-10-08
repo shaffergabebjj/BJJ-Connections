@@ -202,6 +202,24 @@ tbody tr:nth-child(even) { background: var(--bg); }
   .contact-link-card .tool-number { margin-bottom: 20px; }
   .not-found-page .page-header { padding-block: 44px; }
 }
+.tech-card-actions { flex-wrap: wrap; gap: 12px; }
+.tech-practice-link { font-size: 12px; font-weight: 700; color: var(--ink); text-decoration: none; }
+.tech-practice-link:hover { text-decoration: underline; }
+.week-activity { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:8px; margin-top:20px; }
+.activity-day { display:grid; gap:7px; text-align:center; padding:16px 4px; border:1px solid var(--border); border-radius:10px; background:var(--surface); }
+.activity-day span { font-size:12px; color:var(--muted); }
+.activity-day strong { font-size:25px; line-height:1.2; }
+.activity-day small { font-size:11px; color:var(--muted); }
+.activity-day.has-session { background:#e2eddd; border-color:#a6bf98; color:#243d20; }
+.activity-day.has-session span,.activity-day.has-session small { color:#405d37; }
+.activity-day.is-today { outline:2px solid #c8102e; outline-offset:2px; }
+[data-theme="dark"] .activity-day.has-session { background:#283d27; border-color:#627b58; color:#e3efdc; }
+[data-theme="dark"] .activity-day.has-session span,[data-theme="dark"] .activity-day.has-session small { color:#c0d5b5; }
+.saved-practice { margin:4px 0 22px; padding:14px 0; border-block:1px solid var(--border); }
+.saved-practice summary { cursor:pointer; font-size:13px; font-weight:700; }
+.saved-practice-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+.saved-practice-list .chip { white-space:normal; text-align:left; min-height:44px; }
+@media(max-width:640px) { .week-activity { gap:5px; } .activity-day { padding:12px 2px; gap:6px; border-radius:7px; } .activity-day span { font-size:10px; } .activity-day strong { font-size:20px; } .activity-day small { font-size:9px; overflow-wrap:anywhere; } }
 @media print {
   .page-header::after, .footer-brand::before { display:none; }
   .timer-face { color:#111; background:#fff; }

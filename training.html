@@ -74,6 +74,8 @@
         <div><strong id="activeGoals">0</strong><span>Open goals</span></div>
       </div>
       <p class="empty-hint" id="weekRange"></p>
+      <div class="week-activity" id="weekActivity" aria-label="Daily training activity"></div>
+      <p class="empty-hint">Filled days show logged sessions. Rest days are part of training, too.</p>
     </div>
   </section>
   <section class="section section-alt">
@@ -199,6 +201,7 @@
           </select></label>
         </div>
         <label class="field-label" for="logTechniques">Techniques practiced</label><input type="text" class="search-input" id="logTechniques" placeholder="Techniques practiced (comma-separated)" style="width:100%;margin-bottom:10px" aria-label="Techniques practiced">
+        <details class="saved-practice"><summary>Add from your saved techniques</summary><div id="savedPractice" class="saved-practice-list"></div><p id="savedPracticeEmpty" class="empty-hint">Save techniques in the <a href="techniques.html">technique library</a> to keep your next session’s ideas here.</p><p id="practiceStatus" class="save-status" role="status"></p></details>
         <label class="field-label" for="logNotes">Session notes</label><input type="text" class="search-input" id="logNotes" placeholder="Notes about this session" style="width:100%;margin-bottom:10px" aria-label="Session notes">
         <div class="dashboard-actions"><button class="btn btn-dark btn-sm" id="addSession">Add Session</button><button class="btn btn-outline btn-sm" id="exportSessions" type="button">Export log (CSV)</button></div><button type="button" class="text-button" id="undoSession" hidden>Undo last deletion</button>
       <p id="logStatus" class="save-status" role="status"></p>

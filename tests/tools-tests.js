@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const root = path.join(__dirname,'..');
-function harness(page, initial = {}, failWrites = false) {
+function harness(page, initial = {}, failWrites = false, search = '') {
   const nodes = new Map(), created = [], storage = new Map(Object.entries(initial));
   function element() {
     const classes = new Set();
@@ -25,7 +25,7 @@ function harness(page, initial = {}, failWrites = false) {
   const downloads=[];
   const context={console,Date,URLSearchParams,Blob,setTimeout:fn=>fn(),URL:{createObjectURL:blob=>{downloads.push(blob);return 'blob:test';},revokeObjectURL(){}},
     localStorage:{getItem:key=>storage.get(key)??null,setItem:(key,value)=>{if(failWrites)throw new Error("storage unavailable");storage.set(key,value);},removeItem:key=>storage.delete(key)},
-    window:{print(){}},location:{reload(){}},confirm:()=>false,
+    window:{print(){}},location:{search,reload(){}},confirm:()=>false,
     document:{getElementById:id=>nodes.get(id),createElement:element,body:element(),querySelectorAll:selector=>selector==='.checklist-item'?created.filter(n=>n.classList.contains('checklist-item')):[]}};
   vm.createContext(context);
   const source=page==='training.html'?fs.readFileSync(path.join(root,'training.js'),'utf8'):html.match(/<script>\s*\/\/ Checklist data([\s\S]*?)<\/script>/)[0].replace(/<\/?script>/g,'');
@@ -76,6 +76,17 @@ async function run() {
   n.get('logList').events.click({target:{closest:()=>({getAttribute:()=> '0'})}});
   assert.equal(JSON.parse(game.storage.get('bjjTrainingLog')).length,0);
   n.get('undoSession').click();assert.equal(JSON.parse(game.storage.get('bjjTrainingLog')).length,1);
-  console.log('Training restoration, goals, validation, safe notes/CSV, malformed storage, and checklist filtering passed.');
+  const draft=harness('training.html',{bjjFavoriteTechniques:JSON.stringify(['Armbar','Armbar',null,'Baseball Choke'])},false,'?technique=Armbar');
+  assert.equal(draft.nodes.get('logTechniques').value,'Armbar');
+  assert.equal(draft.storage.has('bjjTrainingLog'),false,'Technique links must not log a session');
+  assert.equal(draft.nodes.get('savedPractice').children.length,2);
+  draft.nodes.get('savedPractice').children[0].click();
+  assert.equal(draft.nodes.get('logTechniques').value,'Armbar','Saved shortcuts must not duplicate a technique');
+  draft.nodes.get('savedPractice').children[1].click();
+  assert.equal(draft.nodes.get('logTechniques').value,'Armbar, Baseball Bat Choke');
+  assert.equal((draft.nodes.get('weekActivity').innerHTML.match(/class="activity-day/g)||[]).length,7);
+  draft.nodes.get('addSession').click();
+  assert.match(draft.nodes.get('weekActivity').innerHTML,/has-session is-today/);
+  console.log('Training restoration, goals, validation, safe notes/CSV, malformed storage, checklist filtering, technique drafts and weekly activity passed.');
 }
 run().catch(error=>{console.error(error);process.exitCode=1;});

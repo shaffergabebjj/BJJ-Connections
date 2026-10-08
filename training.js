@@ -66,6 +66,27 @@
 
   // Session log
   $("logDate").value = localDate;
+  // Draft only: following a technique link never creates a session automatically.
+  const incomingTechnique = new URLSearchParams(location.search || "").get("technique");
+  if (incomingTechnique && incomingTechnique.trim()) {
+    $("logTechniques").value = incomingTechnique.trim().slice(0, 200);
+    $("logStatus").textContent = "Technique added to your draft. Log it after you practice.";
+  }
+  const savedTechniques = [...new Set(read("bjjFavoriteTechniques")
+    .filter(name => typeof name === "string" && name.trim())
+    .map(name => name === "Baseball Choke" ? "Baseball Bat Choke" : name))];
+  $("savedPracticeEmpty").hidden = savedTechniques.length > 0;
+  savedTechniques.forEach(name => {
+    const button = document.createElement("button");
+    button.type = "button"; button.className = "chip"; button.textContent = "+ " + name;
+    button.addEventListener("click", () => {
+      const current = $("logTechniques").value.split(",").map(value => value.trim()).filter(Boolean);
+      if (!current.some(value => value.toLowerCase() === name.toLowerCase())) current.push(name);
+      $("logTechniques").value = current.join(", ");
+      $("practiceStatus").textContent = name + " is in your session draft.";
+    });
+    $("savedPractice").appendChild(button);
+  });
   let sessions = read("bjjTrainingLog").filter(s => s && validDate(s.date)).map(s => ({
     date:s.date, duration:Number.isFinite(Number(s.duration)) && Number(s.duration)>0 ? Math.min(1440,Math.round(Number(s.duration))) : "",
     type:typeof s.type === "string" ? s.type : "", techniques:typeof s.techniques === "string" ? s.techniques : "", notes:typeof s.notes === "string" ? s.notes : "", timestamp:s.timestamp
@@ -86,6 +107,12 @@
     const format = {month:'short',day:'numeric'};
     const last = new Date(end); last.setDate(last.getDate()-1);
     $("weekRange").textContent = start.toLocaleDateString('en-US',format)+' – '+last.toLocaleDateString('en-US',format)+' · From your session log';
+    $("weekActivity").innerHTML = Array.from({length:7}, (_, i) => {
+      const day = new Date(start); day.setDate(day.getDate() + i);
+      const key = [day.getFullYear(), String(day.getMonth()+1).padStart(2,"0"), String(day.getDate()).padStart(2,"0")].join("-");
+      const count = week.filter(s => s.date === key).length;
+      return '<div class="activity-day' + (count ? ' has-session' : '') + (key === localDate ? ' is-today' : '') + '"><span>' + day.toLocaleDateString('en-US',{weekday:'short'}) + '</span><strong>' + day.getDate() + '</strong><small>' + (count ? count + (count === 1 ? ' session' : ' sessions') : key > localDate ? 'Upcoming' : 'No log') + '</small></div>';
+    }).join("");
     $("noSessions").classList.toggle("hidden",sessions.length > 0);
     $("exportSessions").disabled = sessions.length === 0;
     $("logList").innerHTML = sessions.map((s,i) => {
