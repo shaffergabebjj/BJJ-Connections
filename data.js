@@ -977,7 +977,7 @@ const BROWN_ROUNDS = [
       "WORM GUARD",
       "SQUID GUARD",
       "LAPEL LASSO",
-      "RINGWORM GUARD",
+      "RINGWORM GUARD (MODIFIED WORM)",
       "LAPEL GUARD SYSTEMS",
       "These gi guards use the lapel as an additional control around the legs or body."
     ],
