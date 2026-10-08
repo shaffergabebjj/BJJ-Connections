@@ -111,7 +111,7 @@
       const day = new Date(start); day.setDate(day.getDate() + i);
       const key = [day.getFullYear(), String(day.getMonth()+1).padStart(2,"0"), String(day.getDate()).padStart(2,"0")].join("-");
       const count = week.filter(s => s.date === key).length;
-      return '<div class="activity-day' + (count ? ' has-session' : '') + (key === localDate ? ' is-today' : '') + '"><span>' + day.toLocaleDateString('en-US',{weekday:'short'}) + '</span><strong>' + day.getDate() + '</strong><small>' + (count ? count + (count === 1 ? ' session' : ' sessions') : key > localDate ? 'Upcoming' : 'No log') + '</small></div>';
+      return '<div class="activity-day' + (count ? ' has-session' : '') + (key === localDate ? ' is-today' : '') + '"><span>' + day.toLocaleDateString('en-US',{weekday:'short'}) + '</span><strong>' + day.getDate() + '</strong><small>' + (count ? count + (count === 1 ? ' session' : ' sessions') : key > localDate ? 'Later' : 'No log') + '</small></div>';
     }).join("");
     $("noSessions").classList.toggle("hidden",sessions.length > 0);
     $("exportSessions").disabled = sessions.length === 0;
