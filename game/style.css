@@ -39,4 +39,9 @@ html.playing,html.playing body{overscroll-behavior:none}html.playing body{touch-
 #panel header h2{letter-spacing:-.03em}
 .dev-banner{border-radius:0 0 6px 6px}
 .home-overlay .eyebrow{color:var(--gold)}
+/* Let the start screen grow with its copy; gameplay keeps its fixed arena. */
+#arena:has(#home:not([hidden])){height:auto;min-height:0;max-height:none}
+#arena:has(#home:not([hidden])) #game{position:absolute;inset:0}
+#home.home-overlay{position:relative;inset:auto;min-height:560px}
+@media(max-width:720px){#home.home-overlay{min-height:440px}}
 @media(max-width:720px){#menu-nav button{padding:12px 9px}.feedback-section{margin-top:18px}.back-site{font-size:11px;padding:11px 12px;letter-spacing:.02em;max-width:100%}.home-overlay{width:76%}#home-progress{font-size:12px}}
