@@ -1,4 +1,4 @@
-// 100 stable daily IDs plus 12 curated Brown training puzzles.
+// 100 stable daily IDs plus 12 curated Brown and 11 curated Black training puzzles.
 // Repeated groups are capped at three appearances.
 const ROUNDS = [
 
@@ -1381,8 +1381,94 @@ const BROWN_ROUNDS = [
     ]
   ]
 ];
+// Black-belt training puzzles. Each puzzle is built from four precise
+// vocabularies (judo throw families, Portuguese terms, leg-lock systems,
+// choke mechanics...) so recognizing a group takes real knowledge, not luck.
+const BLACK_ROUNDS = [
+  // Judo throws by family
+  [
+    ["OSOTO GARI","OUCHI GARI","KOSOTO GARI","DEASHI HARAI","FOOT AND LEG THROWS (ASHI-WAZA)","In judo's classification these are ashi-waza: throws made mainly with a foot or leg sweeping, reaping, or blocking the opponent's leg."],
+    ["O GOSHI","HARAI GOSHI","HANE GOSHI","TSURIKOMI GOSHI","HIP THROWS (KOSHI-WAZA)","Koshi-waza are throws where the hips are the main point of contact, loading the opponent over or around them."],
+    ["SEOI NAGE","TAI OTOSHI","KATA GURUMA","SUKUI NAGE","HAND THROWS (TE-WAZA)","Te-waza are throws driven mainly by the arms and hands, from shoulder throws to scooping and carrying actions."],
+    ["TOMOE NAGE","SUMI GAESHI","URA NAGE","TANI OTOSHI","SACRIFICE THROWS (SUTEMI-WAZA)","In sutemi-waza the thrower deliberately falls to the mat to complete the throw."]
+  ],
+  // Judo groundwork
+  [
+    ["KESA GATAME","KAMI SHIHO GATAME","YOKO SHIHO GATAME","TATE SHIHO GATAME","JUDO HOLD-DOWNS (OSAEKOMI-WAZA)","Osaekomi-waza are pins held on the back: scarf hold, upper four-quarter (north-south), side four-quarter (side control), and vertical four-quarter (mount)."],
+    ["JUJI GATAME","UDE GARAMI","WAKI GATAME","HIZA GATAME","JUDO ARM LOCKS (KANSETSU-WAZA)","Kansetsu-waza are joint locks: the cross armlock, the entangled armlock, the armpit armlock, and the knee armlock."],
+    ["HADAKA JIME","OKURI ERI JIME","SANKAKU JIME","NAMI JUJI JIME","JUDO STRANGLES (SHIME-WAZA)","Shime-waza are chokes: the naked strangle, sliding collar, triangle, and normal cross strangle."],
+    ["UKEMI","UCHIKOMI","RANDORI","KATA","JUDO TRAINING METHODS","Breakfalling, repeated fit-in practice, free sparring, and prearranged forms are the core ways judo is practiced."]
+  ],
+  // Judo vocabulary and scoring
+  [
+    ["UCHI MATA","HIZA GURUMA","OKURI ASHI HARAI","KOUCHI GARI","FOOT AND LEG THROWS (ASHI-WAZA)","Each is an ashi-waza throw using a leg or foot as the main tool."],
+    ["UKI GOSHI","KOSHI GURUMA","O GOSHI","HANE GOSHI","HIP THROWS (KOSHI-WAZA)","Each is a koshi-waza throw where the hips are the main point of contact."],
+    ["KUZUSHI","TSUKURI","KAKE","UKE","JUDO THROW VOCABULARY","Kuzushi is breaking balance, tsukuri is the fit-in, kake is the execution, and uke is the person being thrown."],
+    ["IPPON","WAZA-ARI","SHIDO","HANSOKU-MAKE","JUDO SCORES AND PENALTIES","Ippon and waza-ari are scores, while shido and hansoku-make are a penalty and a direct disqualification."]
+  ],
+  // Leg lock anatomy and 10th Planet
+  [
+    ["SADDLE","50/50","OUTSIDE ASHI","SINGLE LEG X","LEG ENTANGLEMENT POSITIONS","These are control positions where your legs trap an opponent's leg, forming the platform for leg-lock finishes."],
+    ["STRAIGHT ANKLE","TOEHOLD","ACHILLES LOCK","ESTIMA LOCK","FOOT AND ANKLE ATTACKS","Each finishing lock targets the ankle or foot rather than the knee."],
+    ["KNEEBAR","INSIDE HEEL HOOK","OUTSIDE HEEL HOOK","CALF SLICER","KNEE AND CALF ATTACKS","These locks stress the knee joint or compress the calf against the knee."],
+    ["RUBBER GUARD","LOCKDOWN","TWISTER","ELECTRIC CHAIR","10TH PLANET SYSTEM","These are staples of Eddie Bravo's 10th Planet system, built around the lockdown and rubber guard."]
+  ],
+  // Portuguese vocabulary
+  [
+    ["MONTADA","GUARDA FECHADA","MEIA GUARDA","CEM QUILOS","PORTUGUESE FOR POSITIONS","Mount, closed guard, half guard, and side control (literally 'one hundred kilos')."],
+    ["RASPAGEM","PASSAGEM","QUEDA","PEGADA","PORTUGUESE FOR CORE ACTIONS","Sweep, guard pass, takedown, and grip."],
+    ["MATA-LEÃO","CHAVE DE BRAÇO","CHAVE DE CALCANHAR","TRIÂNGULO","PORTUGUESE FOR SUBMISSIONS","Rear naked choke ('lion killer'), armbar, heel hook, and triangle."],
+    ["KESA GATAME","KAMI SHIHO GATAME","YOKO SHIHO GATAME","KUZURE KESA GATAME","JAPANESE PINS","These are judo hold-down names, the Japanese counterparts to positions BJJ often names in Portuguese."]
+  ],
+  // Chokes by mechanism
+  [
+    ["LOOP CHOKE","BOW-AND-ARROW","PAPER CUTTER","BASEBALL BAT CHOKE","CHOKES THAT NEED THE GI","Each of these depends on gripping the collar or lapel of the gi."],
+    ["TRIANGLE","BUGGY CHOKE","GOGOPLATA","PERUVIAN NECKTIE","LEG-ASSISTED CHOKES","These chokes use the legs or shin as the main strangling tool."],
+    ["D'ARCE","ANACONDA","ARM TRIANGLE","ARM-IN GUILLOTINE","CHOKES TRAPPING ONE ARM","Each squeezes the neck while one of the opponent's arms is trapped alongside the head."],
+    ["HADAKA JIME","OKURI ERI JIME","KATA HA JIME","NAMI JUJI JIME","JUDO STRANGLES","The naked strangle, sliding collar, single wing, and cross strangle are classic judo choking techniques."]
+  ],
+  // Guard game
+  [
+    ["KNEE CUT","TOREANDO","LEG DRAG","BACKSTEP","MOBILITY PASSES","These passes rely on footwork and angles to get around the legs."],
+    ["SMASH PASS","STACK PASS","OVER-UNDER","DOUBLE UNDER","PRESSURE PASSES","These passes use heavy body weight and tight control to flatten or fold the guard."],
+    ["TRIPOD","SICKLE","ELEVATOR","BALLOON","OPEN GUARD SWEEPS","Each is a sweep from an open guard, using hooks or grips to lift and tip the opponent."],
+    ["DEEP HALF","KNEE SHIELD","Z-GUARD","LOCKDOWN","HALF GUARD VARIATIONS","These are all ways of playing half guard from different frames and leg configurations."]
+  ],
+  // Wrestling roots and scrambles
+  [
+    ["KIMURA","AMERICANA","OMOPLATA","BARATOPLATA","SHOULDER LOCKS","Each submission attacks the shoulder joint."],
+    ["SNAP DOWN","SPRAWL","WHIZZER","GRANBY ROLL","WRESTLING SKILLS IN BJJ","These are wrestling tools for defending shots, controlling the head, and scrambling."],
+    ["S-MOUNT","TECHNICAL MOUNT","HIGH MOUNT","LOW MOUNT","MOUNT VARIATIONS","These describe different ways of arranging the knees and hips while on top in mount."],
+    ["RUBBER GUARD","TRUCK","TWISTER","GOGOPLATA","10TH PLANET STAPLES","These are positions and submissions closely associated with Eddie Bravo's rubber guard and twister systems."]
+  ],
+  // The standing game
+  [
+    ["HIGH CROTCH","FIREMAN'S CARRY","KNEE TAP","DOUBLE LEG","WRESTLING SHOTS","These are wrestling takedowns finished by attacking the legs or hips."],
+    ["SEOI NAGE","TAI OTOSHI","UKI OTOSHI","SUKUI NAGE","HAND THROWS (TE-WAZA)","Each is a judo throw driven primarily by the hands and arms."],
+    ["TOMOE NAGE","SUMI GAESHI","YOKO OTOSHI","UKI WAZA","SACRIFICE THROWS (SUTEMI-WAZA)","Each is a sutemi-waza throw where the thrower drops to the mat as part of the technique."],
+    ["OSOTO GARI","OUCHI GARI","KOSOTO GARI","KOSOTO GAKE","LEG REAPS AND HOOKS","These foot and leg throws reap or hook the opponent's leg to take their base."]
+  ],
+  // Concepts and retention
+  [
+    ["FRAMES","BASE","POSTURE","INSIDE POSITION","DEFENSIVE STRUCTURE","These are core principles for resisting pressure and keeping your body organized."],
+    ["HIP ESCAPE","GRANBY ROLL","LEG PUMMEL","RE-GUARD","GUARD RETENTION SKILLS","These are the movements used to recover guard when a pass is being attempted."],
+    ["SEATBELT","BODY TRIANGLE","CRAB RIDE","CHEST-TO-BACK","BACK CONTROL VOCABULARY","These are terms used for connecting to and keeping control of an opponent's back."],
+    ["UKEMI","UCHIKOMI","RANDORI","KATA","JUDO TRAINING METHODS","Breakfalling, repeated fit-in practice, free sparring, and prearranged forms are the core ways judo is practiced."]
+  ],
+  // Names and origins
+  [
+    ["KIMURA","D'ARCE","BARATOPLATA","MARCELOTINE","NAMED AFTER PEOPLE","Each carries the name of a person associated with it, such as Masahiko Kimura, Joe D'Arce, Rafael Barata, and Marcelo Garcia."],
+    ["SPIDER GUARD","WORM GUARD","OCTOPUS GUARD","CRAB RIDE","NAMED AFTER ANIMALS","Each takes its name from the creature the position or leg configuration resembles."],
+    ["PAPER CUTTER","CAN OPENER","ELECTRIC CHAIR","BASEBALL BAT CHOKE","NAMED AFTER OBJECTS","Each is named after an everyday object that resembles the motion or grip."],
+    ["X-GUARD","Z-GUARD","K-GUARD","S-MOUNT","NAMED AFTER LETTERS","Each takes its name from the letter its leg or body shape resembles."]
+  ]
+];
+
 const PUZZLES = [...DAILY_PUZZLES, ...BROWN_ROUNDS.map((groups, index) => ({
   id: 101 + index, difficulty: "brown",
+  groups: groups.map(g => ({items:g.slice(0,4), category:g[4], explanation:g[5]}))
+})), ...BLACK_ROUNDS.map((groups, index) => ({
+  id: 101 + BROWN_ROUNDS.length + index, difficulty: "black",
   groups: groups.map(g => ({items:g.slice(0,4), category:g[4], explanation:g[5]}))
 }))];
 

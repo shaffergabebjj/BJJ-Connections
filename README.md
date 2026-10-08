@@ -29,7 +29,7 @@ Live at **[bjjconnectionsbygabe.com](https://bjjconnectionsbygabe.com)**.
 - "One away" feedback
 - "Learn why" explanations for every category
 - Share results as a colored-square grid
-- 112-puzzle bank (100 daily rounds and 12 Brown training rounds) with automated duplicate/structure checking
+- 123-puzzle bank (100 daily rounds, 12 Brown training rounds, and 11 Black training rounds) with automated duplicate/structure checking
 
 ### Technique Explorer (techniques.html)
 - Technique library with category, belt, search, and saved-only filters
