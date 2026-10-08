@@ -310,3 +310,27 @@ tbody tr:nth-child(even) { background: var(--bg); }
   .timer-face { color:#111; background:#fff; }
   .panel, .card, .prep-panel { box-shadow:none; }
 }
+
+/* Belt icon on the "Explore techniques" homepage card */
+.tool-number-icon { display: flex; align-items: center; justify-content: space-between; }
+.tool-icon { color: var(--ink); flex: none; }
+
+/* Phones/tablets with the menu button: the theme toggle sits beside it in the
+   header instead of floating over the puzzle tiles, and the puzzle controls
+   no longer need to reserve space for it. */
+@media (max-width: 1000px) {
+  .theme-toggle {
+    top: calc(10px + env(safe-area-inset-top, 0px)); bottom: auto;
+    right: calc(68px + env(safe-area-inset-right, 0px));
+    width: 40px; height: 40px; box-shadow: none; z-index: 120;
+  }
+  .theme-toggle svg { width: 20px; height: 20px; }
+  .back-to-top {
+    right: calc(14px + env(safe-area-inset-right, 0px));
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    width: 44px; height: 44px; opacity: .9;
+  }
+}
+@media (max-width: 640px) {
+  .puzzle-buttons, .home-game-controls { padding-right: 10px; }
+}
