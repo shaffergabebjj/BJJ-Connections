@@ -4,6 +4,16 @@
   var links = document.querySelector('.nav-links');
   if (!toggle || !links) return;
 
+  var captions = {'/':'Your daily puzzle','techniques.html':'Find your next move','puzzles.html':'Play, practice, replay','competition.html':'Get match ready','training.html':'Plan your mat time','resources.html':'Videos & answers','game/':'The 8-bit dojo','about.html':'Meet the creator'};
+  links.querySelectorAll('a').forEach(function (link) {
+    var caption = captions[link.getAttribute('href')];
+    if (!caption) return;
+    var detail = document.createElement('span');
+    detail.className = 'nav-caption'; detail.textContent = caption;
+    detail.setAttribute('aria-hidden', 'true');
+    link.appendChild(detail);
+  });
+
   var backdrop = document.createElement('button');
   backdrop.type = 'button';
   backdrop.className = 'nav-backdrop';

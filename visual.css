@@ -220,6 +220,91 @@ tbody tr:nth-child(even) { background: var(--bg); }
 .saved-practice-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
 .saved-practice-list .chip { white-space:normal; text-align:left; min-height:44px; }
 @media(max-width:640px) { .week-activity { gap:5px; } .activity-day { padding:12px 2px; gap:6px; border-radius:7px; } .activity-day span { font-size:10px; } .activity-day strong { font-size:20px; } .activity-day small { font-size:9px; overflow-wrap:anywhere; } }
+/* A quiet frame for play, with mode navigation and results clearly separated. */
+.puzzle-wrap { width:min(800px, calc(100% - 32px)); padding-top:28px; }
+.puzzle-tabs { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; padding:6px; margin:20px 0; }
+.puzzle-tabs .tab { min-width:0; padding:12px 4px; font-size:13px; }
+.puzzle-tabs .tab.active { box-shadow:0 2px 6px #0000000d, inset 0 -3px var(--accent); }
+#gameView { background:var(--surface); border:1px solid var(--border); border-top:4px solid var(--accent); border-radius:18px; padding:24px; box-shadow:var(--panel-shadow); }
+.puzzle-meta { text-align:left; font-size:12px; border-bottom:1px solid var(--border); padding-bottom:14px; margin-bottom:0; }
+.puzzle-status { color:var(--muted); margin-top:8px; }
+#dots { color:var(--accent); letter-spacing:4px; }
+.puzzle-buttons { margin-top:16px; gap:8px; }
+.puzzle-buttons .ctrl { min-width:104px; }
+.solved { padding:18px 14px; line-height:1.5; border:1px solid #0000000d; }
+.solved b { text-transform:uppercase; letter-spacing:.04em; font-size:12px; }
+.result-summary { border-radius:12px; border:1px solid var(--border); background:var(--bg); }
+#learnPanel { box-shadow:none; background:var(--bg); }
+.training-tools { background:var(--bg); }
+.difficulty-bar { justify-content:flex-start; gap:6px; margin:0 0 14px; }
+.difficulty-bar button { border-radius:7px; font-size:12px; }
+#archiveView > .panel, #statsView > .panel { padding:28px; border-top:4px solid var(--accent); }
+#archiveView h2, #statsView h2 { font-size:25px; letter-spacing:-.035em; margin-bottom:12px; }
+.archiveList { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); padding:3px; gap:10px; max-height:650px; }
+.archiveItem { display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:7px; padding:18px; background:var(--bg); border:1px solid var(--border); }
+.archiveDate { font-size:16px; font-weight:750; letter-spacing:-.02em; }
+.archiveTag { font-size:10px; letter-spacing:.045em; color:var(--muted); }
+.stats { gap:10px; margin-top:20px; }
+.stats .stat { position:relative; text-align:left; padding:20px; background:var(--bg); border-radius:12px; color:var(--muted); }
+.stats .stat b { color:var(--ink); font-size:36px; line-height:1.15; margin-bottom:8px; font-variant-numeric:tabular-nums; }
+.stats .stat:nth-child(3) { border-top:3px solid #719065; }
+.stats .stat:nth-child(4) { border-top:3px solid #bc9949; }
+.stats .stat:nth-child(5) { border-top:3px solid #947ca7; }
+.practice-progress-row { --belt-progress:#8f9789; grid-template-columns:62px minmax(0,1fr) 48px; background:var(--bg); padding:13px 14px; border:1px solid var(--border); border-radius:9px; margin:8px 0; font-size:12px; }
+.practice-progress-row:nth-child(2) { --belt-progress:#4879bd; }
+.practice-progress-row:nth-child(3) { --belt-progress:#8a64ad; }
+.practice-progress-row:nth-child(4) { --belt-progress:#936744; }
+.practice-progress-row:nth-child(5) { --belt-progress:var(--ink); }
+.practice-progress-row progress { accent-color:var(--belt-progress); height:8px; border:0; border-radius:99px; overflow:hidden; background:var(--border); }
+.practice-progress-row progress::-webkit-progress-bar { background:var(--border); border-radius:99px; }
+.practice-progress-row progress::-webkit-progress-value { background:var(--belt-progress); border-radius:99px; }
+.practice-progress-row progress::-moz-progress-bar { background:var(--belt-progress); border-radius:99px; }
+.practice-history-item { background:var(--surface); border-color:var(--border); border-left:3px solid var(--accent); font-size:12px; }
+#practiceEmpty { padding:22px; border:1px dashed var(--border-strong); border-radius:10px; color:var(--muted); font-size:13px; background:var(--bg); }
+.stats-actions { padding-top:18px; border-top:1px solid var(--border); }
+.stats-actions .ctrl { font-size:12px; background:transparent; color:var(--muted); }
+
+/* Compact destination cards make the phone menu readable in one glance. */
+.nav-caption { display:none; }
+@media(max-width:1000px) {
+  .nav-toggle { border:1px solid var(--border); border-radius:10px; font-size:24px; line-height:1; }
+  .nav-toggle[aria-expanded="true"] { color:var(--accent); background:var(--accent-soft); border-color:var(--accent); }
+  :root[data-theme] .nav-links { top:calc(63px + env(safe-area-inset-top,0px)); left:12px; right:12px; padding:12px; gap:8px; background:var(--surface); border:1px solid var(--border); border-bottom:3px solid var(--accent); border-radius:0 0 16px 16px; box-shadow:0 20px 40px #0002; max-height:calc(100dvh - 88px - env(safe-area-inset-top,0px)); overflow-y:auto; }
+  .nav-links.open { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+  :root[data-theme] .nav-links a { display:block; min-width:0; min-height:72px; padding:14px 12px; border:1px solid var(--border); border-radius:9px; background:var(--bg); font-size:14px; line-height:1.3; }
+  :root[data-theme] .nav-links a.active { background:var(--accent-soft); border-color:var(--accent); }
+  .nav-caption { display:block; font-weight:400; font-size:10px; line-height:1.4; color:var(--muted); margin-top:6px; }
+  .nav-install-btn { grid-column:1/-1; width:100%; min-height:44px; margin:2px 0 0; border-radius:8px; }
+  .nav-backdrop { background:#080b0ac2; backdrop-filter:blur(3px); }
+}
+
+/* Small details shared by the supporting pages. */
+.drill-list { counter-reset:drill; }
+.drill-item { counter-increment:drill; position:relative; padding-top:46px; }
+.drill-item::before { content:counter(drill,decimal-leading-zero); position:absolute; top:17px; left:24px; font-size:10px; font-weight:800; color:var(--accent); letter-spacing:.1em; }
+.drill-item .drill-meta { border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:12px; }
+.checklist-item input[type="checkbox"] { accent-color:var(--accent); }
+.btn, .ctrl, .resource-watch { transition:background-color 140ms, border-color 140ms, box-shadow 140ms; }
+@media(hover:hover) { .btn:hover, .ctrl:not(:disabled):hover, .resource-watch:hover { box-shadow:0 3px 10px #00000012; } .archiveItem:hover { border-color:var(--accent); background:var(--accent-soft); } }
+@media(max-width:640px) {
+  .puzzle-wrap { width:calc(100% - 24px); padding-top:18px; }
+  #gameView { padding:14px 10px; border-radius:14px; }
+  #gameView .puzzle-status { background:var(--surface); }
+  .puzzle-tabs { margin:16px 0; }
+  .puzzle-tabs .tab { font-size:12px; }
+  .puzzle-buttons .ctrl { min-width:0; }
+  #archiveView > .panel, #statsView > .panel { padding:18px 14px; }
+  #archiveView h2, #statsView h2 { font-size:22px; }
+  .archiveList { gap:8px; max-height:60svh; }
+  .archiveItem { padding:14px 10px; }
+  .archiveDate { font-size:14px; }
+  .archiveTag { font-size:9px; }
+  .stats { gap:8px; }
+  .stats .stat { padding:16px 10px; font-size:10px; }
+  .stats .stat b { font-size:28px; }
+  .practice-progress-row { grid-template-columns:48px minmax(0,1fr) 38px; gap:8px; padding:12px 10px; }
+}
+@media(prefers-reduced-motion:reduce) { .btn,.ctrl,.resource-watch { transition:none; } }
 @media print {
   .page-header::after, .footer-brand::before { display:none; }
   .timer-face { color:#111; background:#fff; }
