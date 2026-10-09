@@ -305,7 +305,82 @@ tbody tr:nth-child(even) { background: var(--bg); }
   .practice-progress-row { grid-template-columns:48px minmax(0,1fr) 38px; gap:8px; padding:12px 10px; }
 }
 @media(prefers-reduced-motion:reduce) { .btn,.ctrl,.resource-watch { transition:none; } }
+/* Desktop layouts use the extra room for persistent controls and readable cards. */
+.desktop-wordmark { display:none; }
+.explorer-content { min-width:0; }
+@media(min-width:1100px) {
+  .desktop-explorer { display:grid; grid-template-columns:258px minmax(0,1fr); gap:28px; align-items:start; }
+  .desktop-explorer .tech-toolbar { position:sticky; top:88px; max-height:calc(100svh - 112px); overflow-y:auto; scrollbar-width:thin; padding:20px; margin:0; border-top:3px solid var(--accent); }
+  .desktop-explorer .search-bar { display:grid; gap:10px; margin-bottom:18px; }
+  .desktop-explorer .search-bar .search-input { min-width:0; width:100%; }
+  .desktop-explorer .search-bar .btn { width:100%; }
+  .desktop-explorer .tech-filter-panel summary { font-size:12px; line-height:1.5; }
+  .desktop-explorer .filter-chips { gap:6px; }
+  .desktop-explorer .chip { font-size:11px; padding:8px 10px; min-height:36px; }
+  .desktop-explorer .tech-results-bar { display:grid; gap:12px; }
+  .desktop-explorer .tech-results-actions { gap:8px; }
+  .desktop-explorer .sort-label { width:100%; justify-content:space-between; }
+  .desktop-explorer .tech-results { grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+  .explorer-content > .save-status:empty { display:none; }
+  .desktop-explorer .tech-card { padding:24px; }
+  .desktop-explorer .tech-card h3 { font-size:22px; }
+  #glossary .library-toolbar { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px 24px; padding:24px; }
+  #glossary .library-toolbar > .field-label { grid-column:1; grid-row:1; align-self:end; margin:0; }
+  #glossarySearch { grid-column:1; grid-row:2; align-self:end; }
+  #glossary .resource-browse { grid-column:2; grid-row:1 / 3; margin:0; align-items:end; }
+  #glossary .resource-browse-hint { grid-column:2; margin:0; }
+  #glossary .library-results-bar { grid-column:1/-1; margin-top:8px; }
+  .creator-profile { position:sticky; top:92px; align-self:start; }
+  .section-heading { align-items:center; }
+  .page-header h1 { font-size:56px; }
+  .page-header p { font-size:17px; }
+}
+@media(min-width:1280px) {
+  :root { --max-width:1320px; }
+  .site-header .container { width:min(1400px,94%); }
+  .desktop-wordmark { display:block; font-size:17px; font-weight:800; letter-spacing:-.045em; color:var(--ink); white-space:nowrap; }
+  .nav-logo { display:flex; align-items:center; gap:12px; }
+  .nav-links { gap:2px; margin-left:auto; }
+  .nav-links a { padding-inline:10px; }
+  .page-header { padding-block:56px 44px; }
+  .page-header[data-section]::after { right:max(4%,calc((100% - 1320px)/2)); }
+  .game-layout { grid-template-columns:minmax(0,.8fr) minmax(0,1.45fr); gap:64px; }
+  .hero .hero-intro h1 { font-size:68px; }
+  .game-hero .hero-mini-tile { min-height:90px; font-size:14px; }
+  .tool-card { padding:28px 24px; }
+  .section { padding-block:56px; }
+  .prep-grid { gap:24px; }
+  .prep-panel { padding:28px; }
+  .footer-grid { gap:64px; }
+}
+@media(min-width:1500px) {
+  .desktop-explorer { grid-template-columns:270px minmax(0,1fr); gap:30px; }
+  .desktop-explorer .tech-results { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .desktop-explorer .tech-card { padding:22px; }
+  .desktop-explorer .tech-card h3 { font-size:20px; }
+}
+/* Comfortable phone controls, including inputs that do not trigger iOS zoom. */
+@media(max-width:640px) {
+  main input:not([type="checkbox"]):not([type="radio"]), main select, main textarea { font-size:16px; }
+  .tech-toolbar { padding:18px 16px; }
+  .tech-toolbar .search-bar { display:grid; grid-template-columns:minmax(0,1fr); gap:10px; }
+  .tech-toolbar .search-bar .btn { width:100%; min-height:44px; }
+  .tech-results-bar { align-items:stretch; gap:12px; }
+  .tech-results-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; }
+  .tech-results-actions .sort-label { justify-content:space-between; }
+  .tech-results-actions .text-button { grid-column:1/-1; min-height:44px; border:1px solid var(--border); border-radius:8px; }
+  .tech-card-actions { display:grid; grid-template-columns:1fr 1fr; align-items:stretch; }
+  .tech-card-actions > * { min-width:0; }
+  .tech-card-actions .tech-favorite { width:100%; align-self:stretch; }
+  .library-pagination .btn { width:100%; }
+  .glossary-item { padding:20px; }
+  .resource-actions { row-gap:12px; }
+  .resource-actions a { min-height:44px; display:inline-flex; align-items:center; }
+  .site-footer { padding-bottom:100px; }
+}
 @media print {
+  .desktop-explorer { display:block; }
+  .desktop-explorer .tech-toolbar, .creator-profile { position:static; max-height:none; overflow:visible; }
   .page-header::after, .footer-brand::before { display:none; }
   .timer-face { color:#111; background:#fff; }
   .panel, .card, .prep-panel { box-shadow:none; }

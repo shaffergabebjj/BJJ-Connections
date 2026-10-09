@@ -65,6 +65,7 @@
 
   <section class="section">
     <div class="container">
+      <div class="desktop-explorer">
       <div class="tech-toolbar">
       <div class="search-bar">
         <input type="search" class="search-input" id="techSearch" placeholder="Search techniques..." aria-label="Search techniques">
@@ -85,10 +86,13 @@
       </div>
       </div>
 
+      <div class="explorer-content">
       <p id="favoriteStatus" class="save-status" role="status"></p>
       <div class="tech-results" id="techResults"></div>
       <div class="library-pagination" id="techPagination"><p id="techVisible" role="status"></p><button type="button" class="btn btn-outline" id="moreTechniques" aria-controls="techResults">Show more techniques</button></div>
       <div class="no-results hidden" id="noResults">No techniques match your search. Try a different filter or search term.</div>
+      </div>
+      </div>
     </div>
   </section>
 

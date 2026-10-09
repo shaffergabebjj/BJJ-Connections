@@ -135,5 +135,11 @@
     if (event.key === 'bjjFavoriteTechniques' || event.key === null) { favorites = readFavorites(); render(); }
   });
   window.addEventListener('popstate', () => { readURL(); render(); });
+  // Open the filter shelf on desktop; compact screens retain the disclosure.
+  if (window.matchMedia) {
+    const desktop = window.matchMedia('(min-width: 1100px)');
+    $('techFilterPanel').open = desktop.matches;
+    desktop.addEventListener?.('change', event => { $('techFilterPanel').open = event.matches; });
+  }
   readURL(); render();
 })();
