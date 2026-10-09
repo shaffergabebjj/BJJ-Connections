@@ -93,6 +93,7 @@
   }));
   let removedSession = null;
   function renderSessions() {
+    if (window.dispatchEvent && typeof Event === "function") window.dispatchEvent(new Event("bjjlogchange"));
     sessions.sort((a,b) => b.date.localeCompare(a.date));
     const minutes = sessions.reduce((sum,s) => sum + Number(s.duration || 0),0);
     $("logSummary").textContent = sessions.length + " session" + (sessions.length === 1 ? "" : "s") + " · " + Math.floor(minutes/60) + "h " + minutes%60 + "m logged";
