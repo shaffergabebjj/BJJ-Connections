@@ -31,7 +31,7 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="visual.css">
 </head>
-<body>
+<body class="training-page">
 <a href="#main" class="skip-link">Skip to content</a>
 
 <header class="site-header">
@@ -64,7 +64,7 @@
   </section>
 
   <!-- Solo Drills -->
-<div class="container"><nav class="section-nav" aria-label="Training sections"><a href="#round-timer">Round timer</a><a href="#game-plan">Game plan</a><a href="#goals">Goals</a><a href="#training-log">Session log</a><a href="#solo-drills">Solo drills</a><a href="#partner-drills">Partner drills</a><a href="#warm-up">Warm-up</a><a href="#conditioning">Conditioning</a></nav></div>
+<div class="training-jump"><div class="container"><nav class="section-nav" aria-label="Training sections"><a href="#round-timer">Round timer</a><a href="#game-plan">Game plan</a><a href="#goals">Goals</a><a href="#training-log">Session log</a><a href="#solo-drills">Solo drills</a><a href="#partner-drills">Partner drills</a><a href="#warm-up">Warm-up</a><a href="#conditioning">Conditioning</a></nav></div></div>
   <section class="section training-overview">
     <div class="container">
       <div class="training-summary-heading"><div><span class="hero-eyebrow">Your mat time</span><h2>This week</h2></div><a class="text-button" href="#training-log">Log a session ↗</a></div>
@@ -188,7 +188,9 @@
     <div class="container">
       <h2 class="section-title" id="training-log">Training Log</h2>
       <p class="section-sub">Track your training sessions. Entries stay in this browser. Export a copy to keep your own backup.</p>
-      <div class="panel">
+      <div class="session-workspace">
+      <div class="panel session-editor">
+        <h3>Record your session</h3>
         <div class="session-fields">
           <label>Session date<input type="date" class="search-input" id="logDate" style="max-width:200px" aria-label="Session date"></label>
           <label>Minutes<input type="number" class="search-input" id="logDuration" placeholder="Duration (min)" style="max-width:160px" aria-label="Duration in minutes" min="1" max="1440" step="1"></label>
@@ -207,11 +209,15 @@
       <p id="logStatus" class="save-status" role="status"></p>
       </div>
 
+      <div class="session-history">
+      <h3>Your training history</h3>
       <div class="checklist-progress mt-2">
         <span id="logSummary">0 sessions logged</span>
       </div>
       <div id="logList" style="display:flex;flex-direction:column;gap:12px"></div>
-      <div class="no-results hidden" id="noSessions">No training sessions logged yet. Add your first session above.</div>
+      <div class="no-results hidden" id="noSessions">No sessions yet. Record a session to start building your training history.</div>
+      </div>
+      </div>
     </div>
   </section>
 
