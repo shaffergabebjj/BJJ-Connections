@@ -1,8 +1,8 @@
-const CACHE_NAME = "bjj-connections-v49";
+const CACHE_NAME = "bjj-connections-v50";
 const APP_SHELL = [
   "/", "/index.html", "/puzzles.html", "/techniques.html",
   "/404.html", "/competition.html", "/training.html", "/resources.html", "/about.html",
-  "/style.css", "/visual.css", "/theme.js", "/nav.js", "/app.js", "/data.js", "/daily-progress.js", "/game-core.js", "/techniques.js", "/technique-videos.js", "/glossary-videos.js", "/resource-catalog.js", "/training.js", "/round-timer.js", "/resources-page.js", "/techniques-page.js", "/questions.js", "/competition-event.js", "/home-desk.js",
+  "/style.css", "/visual.css", "/theme.js", "/nav.js", "/app.js", "/data.js", "/daily-progress.js", "/game-core.js", "/techniques.js", "/technique-videos.js", "/glossary-videos.js", "/resource-catalog.js", "/training.js", "/round-timer.js", "/resources-page.js", "/techniques-page.js", "/questions.js", "/competition-event.js", "/home-desk.js", "/next-step.js",
   "/favicon.svg?v=gi2", "/favicon-32.png?v=gi2", "/apple-touch-icon.png?v=gi2",
   "/logo.svg", "/favicon.svg", "/favicon-32.png", "/apple-touch-icon.png",
   "/icon-192.png", "/icon-512.png", "/manifest.json", "/game/", "/game/index.html", "/game/style.css", "/game/app.js", "/game/audio.js", "/game/data.js", "/game/engine.js", "/game/render.js", "/game/save.js"

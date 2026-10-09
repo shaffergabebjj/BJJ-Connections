@@ -141,5 +141,12 @@
     $('techFilterPanel').open = desktop.matches;
     desktop.addEventListener?.('change', event => { $('techFilterPanel').open = event.matches; });
   }
+  document.querySelectorAll?.('[data-discover]').forEach(button => {
+    button.addEventListener('click', () => {
+      activeCat = button.getAttribute('data-discover'); activeBelt = 'all'; savedOnly = false; $('techSearch').value = '';
+      refresh(); $('techCount').scrollIntoView({behavior:'auto', block:'center'});
+      $('techResults').querySelector('.tech-card')?.focus({preventScroll:true});
+    });
+  });
   readURL(); render();
 })();

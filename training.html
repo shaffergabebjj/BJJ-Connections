@@ -164,6 +164,15 @@
     </div>
   </section>
 
+  <section class="section" aria-labelledby="savedReviewTitle">
+    <div class="container">
+      <div class="section-heading"><div><span class="hero-eyebrow">From saved to practiced</span><h2 class="section-title" id="savedReviewTitle">Your technique rotation</h2></div><a class="text-button" href="techniques.html?saved=1">Manage saved techniques ↗</a></div>
+      <p id="rotationSummary" class="section-sub" role="status"></p>
+      <progress id="rotationProgress" class="rotation-progress" max="1" value="0" aria-label="Saved techniques practiced in the last 30 days"></progress>
+      <div id="techniqueRotation" class="rotation-grid"></div>
+      <p class="empty-hint">Based on the technique names in your session log. Use “Practice next” to add one to a session draft.</p>
+    </div>
+  </section>
   <!-- Goal Setting -->
   <section class="section">
     <div class="container">
@@ -386,6 +395,7 @@
 
 <script src="nav.js"></script>
 <script src="training.js"></script>
+<script src="next-step.js"></script>
 <script src="round-timer.js"></script>
 </body>
 </html>
