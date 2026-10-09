@@ -4,6 +4,15 @@
   var links = document.querySelector('.nav-links');
   if (!toggle || !links) return;
 
+  var logo = document.querySelector('.nav-logo');
+  if (logo) {
+    var wordmark = document.createElement('span');
+    wordmark.className = 'desktop-wordmark';
+    wordmark.textContent = 'BJJ Connections';
+    wordmark.setAttribute('aria-hidden', 'true');
+    logo.appendChild(wordmark);
+  }
+
   var captions = {'/':'Your daily puzzle','techniques.html':'Find your next move','puzzles.html':'Play, practice, replay','competition.html':'Get match ready','training.html':'Plan your mat time','resources.html':'Videos & answers','game/':'The 8-bit dojo','about.html':'Meet the creator'};
   links.querySelectorAll('a').forEach(function (link) {
     var caption = captions[link.getAttribute('href')];
