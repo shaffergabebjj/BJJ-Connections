@@ -460,3 +460,10 @@ tbody tr:nth-child(even) { background: var(--bg); }
 #sessionMatches:empty { display:none; }
 @media(max-width:640px) { .history-controls { grid-template-columns:1fr; } }
 @media print { .history-controls, .session-reuse, #sessionMatches { display:none; } }
+
+.competition-format { display:flex; align-items:center; gap:24px; padding:20px 24px; margin-bottom:22px; border:1px solid var(--border); border-radius:14px; background:var(--surface); }
+.competition-format label { display:grid; gap:10px; flex:0 1 300px; min-width:0; font-size:14px; }
+.competition-format select { width:100%; min-width:0; }
+.competition-format p { margin:0; color:var(--muted); font-size:13px; line-height:1.6; }
+@media(max-width:640px) { .competition-format { display:block; padding:20px 16px; } .competition-format p { margin-top:14px; } }
+@media print { .competition-format { display:none; } .checklist-item.format-excluded { display:none !important; } }

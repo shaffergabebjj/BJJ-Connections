@@ -69,6 +69,7 @@
         <div><span class="hero-eyebrow">Your preparation</span><h2 id="prepSummary" role="status">Loading your checklist…</h2><p>Check off what applies to your event. Your progress stays in this browser.</p></div>
         <div class="dashboard-actions"><button class="btn btn-outline btn-sm" id="remainingOnly" type="button" aria-pressed="false">Show remaining</button><button class="btn btn-outline btn-sm" id="printChecklist" type="button">Print checklist</button></div>
       </div>
+      <div class="competition-format"><label for="competitionFormat"><strong>What are you competing in?</strong><select id="competitionFormat" class="search-input"><option value="both">Gi &amp; No-Gi</option><option value="gi">Gi only</option><option value="nogi">No-Gi only</option></select></label><p id="formatHint" role="status">Your checklist adjusts to your event. Saved checkmarks stay available when you switch.</p></div>
       <div class="event-bar" aria-labelledby="eventBarTitle">
         <div><span class="hero-eyebrow">Your next event</span><h2 id="eventBarTitle">Keep the date in view.</h2><p id="eventCountdown">Save your tournament name and date on this device.</p></div>
         <div class="event-fields">
@@ -328,6 +329,16 @@ var CHECKLISTS = {
   }
 
   var remainingOnly = false;
+  var format = 'both';
+  try { var storedFormat = localStorage.getItem('bjjCompetitionFormat'); if (['gi','nogi'].includes(storedFormat)) format = storedFormat; } catch (_) {}
+  document.getElementById('competitionFormat').value = format;
+  function applicable(key,index) {
+    if (key === 'giPrep') return format !== 'nogi';
+    if (key === 'nogiPrep') return format !== 'gi';
+    if (key === 'bring' && (index === 0 || index === 1 || index === 3)) return format !== 'nogi';
+    if (key === 'bring' && index === 2) return format !== 'gi';
+    return true;
+  }
   var progress = {};
   Object.keys(CHECKLISTS).forEach(function(listKey) {
     var container = document.getElementById(listKey);
@@ -339,6 +350,7 @@ var CHECKLISTS = {
     items.forEach(function(item, i) {
       var div = document.createElement("div");
       div.className = "checklist-item" + (checked[i] ? " checked" : "");
+      div.setAttribute('data-list',listKey); div.setAttribute('data-index',String(i));
 
       var cb = document.createElement("input");
       cb.type = "checkbox";
@@ -370,8 +382,8 @@ var CHECKLISTS = {
   function updateProgress(key) {
     var items = CHECKLISTS[key];
     var checked = progress[key] || [];
-    var done = checked.filter(Boolean).length;
-    var total = items.length;
+    var done = items.filter(function(_,i) { return applicable(key,i) && checked[i]; }).length;
+    var total = items.filter(function(_,i) { return applicable(key,i); }).length;
     var pct = total ? (done / total * 100) : 0;
 
     var progressEl = document.getElementById(key + "Progress");
@@ -384,14 +396,29 @@ var CHECKLISTS = {
   function updateOverview() {
     var total = 0, done = 0;
     Object.keys(CHECKLISTS).forEach(function(key) {
-      total += CHECKLISTS[key].length;
-      done += (progress[key] || []).filter(Boolean).length;
+      CHECKLISTS[key].forEach(function(_,i) { if (applicable(key,i)) { total++; if ((progress[key] || [])[i]) done++; } });
     });
     document.getElementById("prepSummary").textContent = done + " of " + total + " tasks complete";
     document.querySelectorAll(".checklist-item").forEach(function(row) {
-      row.hidden = remainingOnly && row.classList.contains("checked");
+      var excluded = !applicable(row.getAttribute('data-list'),Number(row.getAttribute('data-index')));
+      row.classList.toggle('format-excluded',excluded);
+      row.hidden = excluded || (remainingOnly && row.classList.contains("checked"));
     });
   }
+  function applyFormat() {
+    document.getElementById('prep-giPrep').hidden = format === 'nogi';
+    document.getElementById('prep-nogiPrep').hidden = format === 'gi';
+    document.querySelectorAll('a[href="#prep-giPrep"]').forEach(function(link) { link.hidden = format === 'nogi'; });
+    document.querySelectorAll('a[href="#prep-nogiPrep"]').forEach(function(link) { link.hidden = format === 'gi'; });
+    document.getElementById('formatHint').textContent = (format === 'both' ? 'Gi and No-Gi' : format === 'gi' ? 'Gi only' : 'No-Gi only') + ' checklist · Saved checkmarks are kept when you switch.';
+    Object.keys(CHECKLISTS).forEach(updateProgress);
+  }
+  document.getElementById('competitionFormat').addEventListener('change',function() {
+    format = this.value;
+    try { localStorage.setItem('bjjCompetitionFormat',format); } catch (_) {}
+    applyFormat();
+  });
+  applyFormat();
   document.getElementById("remainingOnly").addEventListener("click", function() {
     remainingOnly = !remainingOnly;
     this.setAttribute("aria-pressed", String(remainingOnly));
