@@ -103,3 +103,11 @@ Resources uses `resource-catalog.js` to include every entry from `techniques.js`
 - `home-desk.js` and `competition-event.js` validate optional saved data so malformed storage cannot interrupt the page.
 - The service worker caches only app-shell paths, shares cached pages across search URLs, and preserves unrelated caches. Static assets return from cache while revalidating; navigations fall back to a saved page after 2.5 seconds on slow connections.
 - Offline mode applies to cached site pages. External videos still require a connection.
+
+## Medal Run
+
+The playable BJJ endless runner is at `/game/`. The Locker lets players name their pixel-art athlete and equip earned outfits. Adult belts and stripes accumulate across runs; athlete names, purchased cosmetics and progress save in this browser. Previous public saves migrate to schema 5. Playtest saves can be transferred with Settings → Export / Import.
+
+Mobile controls support swipe up to jump, swipe down to roll and swipe left to shrimp, plus three direct buttons. Desktop supports WASD, arrows and Space. Checkpoints near each minute offer one retry; a ten-minute goal offers a break. The private feedback form continues emailing the creator.
+
+Run the 48 movement, input, save migration, name editing and full gameplay-loop checks with `node --test tests/medal-run/*.test.mjs`. They run in CI alongside the existing site checks. Browser layout and physical-device play feel remain unverified in this environment.

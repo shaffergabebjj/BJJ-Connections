@@ -1,4 +1,4 @@
-export const VERSION=3;
+export const VERSION=5;
 export const BELTS=[['White','#eee9da'],['Blue','#4298ee'],['Purple','#a477e2'],['Brown','#ac7752'],['Black','#252d3b']];
 export const RANK_XP=[0,180,420,720,1080,1500,2000,2580,3240,3980,4800,5700,6720,7860,9120,10500,12000,13700,15600,17700,20000];
 export function rank(xp){let level=0;while(level<20&&xp>=RANK_XP[level+1])level++;return {level,belt:Math.floor(level/5),stripes:level===20?0:level%5,name:BELTS[Math.floor(level/5)][0],color:BELTS[Math.floor(level/5)][1],floor:RANK_XP[level],next:RANK_XP[level+1]??null};}
@@ -15,17 +15,17 @@ export const COSMETICS=[
 {id:'gi-black',category:'gi',name:'Midnight gi',color:'#323c50',shade:'#1b2333',cost:220},
 {id:'gi-sand',category:'gi',name:'Camp canvas',color:'#c6ad83',shade:'#8d785d',unlock:'env4',hint:'Reach Training Camp'},
 {id:'gi-gold',category:'gi',name:'Black belt edition',color:'#ddc487',shade:'#a28a57',unlock:'black',hint:'Reach black belt'},
-{id:'hair-original',category:'hair',name:'Original curls',color:'#4b3629',cost:0},
-{id:'hair-dark',category:'hair',name:'Dark curls',color:'#23252c',cost:50},
-{id:'hair-light',category:'hair',name:'Sunlit curls',color:'#b98d4f',cost:65},
+{id:'hair-original',category:'hair',name:'Walnut',color:'#4b3629',cost:0},
+{id:'hair-dark',category:'hair',name:'Ink black',color:'#23252c',cost:50},
+{id:'hair-light',category:'hair',name:'Sandy blond',color:'#b98d4f',cost:65},
 {id:'rash-dark',category:'rash',name:'Charcoal',color:'#252c3b',cost:0},
 {id:'rash-red',category:'rash',name:'Red corner',color:'#b3444b',cost:60},
 {id:'rash-teal',category:'rash',name:'Sea glass',color:'#45aa9b',cost:70},
 {id:'patch-red',category:'patch',name:'Original red',color:'#bd4d4d',cost:0},
 {id:'patch-gold',category:'patch',name:'Medal club',color:'#ecc563',unlock:'medals25',hint:'Collect 25 medals'},
 {id:'patch-teal',category:'patch',name:'Academy crest',color:'#65cbbc',cost:60},
-{id:'wrist-blue',category:'wrist',name:'Blue wrist tape',color:'#5a9ada',cost:0},
-{id:'wrist-gold',category:'wrist',name:'Gold wrist tape',color:'#e7bf61',cost:80}];
+{id:'wrist-blue',category:'wrist',name:'Blue wristband',color:'#5a9ada',cost:0},
+{id:'wrist-gold',category:'wrist',name:'Gold wristband',color:'#e7bf61',cost:80}];
 export const ACHIEVEMENTS=[
 {id:'precision20',name:'Thread the needle',description:'Earn 20 tight-clearance bonuses.',stat:'precision',target:20,coins:80,xp:160},
 {id:'first',name:'First round',description:'Finish your first run.',stat:'runs',target:1,coins:20,xp:40},
