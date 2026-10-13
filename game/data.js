@@ -1,4 +1,4 @@
-export const VERSION=5;
+export const VERSION=6;
 export const BELTS=[['White','#eee9da'],['Blue','#4298ee'],['Purple','#a477e2'],['Brown','#ac7752'],['Black','#252d3b']];
 export const RANK_XP=[0,180,420,720,1080,1500,2000,2580,3240,3980,4800,5700,6720,7860,9120,10500,12000,13700,15600,17700,20000];
 export function rank(xp){let level=0;while(level<20&&xp>=RANK_XP[level+1])level++;return {level,belt:Math.floor(level/5),stripes:level===20?0:level%5,name:BELTS[Math.floor(level/5)][0],color:BELTS[Math.floor(level/5)][1],floor:RANK_XP[level],next:RANK_XP[level+1]??null};}
@@ -49,3 +49,11 @@ export const CHAPTERS=[
 export const UPGRADE_COSTS=[90,160,260,400];
 export const STORY_XP=420;
 export const fmtTime=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+
+export const SKIN_TONES=[
+{id:'light',name:'Light',color:'#f1c8a2',shade:'#d79b78'},
+{id:'medium',name:'Medium',color:'#e1aa81',shade:'#b87e59'},
+{id:'tan',name:'Tan',color:'#bd8862',shade:'#976042'},
+{id:'brown',name:'Brown',color:'#895638',shade:'#633924'},
+{id:'deep',name:'Deep',color:'#583d30',shade:'#36241c'}];
+export const HAIR_STYLES=[{id:'tousled',name:'Tousled'},{id:'cropped',name:'Cropped'},{id:'bun',name:'Tied back'}];
