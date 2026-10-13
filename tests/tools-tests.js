@@ -67,6 +67,13 @@ async function run() {
   assert.match(event.nodes.get('eventStatus').textContent,/Event saved/);
   assert.match(event.nodes.get('eventCountdown').textContent,/Winter Open/);
   event.nodes.get('clearEvent').click();assert.equal(event.storage.has('bjjCompetitionEvent'),false);
+  event.nodes.get('competitionFormat').value='nogi';event.nodes.get('competitionFormat').events.change.call(event.nodes.get('competitionFormat'));
+  assert.equal(event.nodes.get('prep-giPrep').hidden,true);assert.equal(event.nodes.get('prep-nogiPrep').hidden,false);
+  assert.equal(event.nodes.get('bringProgress').textContent,'0/23');
+  event.nodes.get('competitionFormat').value='gi';event.nodes.get('competitionFormat').events.change.call(event.nodes.get('competitionFormat'));
+  assert.equal(event.nodes.get('prep-nogiPrep').hidden,true);assert.equal(event.nodes.get('bringProgress').textContent,'0/25');
+  const restoreFormat=harness('competition.html',{bjjCompetitionFormat:'nogi'});
+  assert.equal(restoreFormat.nodes.get('competitionFormat').value,'nogi');assert.equal(restoreFormat.nodes.get('prep-giPrep').hidden,true);
   const unavailable=harness('competition.html',{},true);
   unavailable.nodes.get('eventDate').value='2026-12-01';unavailable.nodes.get('saveEvent').click();
   assert.match(unavailable.nodes.get('eventStatus').textContent,/visit only/);
