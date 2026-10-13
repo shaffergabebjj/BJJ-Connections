@@ -451,3 +451,12 @@ tbody tr:nth-child(even) { background: var(--bg); }
 .rotation-card .text-button { min-height:44px; display:inline-flex; align-items:center; font-size:12px; }
 @media(max-width:900px) { .discovery-paths { display:block; } .discovery-buttons { margin-top:16px; } .rotation-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media(max-width:640px) { .resume-work { grid-template-columns:1fr; padding:20px; } .resume-work b { grid-column:1; grid-row:auto; margin-top:8px; } .discovery-buttons { display:grid; grid-template-columns:1fr 1fr; } .discovery-buttons .chip { text-align:left; font-size:12px; } .rotation-grid { grid-template-columns:1fr; } }
+
+.history-controls { display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,1fr); gap:12px; margin-bottom:12px; }
+.history-controls label { min-width:0; display:grid; gap:7px; font-size:12px; font-weight:700; color:var(--muted); }
+.history-controls .search-input { min-width:0; width:100%; padding:12px 10px; }
+.session-reuse { margin-top:16px; padding-top:12px; border-top:1px solid var(--border); }
+.session-reuse .text-button { min-height:44px; }
+#sessionMatches:empty { display:none; }
+@media(max-width:640px) { .history-controls { grid-template-columns:1fr; } }
+@media print { .history-controls, .session-reuse, #sessionMatches { display:none; } }
