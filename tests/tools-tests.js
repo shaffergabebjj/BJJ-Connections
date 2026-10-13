@@ -73,9 +73,17 @@ async function run() {
   const removeGoal=n.get('goalsList').children[0].children[2];removeGoal.click();
   assert.equal(JSON.parse(game.storage.get('bjjTrainingGoals')).length,0);
   n.get('undoGoal').click();assert.equal(JSON.parse(game.storage.get('bjjTrainingGoals'))[0].text,'Practice guard retention');
-  n.get('logList').events.click({target:{closest:()=>({getAttribute:()=> '0'})}});
+  n.get('logList').events.click({target:{closest:selector=>selector==='[data-del]'?({getAttribute:()=> '0'}):null}});
   assert.equal(JSON.parse(game.storage.get('bjjTrainingLog')).length,0);
   n.get('undoSession').click();assert.equal(JSON.parse(game.storage.get('bjjTrainingLog')).length,1);
+  n.get('sessionSearch').value='no match anywhere';n.get('sessionSearch').events.input();
+  assert.equal(n.get('logList').innerHTML,'');assert.match(n.get('noSessions').textContent,/No matching/);
+  n.get('sessionSearch').value='';n.get('sessionSearch').events.input();
+  n.get('logList').events.click({target:{closest:selector=>selector==='[data-reuse]'?({getAttribute:()=> '0'}):null}});
+  assert.equal(JSON.parse(game.storage.get('bjjTrainingLog')).length,1,'Reusing only creates a draft');
+  assert.match(n.get('logStatus').textContent,/draft/);
+  n.get('sessionTypeFilter').value='Competition';n.get('sessionTypeFilter').events.change();
+  assert.equal(n.get('logList').innerHTML,'');
   const draft=harness('training.html',{bjjFavoriteTechniques:JSON.stringify(['Armbar','Armbar',null,'Baseball Choke'])},false,'?technique=Armbar');
   assert.equal(draft.nodes.get('logTechniques').value,'Armbar');
   assert.equal(draft.storage.has('bjjTrainingLog'),false,'Technique links must not log a session');

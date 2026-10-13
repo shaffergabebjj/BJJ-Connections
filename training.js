@@ -116,15 +116,30 @@
     }).join("");
     $("noSessions").classList.toggle("hidden",sessions.length > 0);
     $("exportSessions").disabled = sessions.length === 0;
-    $("logList").innerHTML = sessions.map((s,i) => {
+    const query = ($("sessionSearch")?.value || "").trim().toLowerCase();
+    const type = $("sessionTypeFilter")?.value || "all";
+    const matches = sessions.map((s,i)=>({s,i})).filter(({s}) => (type === "all" || s.type === type) && (!query || [s.date,s.type,s.techniques,s.notes].join(" ").toLowerCase().includes(query)));
+    if ($("sessionMatches")) $("sessionMatches").textContent = sessions.length ? matches.length + " of " + sessions.length + " sessions shown" : "";
+    if (sessions.length && !matches.length) { $("noSessions").classList.remove("hidden"); $("noSessions").textContent = "No matching sessions. Try another search or session type."; }
+    else $("noSessions").textContent = "No sessions yet. Record a session to start building your training history.";
+    $("logList").innerHTML = matches.map(({s,i}) => {
       const date = new Date(s.date+"T12:00:00").toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric",year:"numeric"});
       return '<article class="session-card"><div><div class="session-meta"><strong>'+escape(date)+'</strong><span>'+escape(s.type)+'</span><span>'+escape(s.duration ? s.duration+" min" : "Duration not recorded")+'</span></div>'+
         (s.techniques ? '<p><b>Techniques:</b> '+escape(s.techniques)+'</p>' : '')+
         (s.notes ? '<p class="session-notes">'+escape(s.notes)+'</p>' : '')+
-        '</div><button type="button" class="btn btn-ghost btn-sm" data-del="'+i+'" aria-label="Delete session from '+escape(date)+'">×</button></article>';
+        '<div class="session-reuse"><button type="button" class="text-button" data-reuse="'+i+'" aria-label="Use session from '+escape(date)+' as a draft">Use as draft ↗</button></div></div><button type="button" class="btn btn-ghost btn-sm" data-del="'+i+'" aria-label="Delete session from '+escape(date)+'">×</button></article>';
     }).join("");
   }
   $("logList").addEventListener("click", event => {
+    const reuse = event.target.closest('[data-reuse]');
+    if (reuse) {
+      const session = sessions[Number(reuse.getAttribute('data-reuse'))];
+      if (!session) return;
+      $("logDate").value = localDate; $("logDuration").value = session.duration;
+      $("logType").value = session.type; $("logTechniques").value = session.techniques; $("logNotes").value = "";
+      $("logStatus").textContent = "Session focus copied to today’s draft. Review it, then add the session after training.";
+      $("logTechniques").focus(); return;
+    }
     const button = event.target.closest('[data-del]');
     if (!button) return;
     const index = Number(button.getAttribute('data-del'));
@@ -160,6 +175,8 @@
     document.body.appendChild(link); link.click(); link.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
     $("logStatus").textContent = "Your log export is ready. Keep a copy as a backup.";
   });
+  $("sessionSearch")?.addEventListener("input",renderSessions);
+  $("sessionTypeFilter")?.addEventListener("change",renderSessions);
   renderSessions();
 
   // Restore valid saved choices before rendering; distinguish unsaved edits.
