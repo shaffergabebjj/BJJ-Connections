@@ -385,21 +385,38 @@ function showStats() {
 
 // ---- Archive (browse & replay past daily puzzles) ------------------------
 const ARCHIVE_DAYS = 30;
+function archiveDays() {
+  return Array.from({length:ARCHIVE_DAYS},(_,index) => {
+    const d = new Date(); d.setDate(d.getDate()-index-1);
+    const dateStr = dateKeyForDate(d);
+    return {p:DAILY_PUZZLES[dailyIndexForDate(d)],dn:dayNumberForDate(d),dateStr,result:state.dailyHistory[dateStr]};
+  });
+}
 function renderArchiveList() {
   archiveList.innerHTML = "";
-  for (let i = 1; i <= ARCHIVE_DAYS; i++) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    const p = DAILY_PUZZLES[dailyIndexForDate(d)];
-    const dn = dayNumberForDate(d);
-    const dateStr = dateKeyForDate(d);
+  const filter = $("archiveFilter")?.value || "all";
+  const days = archiveDays();
+  const shown = days.filter(day => filter === "unplayed" ? !day.result : filter === "review" ? day.result && !day.result.win : filter === "solved" ? day.result?.win : true);
+  if ($("archiveCount")) $("archiveCount").textContent = shown.length ? shown.length + " of " + ARCHIVE_DAYS + " past days shown" : "No days match this filter. Try All past days.";
+  if ($("missedPuzzle")) $("missedPuzzle").disabled = !days.some(day=>!day.result);
+  for (const {p,dn,dateStr,result} of shown) {
     const btn = document.createElement("button");
     btn.className = "archiveItem";
-    btn.innerHTML = `<span class="archiveDate">${dateStr}</span><span class="archiveTag">#${dn} · ${p.difficulty.toUpperCase()} BELT</span>`;
+    const outcome = !result ? "Not played" : result.win ? "Solved" : "Needs review";
+    btn.innerHTML = `<span class="archiveDate">${dateStr}</span><span class="archiveTag">#${dn} · ${p.difficulty.toUpperCase()} BELT</span><span class="archive-outcome ${result?.win ? 'is-solved' : ''}">${outcome}</span>`;
+    btn.setAttribute("aria-label",dateStr + " · " + outcome + " · Replay puzzle");
     btn.onclick = () => openArchivedPuzzle(p, dateStr, dn);
     archiveList.appendChild(btn);
   }
 }
+$("archiveFilter")?.addEventListener("change",renderArchiveList);
+$("missedPuzzle")?.addEventListener("click",()=>{
+  const missed = archiveDays().filter(day=>!day.result);
+  if (!missed.length) return;
+  const chosen = missed[Math.floor(Math.random()*missed.length)];
+  openArchivedPuzzle(chosen.p,chosen.dateStr,chosen.dn);
+});
+
 function openArchivedPuzzle(p, dateStr, dayNum) {
   mode = "archive";
   document.querySelectorAll(".tab").forEach(b => {

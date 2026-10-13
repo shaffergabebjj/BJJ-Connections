@@ -140,6 +140,9 @@
       <div class="panel">
         <h2>Past Puzzles</h2>
         <p class="archiveNote">Replay any previous daily puzzle. These are the same deterministic puzzles that appeared on each date below.</p>
+        <div class="archive-controls"><label for="archiveFilter">Find a puzzle<select id="archiveFilter"><option value="all">All past days</option><option value="unplayed">Not played</option><option value="review">Needs review</option><option value="solved">Solved</option></select></label><button class="ctrl" id="missedPuzzle" type="button">Play a missed day ↗</button></div>
+        <p class="archiveNote">Badges use your saved daily results on this device. Archive replays don’t change your daily stats.</p>
+        <p id="archiveCount" class="archiveNote" role="status"></p>
         <div class="archiveList" id="archiveList"></div>
       </div>
     </section>

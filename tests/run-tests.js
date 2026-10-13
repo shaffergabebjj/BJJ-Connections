@@ -264,6 +264,14 @@ for (const mode of ["archive", "stats"]) {
   assert.equal(game.elements.get(mode + "View").classList.contains("hidden"), false);
   assert.equal(game.elements.get("gameView").classList.contains("hidden"), true);
 }
+const pastWin = new Date();pastWin.setDate(pastWin.getDate()-1);
+const pastLoss = new Date();pastLoss.setDate(pastLoss.getDate()-2);
+const archiveHistory = {[daily.dateKey(pastWin)]:{win:true,mistakes:4,seconds:10},[daily.dateKey(pastLoss)]:{win:false,mistakes:0,seconds:20}};
+const archiveGame = gameHarness("puzzles.html",new Map([["bjjConnectionsState",JSON.stringify({dailyHistory:archiveHistory})]]),"?mode=archive");
+for(const [filter,count] of [["all",30],["unplayed",28],["solved",1],["review",1]]) {
+  archiveGame.elements.get("archiveFilter").value=filter;archiveGame.context.renderArchiveList();
+  assert.equal(archiveGame.elements.get("archiveList").children.length,count,filter+" archive count");
+}
 console.log("Stable tile selection, shared-link recovery, and mode deep links passed.");
 
 function techniqueHarness(saved, search = "") {
