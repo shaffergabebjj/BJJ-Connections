@@ -1,0 +1,18 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+let handler, focused=-1;
+const buttons=Array.from({length:16},(_,i)=>({focus:()=>focused=i}));
+const grid={addEventListener:(_,fn)=>handler=fn,querySelectorAll:()=>buttons};
+const context={window:{},document:{getElementById:id=>id==='grid'?grid:null}};
+vm.createContext(context);vm.runInContext(fs.readFileSync('puzzle-history.js','utf8'),context);
+const puzzle={groups:[{items:['a','b','c','d']},{items:['e','f','g','h']},{items:['i','j','k','l']},{items:['m','n','o','p']}]};
+const api=context.window.BJJGuessHistory;
+const rows=api.rows(puzzle,[JSON.stringify(['a','b','c','d']),JSON.stringify(['a','b','c','e']),JSON.stringify(['a','b','e','f']),'bad',JSON.stringify(['a','a','b','c'])]);
+assert.equal(rows.length,3);assert.equal(rows[0].verdict,'Group found');assert.equal(rows[1].verdict,'One away');assert.equal(rows[2].verdict,'Not a group');
+const summary={},list={},panel={querySelector:s=>s==='summary span'?summary:list};
+api.render(panel,puzzle,[JSON.stringify(['a','b','c','e'])]);
+assert(!list.innerHTML.includes('d ·'),'untried answer words stay hidden');assert.equal(panel.hidden,false);
+api.render(panel,puzzle,[]);assert.equal(panel.hidden,true);
+handler({key:'ArrowDown',target:buttons[2],preventDefault(){}});assert.equal(focused,6);
+handler({key:'ArrowLeft',target:buttons[0],preventDefault(){}});assert.equal(focused,0);
+handler({key:'ArrowRight',target:buttons[15],preventDefault(){}});assert.equal(focused,15);
+console.log('Guess verdicts, invalid guesses, spoiler-free history and arrow navigation passed.');

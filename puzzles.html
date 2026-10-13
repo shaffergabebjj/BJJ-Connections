@@ -129,7 +129,8 @@
         <button class="ctrl hidden" id="next">Next Puzzle</button>
       </div>
 
-      <div id="learnPanel" class="panel hidden">
+      <details class="guess-history" id="guessHistory" hidden><summary>Your guesses <span></span></summary><div class="guess-history-list"></div></details>
+        <div id="learnPanel" class="panel hidden">
         <h2>Learn why</h2>
         <div id="learn" class="learn"></div>
       </div>
@@ -194,6 +195,7 @@
 <script src="data.js"></script>
 <script src="daily-progress.js"></script>
 <script src="game-core.js"></script>
+<script src="puzzle-history.js"></script>
 <script src="app.js"></script>
 <script src="nav.js"></script>
 </body>

@@ -202,6 +202,7 @@ function renderSolved(animateGroup) {
   });
 }
 function update() {
+  window.BJJGuessHistory?.render($("guessHistory"), puzzle, attemptedGuesses);
   mistakesEl.textContent = mistakes;
   dots.textContent = "● ".repeat(mistakes).trim();
   dots.setAttribute("aria-label", `${mistakes} mistake${mistakes === 1 ? "" : "s"} remaining`);
