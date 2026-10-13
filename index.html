@@ -117,6 +117,7 @@
           <textarea id="homeCopy" class="home-copy" rows="7" readonly hidden></textarea>
         </section>
         <details id="homeLearn" class="home-learn" hidden><summary>Why these words connect</summary><div id="homeExplanations"></div></details>
+        <details class="guess-history" id="homeGuessHistory" hidden><summary>Your guesses <span></span></summary><div class="guess-history-list"></div></details>
         <div class="home-game-footer">
           <span id="homeStreak">Streak: 0</span>
           <a id="homeFullGame" href="puzzles.html">Open full game →</a>
@@ -196,6 +197,7 @@
 <script src="data.js"></script>
 <script src="daily-progress.js"></script>
 <script src="game-core.js"></script>
+<script src="puzzle-history.js"></script>
 <script>
 (function () {
   const grid = document.getElementById("homePuzzleGrid");
@@ -300,6 +302,7 @@
   }
 
   function update() {
+    window.BJJGuessHistory?.render(document.getElementById("homeGuessHistory"), puzzle, attemptedGuesses);
     mistakesEl.textContent = mistakes + (mistakes === 1 ? " mistake" : " mistakes") + " left";
     submitBtn.disabled = selected.length !== 4 || finished;
     submitBtn.textContent = finished ? "Complete" : "Submit (" + selected.length + "/4)";

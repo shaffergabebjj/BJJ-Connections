@@ -467,3 +467,13 @@ tbody tr:nth-child(even) { background: var(--bg); }
 .competition-format p { margin:0; color:var(--muted); font-size:13px; line-height:1.6; }
 @media(max-width:640px) { .competition-format { display:block; padding:20px 16px; } .competition-format p { margin-top:14px; } }
 @media print { .competition-format { display:none; } .checklist-item.format-excluded { display:none !important; } }
+
+.guess-history { margin:20px 0; border:1px solid var(--border); border-radius:12px; background:var(--surface); }
+.guess-history summary { padding:16px; cursor:pointer; font-size:13px; font-weight:700; }
+.guess-history summary span { color:var(--muted); margin-left:4px; }
+.guess-history-list { padding:0 16px 8px; }
+.guess-history-row { display:flex; justify-content:space-between; gap:16px; padding:14px 0; border-top:1px solid var(--border); }
+.guess-history-row b { display:block; font-size:12px; margin-bottom:7px; }
+.guess-history-row div > span { font-size:12px; line-height:1.7; color:var(--muted); overflow-wrap:anywhere; }
+.guess-verdict { color:var(--muted); font-size:18px; }
+.guess-verdict.is-correct { color:var(--accent); }
