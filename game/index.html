@@ -36,6 +36,7 @@
         <div class="home-record" id="home-record">A fresh start on the mats.</div>
         <span class="build-label">IN DEVELOPMENT · PROGRESS SAVES AUTOMATICALLY</span>
       </div>
+      <div id="move-cue" class="move-cue" hidden><strong id="cue-action"></strong><span id="cue-detail"></span></div>
       <div id="banner" class="banner" role="status" aria-live="polite" hidden></div>
       <div id="pause-overlay" class="veil" role="dialog" aria-modal="true" aria-labelledby="pause-title" hidden>
         <div class="compact-panel"><div class="eyebrow" id="pause-eyebrow">TAKE A BREATH</div><h2 id="pause-title">PAUSED</h2><p id="pause-copy">Your progress is saved. Resume when you are ready.</p><button class="primary" id="resume">RESUME RUN</button><button id="quit">END RUN & SAVE</button><a class="text-link" href="https://bjjconnectionsbygabe.com/">← Back to BJJ Connections</a></div>
@@ -46,7 +47,7 @@
     <div id="run-controls" hidden>
       <button id="shrimp" class="control shrimp" aria-label="Shrimp backward; hold to stay low"><strong>← SHRIMP</strong><small>A / ← · SWIPE LEFT</small></button>
       <button id="roll" class="control" aria-label="Roll; hold to stay low"><strong>↓ ROLL</strong><small>S / ↓ · HOLD TO STAY LOW</small></button>
-      <button id="jump" class="control jump" aria-label="Jump; press again for a double jump"><strong>↑ JUMP</strong><small>W / ↑ · TAP TWICE FOR DOUBLE</small></button>
+      <button id="jump" class="control jump" aria-label="Jump; press again for a double jump"><strong>↑ JUMP</strong><small id="jump-state">2 JUMPS READY</small></button>
       <div id="run-location">FIRST LIGHT DOJO</div>
       <div class="round-meter" aria-label="Ten minute session target"><i id="session-fill"></i></div>
       <small id="session-note">10-MINUTE GOAL · STOP ANYTIME</small>

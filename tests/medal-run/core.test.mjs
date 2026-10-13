@@ -61,3 +61,11 @@ test('athlete names support Unicode, bound length, and handle empty or malformed
   assert.equal(Array.from(athleteName('🥋'.repeat(25))).length,20);assert.equal(athleteName('\u202eGabe\u0000'),'Gabe');
   for(const value of ['',null,{},123,'   '])assert.equal(normalize({profile:{name:value}}).profile.name,'Athlete');
 });
+
+
+test('appearance and control preferences survive saves, imports and version-five migration',()=>{
+  const a=new SaveStore(storage());a.data.profile={name:'Gabe',skin:'deep',hairStyle:'bun'};a.data.settings.cues=false;a.data.settings.jumpLeft=true;a.data.xp=5800;a.data.unlocks.push('gi-black');a.data.equipped.gi='gi-black';assert(a.save());
+  const b=new SaveStore(storage());assert(b.import(a.export()));assert.deepEqual(b.data.profile,{name:'Gabe',skin:'deep',hairStyle:'bun'});assert(!b.data.settings.cues);assert(b.data.settings.jumpLeft);assert.equal(b.data.xp,5800);assert.equal(b.data.equipped.gi,'gi-black');
+  const old={version:5,profile:{name:'Gabe'},xp:5800};const migrated=normalize(old);assert.equal(migrated.profile.skin,'medium');assert.equal(migrated.profile.hairStyle,'tousled');assert(migrated.settings.cues);assert(!migrated.settings.jumpLeft);
+  const malformed=normalize({profile:{skin:'unknown',hairStyle:42}});assert.equal(malformed.profile.skin,'medium');assert.equal(malformed.profile.hairStyle,'tousled');
+});

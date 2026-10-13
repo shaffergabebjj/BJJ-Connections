@@ -29,14 +29,31 @@ test('R retries even with the results button focused, and resume gives reaction 
 
 const pointer=(id,type,props={})=>els.get(id).listeners[type]?.({pointerId:1,button:0,clientX:200,clientY:300,timeStamp:now,detail:1,preventDefault(){},...props});
 test('actual UI swipe path handles jump, double jump, shrimp, cancel, and pause reset',()=>{
-  els.get('again').click();pointer('game','pointerdown');pointer('game','pointermove',{clientY:260});pointer('game','pointerup',{clientY:260});frames(3);assert.equal(status().marker.jumps,1);
-  frames(10);pointer('game','pointerdown');pointer('game','pointermove',{clientY:250});pointer('game','pointerup',{clientY:250});frames(2);assert.equal(status().marker.jumps,2);
+  els.get('again').click();pointer('game','pointerdown');pointer('game','pointermove',{clientY:260});pointer('game','pointerup',{clientY:260});frames(3);assert.equal(status().marker.jumps,1);assert.equal(els.get('jump-state').textContent,'1 JUMP LEFT');
+  frames(10);pointer('game','pointerdown');pointer('game','pointermove',{clientY:250});pointer('game','pointerup',{clientY:250});frames(2);assert.equal(status().marker.jumps,2);assert.equal(els.get('jump-state').textContent,'LAND TO RESET');
   pointer('shrimp','pointerdown',{pointerId:3});assert(status().marker.shrimp);pointer('shrimp','pointercancel',{pointerId:3});assert(!status().marker.shrimp);
   pointer('roll','pointerdown');els.get('pause').click();assert(status().paused);els.get('resume').click();frames(70);assert(!status().marker.low);
   els.get('pause').click();els.get('quit').click();
 });
 test('prominent connection routes are absolute and back link exists in results',()=>{
   assert.equal(els.get('back-connections').href,'https://bjjconnectionsbygabe.com/');assert.match(els.get('results').innerHTML,/href="https:\/\/bjjconnectionsbygabe\.com\/"/);
+});
+
+test('results locker edits free appearance, preserves a name draft and saves control preferences',()=>{
+  assert.equal(status().mode,'results');els.get('result-locker').click();assert(els.get('panel').open);const coins=JSON.parse(JSON.parse(mem.get('medal-run-save')).payload).coins;
+  els.get('athlete-name').value='Pending name';els.get('panel').querySelectorAll('[data-skin]').find(b=>b.dataset.skin==='deep').click();
+  assert.equal(els.get('athlete-name').value,'Pending name');els.get('panel').querySelectorAll('[data-hair-style]').find(b=>b.dataset.hairStyle==='bun').click();assert.equal(els.get('athlete-name').value,'Pending name');
+  els.get('panel').querySelectorAll('[data-cosmetic]').find(b=>b.dataset.cosmetic==='gi-white').click();assert.equal(els.get('athlete-name').value,'Pending name');
+  const data=JSON.parse(JSON.parse(mem.get('medal-run-save')).payload);assert.equal(data.profile.skin,'deep');assert.equal(data.profile.hairStyle,'bun');assert.equal(data.profile.name,'Gabe');assert.equal(data.coins,coins);
+  els.get('close-panel').click();els.get('return-home').click();root.querySelectorAll('[data-page]').find(b=>b.dataset.page==='settings').click();
+  const settings=els.get('panel').querySelectorAll('[data-setting]');const left=settings.find(e=>e.dataset.setting==='jumpLeft');left.checked=true;left.oninput();const cues=settings.find(e=>e.dataset.setting==='cues');cues.checked=false;cues.oninput();
+  const prefs=JSON.parse(JSON.parse(mem.get('medal-run-save')).payload).settings;assert(prefs.jumpLeft);assert(!prefs.cues);
+  cues.checked=true;cues.oninput();left.checked=false;left.oninput();els.get('close-panel').click();els.get('play').click();frames(400);assert.equal(status().mode,'results');
+});
+
+test('urgent movement cues take priority over the intro and disappear on pause',()=>{
+  els.get('again').click();let waited=0;while(els.get('move-cue').hidden&&status().mode==='run'&&waited++<600)frames(1);assert.equal(status().mode,'run');assert(!els.get('move-cue').hidden,JSON.stringify(status()));assert.equal(els.get('cue-action').textContent,'JUMP');assert(els.get('banner').hidden);
+  els.get('pause').click();assert(els.get('move-cue').hidden);els.get('quit').click();assert.equal(status().mode,'results');
 });
 
 // The ideal player uses the same DOM keyboard events as a real desktop player.
