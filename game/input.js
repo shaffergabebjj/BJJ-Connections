@@ -16,7 +16,7 @@ export class RunInput {
       button.addEventListener('click',e=>{if(e.detail===0)this.pulse(name);});
     }
     // Prevent browser panning from intercepting gameplay gestures on touchscreens.
-    canvas.style.touchAction='none';
+    if(canvas.style)canvas.style.touchAction='none';
     canvas.addEventListener('pointerdown',e=>{
       if(!this.active()||(e.button!=null&&e.button!==0))return;
       e.preventDefault();try{canvas.setPointerCapture(e.pointerId);}catch{}
