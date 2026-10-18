@@ -1426,3 +1426,21 @@ function validateAllPuzzles(puzzles) {
   });
   return errors;
 }
+
+
+// Similarity audit for editors: published puzzles are retained to preserve
+// historical daily results. New puzzles should avoid flagged overlap.
+function auditPuzzleSimilarity(puzzles, warningThreshold = 8, rejectThreshold = 12) {
+  const warnings = [], errors = [];
+  for (let i = 0; i < puzzles.length; i++) {
+    const a = new Set(puzzles[i].groups.flatMap(g => g.items.map(w => w.trim().toUpperCase())));
+    for (let j = i + 1; j < puzzles.length; j++) {
+      const shared = puzzles[j].groups.flatMap(g => g.items).filter(w => a.has(w.trim().toUpperCase())).length;
+      if (shared >= warningThreshold) {
+        const message = `Puzzles ${puzzles[i].id} and ${puzzles[j].id} share ${shared}/16 answers.`;
+        (shared >= rejectThreshold ? errors : warnings).push(message);
+      }
+    }
+  }
+  return {warnings, errors};
+}

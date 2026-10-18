@@ -249,7 +249,12 @@ function finish(win, animateGroup) {
     BJJDaily.recordResult(state, puzzle, win, mistakes, seconds);
   } else {
     state.gamesPlayed++;
+    const bucket = mode === "archive" ? "archive" : "training";
+    state.modeStats ??= {};
+    state.modeStats[bucket] ??= {played:0,won:0};
+    state.modeStats[bucket].played++;
     if (win) {
+      state.modeStats[bucket].won++;
       state.gamesWon++;
       if (state.bestTime === null || seconds < state.bestTime) state.bestTime = seconds;
     }
@@ -357,10 +362,18 @@ function copyWithSelection(text) {
 // ---- Stats ---------------------------------------------------------------
 function showStats() {
   const winPct = state.gamesPlayed ? Math.round(state.gamesWon / state.gamesPlayed * 100) : 0;
+  const modeStats = state.modeStats || {};
+  const dailyResults = Object.values(state.dailyHistory || {}).filter(x => x && typeof x === "object");
+  const dailyWins = dailyResults.filter(x => x.won === true || x.win === true).length;
   $("stats").innerHTML = [
     ["Played", state.gamesPlayed], ["Won", state.gamesWon], ["Win %", winPct + "%"],
     ["Current streak", BJJDaily.displayStreak(state)], ["Best streak", state.longestStreak],
-    ["Best time", state.bestTime != null ? state.bestTime + "s" : "—"]
+    ["Best time", state.bestTime != null ? state.bestTime + "s" : "—"],
+    ["Daily results saved", dailyResults.length], ["Daily wins saved", dailyWins],
+    ["Training played (new tracking)", modeStats.training?.played || 0],
+    ["Training won (new tracking)", modeStats.training?.won || 0],
+    ["Archive played (new tracking)", modeStats.archive?.played || 0],
+    ["Archive won (new tracking)", modeStats.archive?.won || 0]
   ].map(([a, b]) => `<div class="stat"><b>${b}</b>${a}</div>`).join("");
   trainingHistory = {...trainingHistory, ...BJJTraining.read(PUZZLES)};
   const progress = $("beltProgress");

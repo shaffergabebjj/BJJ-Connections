@@ -1,15 +1,17 @@
-const CACHE_NAME = "bjj-connections-v56";
+const CACHE_NAME = "bjj-connections-v57";
 const APP_SHELL = [
   "/", "/index.html", "/puzzles.html", "/techniques.html",
   "/404.html", "/competition.html", "/training.html", "/resources.html", "/about.html",
   "/style.css", "/visual.css", "/theme.js", "/nav.js", "/app.js", "/data.js", "/daily-progress.js", "/game-core.js", "/puzzle-history.js", "/techniques.js", "/technique-videos.js", "/glossary-videos.js", "/resource-catalog.js", "/training.js", "/round-timer.js", "/resources-page.js", "/techniques-page.js", "/questions.js", "/competition-event.js", "/home-desk.js", "/next-step.js",
   "/favicon.svg?v=gi2", "/favicon-32.png?v=gi2", "/apple-touch-icon.png?v=gi2",
   "/logo.svg", "/favicon.svg", "/favicon-32.png", "/apple-touch-icon.png",
-  "/icon-192.png", "/icon-512.png", "/manifest.json", "/game/", "/game/index.html", "/game/style.css", "/game/app.js", "/game/audio.js", "/game/data.js", "/game/engine.js", "/game/render.js", "/game/save.js", "/game/input.js", "/game/athlete.js", "/game/belt.svg", "/game/coach.js"
+  "/icon-192.png", "/icon-512.png", "/manifest.json"
 ];
 
-// Only cache our finite app shell. Search filters never create extra cache entries.
-const SHELL_PATHS = new Set(APP_SHELL.map(path => new URL(path, self.location.origin).pathname));
+// Medal Run assets are cached on first visit rather than during the main-site install.
+const GAME_ASSETS = ["/game/", "/game/index.html", "/game/style.css", "/game/app.js", "/game/audio.js", "/game/data.js", "/game/engine.js", "/game/render.js", "/game/save.js", "/game/input.js", "/game/athlete.js", "/game/belt.svg", "/game/coach.js"];
+// Only cache known local assets. Search filters never create extra cache entries.
+const SHELL_PATHS = new Set([...APP_SHELL, ...GAME_ASSETS].map(path => new URL(path, self.location.origin).pathname));
 
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE_NAME)

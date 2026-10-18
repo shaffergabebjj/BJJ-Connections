@@ -5,7 +5,7 @@ async function run(){
   const cache={match:async key=>items.get(key)?.clone(),put:async(key,response)=>{puts.push(key);items.set(key,response);}};
   const c={URL,Response,Request,setTimeout:fn=>{queueMicrotask(fn);return 1;},clearTimeout(){},
     self:{location:{origin:'https://bjjconnectionsbygabe.com'},addEventListener:(key,fn)=>handlers[key]=fn,clients:{claim:async()=>{}},skipWaiting:async()=>{}},
-    fetch:(...args)=>network(...args),caches:{open:async()=>cache,keys:async()=>['bjj-connections-v38','bjj-connections-v56','another-app'],delete:async key=>deleted.push(key)}};
+    fetch:(...args)=>network(...args),caches:{open:async()=>cache,keys:async()=>['bjj-connections-v38','bjj-connections-v56','bjj-connections-v57','another-app'],delete:async key=>deleted.push(key)}};
   vm.createContext(c);vm.runInContext(fs.readFileSync('sw.js','utf8'),c);
   function request(path,mode='navigate',method='GET'){
     const waits=[];let response;
@@ -13,7 +13,7 @@ async function run(){
     return {response,finish:()=>Promise.all(waits)};
   }
   let activated;handlers.activate({waitUntil:p=>activated=p});await activated;
-  assert.deepEqual(deleted,['bjj-connections-v38'],'never delete another application’s caches');
+  assert.deepEqual(deleted,['bjj-connections-v38','bjj-connections-v56'],'never delete another application’s caches');
   items.set('/puzzles.html',new Response('puzzle'));
   assert.equal(await (await request('/puzzles.html?p=42').response).text(),'puzzle');
   items.set('/404.html',new Response('unavailable'));
