@@ -15,6 +15,8 @@ export class RunInput {
       // Native keyboard / assistive-technology activation has no pointer detail.
       button.addEventListener('click',e=>{if(e.detail===0)this.pulse(name);});
     }
+    // Prevent browser panning from intercepting gameplay gestures on touchscreens.
+    canvas.style.touchAction='none';
     canvas.addEventListener('pointerdown',e=>{
       if(!this.active()||(e.button!=null&&e.button!==0))return;
       e.preventDefault();try{canvas.setPointerCapture(e.pointerId);}catch{}
@@ -37,6 +39,9 @@ export class RunInput {
       if(!g.fired&&g.moved<g.threshold&&e.timeStamp-g.time<400)this.pulse('jump');
     });
     for(const type of ['pointercancel','lostpointercapture'])canvas.addEventListener(type,e=>this.gestures.delete(e.pointerId));
+    // A tab switch or focus loss must never leave Roll/Shrimp held down.
+    if(typeof window!=='undefined')window.addEventListener('blur',()=>this.clear());
+    if(typeof document!=='undefined')document.addEventListener('visibilitychange',()=>{if(document.hidden)this.clear();});
   }
   press(source,name){
     if(!this.active()||this.sources.has(source))return;
