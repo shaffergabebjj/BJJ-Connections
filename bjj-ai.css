@@ -5,7 +5,7 @@
 .bjj-ai-header h2 { margin:0; font-size:1.4rem; }
 .bjj-ai-dialog button,.bjj-ai-dialog textarea { font:inherit; }
 .bjj-ai-dialog button { min-height:44px; cursor:pointer; border-radius:10px; padding:8px 12px; }
-.bjj-ai-close,.bjj-ai-examples button { border:1px solid var(--border-strong,#ccc); background:var(--bg-alt,#eee); color:inherit; }
+.bjj-ai-close,.bjj-ai-stop,.bjj-ai-examples button { border:1px solid var(--border-strong,#ccc); background:var(--bg-alt,#eee); color:inherit; }
 .bjj-ai-intro { margin:12px 0; }
 .bjj-ai-examples { display:flex; flex-wrap:wrap; gap:8px; }
 .bjj-ai-examples button { text-align:left; font-size:.85rem; }
