@@ -1,0 +1,1 @@
+Deploy with `cd worker && npx wrangler login && npx wrangler deploy`. Replace `REPLACE_ME` in `bjj-ai.js` with your Cloudflare workers.dev subdomain. Add `<script defer src="bjj-ai.js"></script>` to site pages. Before public release, add rate limiting and abuse protection. The chat is not yet connected to website content. Do not merge until the Worker is deployed and tested.
