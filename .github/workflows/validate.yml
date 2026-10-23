@@ -23,3 +23,5 @@ jobs:
       - run: node tests/next-step-tests.js
       - run: node --test tests/medal-run/*.test.mjs
       - run: node tests/puzzle-history-tests.js
+      - run: node --test worker/test/*.test.js
+      - run: node --test tests/bjj-ai.test.cjs

@@ -1,12 +1,14 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 async function run(){
   const handlers={},items=new Map(),puts=[],deleted=[];
+  const source=fs.readFileSync('sw.js','utf8');
+  const currentCache=source.match(/const CACHE_NAME = "([^"]+)"/)[1];
   let network=async()=>{throw new Error('offline');};
   const cache={match:async key=>items.get(key)?.clone(),put:async(key,response)=>{puts.push(key);items.set(key,response);}};
   const c={URL,Response,Request,setTimeout:fn=>{queueMicrotask(fn);return 1;},clearTimeout(){},
     self:{location:{origin:'https://bjjconnectionsbygabe.com'},addEventListener:(key,fn)=>handlers[key]=fn,clients:{claim:async()=>{}},skipWaiting:async()=>{}},
-    fetch:(...args)=>network(...args),caches:{open:async()=>cache,keys:async()=>['bjj-connections-v38','bjj-connections-v56','bjj-connections-v57','another-app'],delete:async key=>deleted.push(key)}};
-  vm.createContext(c);vm.runInContext(fs.readFileSync('sw.js','utf8'),c);
+    fetch:(...args)=>network(...args),caches:{open:async()=>cache,keys:async()=>['bjj-connections-v38','bjj-connections-v56',currentCache,'another-app'],delete:async key=>deleted.push(key)}};
+  vm.createContext(c);vm.runInContext(source,c);
   function request(path,mode='navigate',method='GET'){
     const waits=[];let response;
     handlers.fetch({request:{url:'https://bjjconnectionsbygabe.com'+path,mode,method},waitUntil:p=>waits.push(p),respondWith:p=>response=p});
